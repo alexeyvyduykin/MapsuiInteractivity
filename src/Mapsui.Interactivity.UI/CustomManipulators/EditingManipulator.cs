@@ -8,7 +8,7 @@ namespace Mapsui.Interactivity.UI
         private bool _isEditing = false;
         private readonly int _vertexRadius = 4;
 
-        public EditingManipulator(IMapView mapView) : base(mapView) { }
+        public EditingManipulator(IView mapView) : base(mapView) { }
 
         public override void Completed(MouseEventArgs e)
         {
@@ -16,16 +16,16 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                var worldPosition = MapView.ScreenToWorld(e.Position);
+                var worldPosition = View.ScreenToWorld(e.Position);
 
-                MapView.Behavior.OnCompleted(worldPosition);
+                View.Behavior.OnCompleted(worldPosition);
 
-                MapView.Map!.PanLock = false;
+                View.Map!.PanLock = false;
 
                 _isEditing = false;
             }
 
-            MapView.SetCursor(CursorType.Default);
+            View.SetCursor(CursorType.Default);
 
             e.Handled = true;
         }
@@ -36,11 +36,11 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                var worldPosition = MapView.ScreenToWorld(e.Position);
+                var worldPosition = View.ScreenToWorld(e.Position);
 
-                MapView.Behavior.OnDelta(worldPosition);
+                View.Behavior.OnDelta(worldPosition);
 
-                MapView.SetCursor(CursorType.HandGrab);
+                View.SetCursor(CursorType.HandGrab);
 
                 e.Handled = true;
             }
@@ -52,7 +52,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Started(e);
 
-            var mapInfo = MapView.GetMapInfo(e.Position)!;
+            var mapInfo = View.GetMapInfo(e.Position)!;
 
             _isEditing = false;
 
@@ -60,14 +60,14 @@ namespace Mapsui.Interactivity.UI
             {
                 var distance = mapInfo.Resolution * _vertexRadius;
 
-                MapView.Behavior.OnStarted(mapInfo.WorldPosition!, distance);
+                View.Behavior.OnStarted(mapInfo.WorldPosition!, distance);
 
                 _isEditing = true;
             }
 
             if (_isEditing == true)
             {
-                MapView.Map!.PanLock = true;
+                View.Map!.PanLock = true;
             }
 
             e.Handled = true;
@@ -79,7 +79,7 @@ namespace Mapsui.Interactivity.UI
     {
         private bool _isChecker = false;
 
-        public HoverEditingManipulator(IMapView view) : base(view) { }
+        public HoverEditingManipulator(IView view) : base(view) { }
 
         public override void Delta(MouseEventArgs e)
         {
@@ -87,13 +87,13 @@ namespace Mapsui.Interactivity.UI
 
             if (e.Handled == false)
             {
-                var mapInfo = MapView.GetMapInfo(e.Position)!;
+                var mapInfo = View.GetMapInfo(e.Position)!;
 
                 if (mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
                 {
                     if (_isChecker == true)
                     {
-                        MapView.SetCursor(CursorType.Hand);
+                        View.SetCursor(CursorType.Hand);
 
                         _isChecker = false;
                     }
@@ -104,7 +104,7 @@ namespace Mapsui.Interactivity.UI
                 {
                     if (_isChecker == false)
                     {
-                        MapView.SetCursor(CursorType.Default);
+                        View.SetCursor(CursorType.Default);
 
                         _isChecker = true;
                     }

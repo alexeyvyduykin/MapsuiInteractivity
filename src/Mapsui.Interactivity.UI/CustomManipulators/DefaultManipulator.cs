@@ -5,15 +5,15 @@ namespace Mapsui.Interactivity.UI
 {
     internal class DefaultManipulator : MouseManipulator
     {
-        public DefaultManipulator(IMapView mapView) : base(mapView)
+        public DefaultManipulator(IView mapView) : base(mapView)
         {
-            MapView.SetCursor(CursorType.Default);
+            View.SetCursor(CursorType.Default);
         }
     }
 
     internal class HoverDefaultManipulator : MouseManipulator
     {
-        public HoverDefaultManipulator(IMapView view) : base(view)
+        public HoverDefaultManipulator(IView view) : base(view)
         {
 
         }
@@ -22,7 +22,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Started(e);
 
-            MapView.SetCursor(CursorType.Default);
+            View.SetCursor(CursorType.Default);
 
             e.Handled = true;
         }

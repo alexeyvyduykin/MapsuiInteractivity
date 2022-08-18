@@ -1,12 +1,11 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
-using Mapsui;
 
 namespace Mapsui.Interactivity.UI
 {
     internal class DrawingManipulator : MouseManipulator
     {
-        public DrawingManipulator(IMapView view) : base(view) { }
+        public DrawingManipulator(IView view) : base(view) { }
 
         private bool _skip;
         private int _counter;
@@ -18,29 +17,29 @@ namespace Mapsui.Interactivity.UI
 
             if (_skip == true)
             {
-                MapView.SetCursor(CursorType.Cross);
+                View.SetCursor(CursorType.Cross);
             }
 
             if (_skip == false)
             {
                 var screenPosition = e.Position;
-                var worldPosition = MapView.ScreenToWorld(screenPosition);
+                var worldPosition = View.ScreenToWorld(screenPosition);
 
                 bool isClick(MPoint worldPosition)
                 {
-                    var p0 = MapView.WorldToScreen(worldPosition);
+                    var p0 = View.WorldToScreen(worldPosition);
 
                     var res = IsClick(p0, screenPosition);
 
                     if (res == true)
                     {
-                        MapView.SetCursor(CursorType.Default);
+                        View.SetCursor(CursorType.Default);
                     }
 
                     return res;
                 }
 
-                MapView.Behavior.OnCompleted(worldPosition, isClick);
+                View.Behavior.OnCompleted(worldPosition, isClick);
             }
 
             e.Handled = true;
@@ -51,9 +50,9 @@ namespace Mapsui.Interactivity.UI
             base.Delta(e);
 
             var screenPosition = e.Position;
-            var worldPosition = MapView.ScreenToWorld(screenPosition);
+            var worldPosition = View.ScreenToWorld(screenPosition);
 
-            MapView.Behavior.OnDelta(worldPosition);
+            View.Behavior.OnDelta(worldPosition);
 
             if (_counter++ > 0)
             {
@@ -73,9 +72,9 @@ namespace Mapsui.Interactivity.UI
             _counter = 0;
 
             var screenPosition = e.Position;
-            var worldPosition = MapView.ScreenToWorld(screenPosition);
+            var worldPosition = View.ScreenToWorld(screenPosition);
 
-            MapView.Behavior.OnStarted(worldPosition, 0);
+            View.Behavior.OnStarted(worldPosition, 0);
 
             e.Handled = true;
         }
@@ -93,7 +92,7 @@ namespace Mapsui.Interactivity.UI
 
     internal class HoverDrawingManipulator : MouseManipulator
     {
-        public HoverDrawingManipulator(IMapView view) : base(view)
+        public HoverDrawingManipulator(IView view) : base(view)
         {
 
         }
@@ -103,9 +102,9 @@ namespace Mapsui.Interactivity.UI
             base.Delta(e);
 
             var screenPosition = e.Position;
-            var worldPosition = MapView.ScreenToWorld(screenPosition);
+            var worldPosition = View.ScreenToWorld(screenPosition);
 
-            MapView.Behavior.OnHover(worldPosition);
+            View.Behavior.OnHover(worldPosition);
 
             //e.Handled = true;
         }
@@ -114,7 +113,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Started(e);
 
-            MapView.SetCursor(CursorType.Cross);
+            View.SetCursor(CursorType.Cross);
 
             e.Handled = true;
         }

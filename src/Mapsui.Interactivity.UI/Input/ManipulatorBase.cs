@@ -1,5 +1,4 @@
 ﻿using Mapsui.Interactivity.UI.Input.Core;
-using Mapsui;
 
 namespace Mapsui.Interactivity.UI.Input
 {
@@ -19,19 +18,9 @@ namespace Mapsui.Interactivity.UI.Input
         public virtual void Started(T e) { }
     }
 
-    public abstract class MapManipulator<T> : ManipulatorBase<T> where T : InputEventArgs
+    public abstract class MouseManipulator : ManipulatorBase<MouseEventArgs>
     {
-        protected MapManipulator(IMapView view) : base(view)
-        {
-            MapView = view;
-        }
-
-        public IMapView MapView { get; private set; }
-    }
-
-    public abstract class MouseManipulator : MapManipulator<MouseEventArgs>
-    {
-        protected MouseManipulator(IMapView plotView)
+        protected MouseManipulator(IView plotView)
             : base(plotView)
         {
         }

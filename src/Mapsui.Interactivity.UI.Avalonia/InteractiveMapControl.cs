@@ -1,13 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Input;
-using Mapsui.Interactivity.UI.Input;
-using Mapsui;
 using Mapsui.UI.Avalonia;
-using System;
 
 namespace Mapsui.Interactivity.UI.Avalonia
 {
-    public class InteractiveMapControl : MapControl, IMapView
+    public class InteractiveMapControl : MapControl, IView
     {
         public InteractiveMapControl() : base()
         {
