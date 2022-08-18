@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5BA43119-DCAD-49DD-A551-B923D65540B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapsui.Interactivity", "src\Mapsui.Interactivity\Mapsui.Interactivity.csproj", "{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapsui.Interactivity.UI", "src\Mapsui.Interactivity.UI\Mapsui.Interactivity.UI.csproj", "{673D58BB-F4A0-4B66-9592-353160C2AA46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapsui.Interactivity.UI.Avalonia", "src\Mapsui.Interactivity.UI.Avalonia\Mapsui.Interactivity.UI.Avalonia.csproj", "{33A023A6-0431-42A3-B219-527F6F01C428}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{CA1D973F-B7F7-4A05-A6C7-D0C800CF5D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsuiInteractivitySample", "samples\MapsuiInteractivitySample\MapsuiInteractivitySample.csproj", "{F059853D-0A01-4333-A98E-E755E49B28EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{673D58BB-F4A0-4B66-9592-353160C2AA46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{673D58BB-F4A0-4B66-9592-353160C2AA46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{673D58BB-F4A0-4B66-9592-353160C2AA46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{673D58BB-F4A0-4B66-9592-353160C2AA46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33A023A6-0431-42A3-B219-527F6F01C428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33A023A6-0431-42A3-B219-527F6F01C428}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33A023A6-0431-42A3-B219-527F6F01C428}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33A023A6-0431-42A3-B219-527F6F01C428}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F059853D-0A01-4333-A98E-E755E49B28EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F059853D-0A01-4333-A98E-E755E49B28EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F059853D-0A01-4333-A98E-E755E49B28EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F059853D-0A01-4333-A98E-E755E49B28EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2BFEE5C3-E2FF-48A0-8CB5-7A79FB587741} = {5BA43119-DCAD-49DD-A551-B923D65540B9}
+		{673D58BB-F4A0-4B66-9592-353160C2AA46} = {5BA43119-DCAD-49DD-A551-B923D65540B9}
+		{33A023A6-0431-42A3-B219-527F6F01C428} = {5BA43119-DCAD-49DD-A551-B923D65540B9}
+		{F059853D-0A01-4333-A98E-E755E49B28EB} = {CA1D973F-B7F7-4A05-A6C7-D0C800CF5D4D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2D6691E-C4CB-4679-BD96-8245F4EFF9A2}
+	EndGlobalSection
+EndGlobal
