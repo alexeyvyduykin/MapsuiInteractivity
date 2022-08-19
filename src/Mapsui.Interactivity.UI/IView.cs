@@ -10,8 +10,6 @@ namespace Mapsui.Interactivity.UI
 
         IInteractiveBehavior Behavior { get; set; }
 
-        //IController Controller { get; set; }
-
         MPoint ScreenToWorld(MPoint screenPosition);
 
         MPoint WorldToScreen(MPoint worldPosition);

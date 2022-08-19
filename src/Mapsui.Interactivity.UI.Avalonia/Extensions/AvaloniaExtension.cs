@@ -1,5 +1,7 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
+using Mapsui.UI;
+using Mapsui.UI.Avalonia;
 using Mapsui.UI.Avalonia.Extensions;
 using aInput = Avalonia.Input;
 
@@ -49,9 +51,18 @@ namespace Mapsui.Interactivity.UI.Avalonia
 
         public static MouseEventArgs ToMouseEventArgs(this aInput.PointerEventArgs e, aInput.IInputElement relativeTo)
         {
+            var position = e.GetPosition(relativeTo).ToMapsui();
+            MapInfo? mapInfo = null;
+
+            if (relativeTo is MapControl mapControl)
+            {
+                mapInfo = mapControl.GetMapInfo(position);
+            }
+
             return new MouseEventArgs
             {
-                Position = e.GetPosition(relativeTo).ToMapsui(),
+                Position = position,
+                MapInfo = mapInfo,
             };
         }
 
@@ -69,9 +80,18 @@ namespace Mapsui.Interactivity.UI.Avalonia
 
         public static MouseEventArgs ToMouseReleasedEventArgs(this aInput.PointerReleasedEventArgs e, aInput.IInputElement relativeTo)
         {
+            var position = e.GetPosition(relativeTo).ToMapsui();
+            MapInfo? mapInfo = null;
+
+            if (relativeTo is MapControl mapControl)
+            {
+                mapInfo = mapControl.GetMapInfo(position);
+            }
+
             return new MouseEventArgs
             {
-                Position = e.GetPosition(relativeTo).ToMapsui(),
+                Position = position,
+                MapInfo = mapInfo,
             };
         }
     }

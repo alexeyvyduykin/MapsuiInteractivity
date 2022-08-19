@@ -1,4 +1,4 @@
-﻿using Mapsui;
+﻿using Mapsui.UI;
 
 namespace Mapsui.Interactivity.UI.Input.Core
 {
@@ -7,5 +7,7 @@ namespace Mapsui.Interactivity.UI.Input.Core
         public MPoint Position { get; set; } = new MPoint();
 
         public IView? View { get; set; }
+
+        public MapInfo? MapInfo { get; set; }
     }
 }

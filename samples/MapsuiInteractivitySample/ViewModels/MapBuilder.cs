@@ -23,6 +23,9 @@ namespace MapsuiInteractivitySample.ViewModels
         private static readonly Color lineColor = new(20, 120, 120);
         private static readonly Color outlineColor = new(20, 20, 20);
 
+        private static SymbolStyle? _redStylePin;
+        private static SymbolStyle? _greenStylePin;
+
         public static Map Create()
         {
             var map = new Map()
@@ -88,9 +91,42 @@ namespace MapsuiInteractivitySample.ViewModels
                     }
                 }
 
+                var isSelect2 = gf.GetValue<bool>("selected");
+                var pointerover = gf.GetValue<bool>("pointerover");
+
+                if (isSelect2 == true)
+                {
+                    if (gf.Geometry is Point)
+                    {
+                        return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
+                    }
+
+                    return new VectorStyle()
+                    {
+                        Fill = new Brush(Color.Violet) { FillStyle = FillStyle.ForwardDiagonal },
+                        Outline = new Pen(Color.Violet, 6),
+                        Line = new Pen(Color.Violet, 6),
+                    };
+                }
+
+                if (pointerover == true)
+                {
+                    if (gf.Geometry is Point)
+                    {
+                        return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
+                    }
+
+                    return new VectorStyle()
+                    {
+                        Fill = new Brush(new Color(backgroundColor)),
+                        Outline = new Pen(Color.Yellow, 3),
+                        Line = new Pen(Color.Yellow, 3),
+                    };
+                }
+
                 if (gf.Geometry is Point)
                 {
-                    return CreateSvgStyle(@"Assets.PinRed.svg", 0.5);
+                    return _redStylePin ??= CreateSvgStyle(@"Assets.PinRed.svg", 0.5);
                 }
 
                 var defaultStyle = new VectorStyle

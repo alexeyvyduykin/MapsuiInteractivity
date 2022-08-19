@@ -1,6 +1,4 @@
-﻿using Mapsui;
-using System;
-using System.Linq;
+﻿using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
@@ -13,6 +11,8 @@ namespace Mapsui.Interactivity
         public event CompletedEventHandler? Completed;
 
         public event HoverEventHandler? Hover;
+        public event HoverEventHandler? HoverStart;
+        public event HoverEventHandler? HoverStop;
 
         public InteractiveBehavior(IInteractive interactive)
         {
@@ -39,7 +39,7 @@ namespace Mapsui.Interactivity
             }
             else
             {
-                throw new Exception();
+                //throw new Exception();
             }
 
             Delta += (s, e) =>
@@ -49,12 +49,35 @@ namespace Mapsui.Interactivity
 
             Completed += (s, e) =>
             {
-                interactive.Ending(e.WorldPosition, e.IsEnd);
+                if (interactive is ISelector selector)
+                {
+                    selector.Click(e.MapInfo);
+                }
+                else
+                {
+                    interactive.Ending(e.WorldPosition, e.IsEnd);
+                }
             };
 
             Hover += (s, e) =>
             {
                 interactive.Hovering(e.WorldPosition);
+            };
+
+            HoverStart += (s, e) =>
+            {
+                if (interactive is ISelector selector)
+                {
+                    selector.PointeroverStart(e.MapInfo);
+                }
+            };
+
+            HoverStop += (s, e) =>
+            {
+                if (interactive is ISelector selector)
+                {
+                    selector.PointeroverStop(e.MapInfo);
+                }
             };
         }
 
@@ -78,9 +101,24 @@ namespace Mapsui.Interactivity
             Completed?.Invoke(this, new CompletedEventArgs() { WorldPosition = worldPosition, IsEnd = null });
         }
 
+        public void OnCompleted(MapInfo? mapInfo)
+        {
+            Completed?.Invoke(this, new CompletedEventArgs() { WorldPosition = null, IsEnd = null, MapInfo = mapInfo });
+        }
+
         public void OnHover(MPoint worldPosition)
         {
             Hover?.Invoke(this, new HoverEventArgs() { WorldPosition = worldPosition });
+        }
+
+        public void OnHoverStart(MapInfo? mapInfo)
+        {
+            HoverStart?.Invoke(this, new HoverEventArgs() { WorldPosition = null, MapInfo = mapInfo });
+        }
+
+        public void OnHoverStop(MapInfo? mapInfo)
+        {
+            HoverStop?.Invoke(this, new HoverEventArgs() { WorldPosition = null, MapInfo = mapInfo });
         }
     }
 }

@@ -31,6 +31,9 @@ namespace MapsuiInteractivitySample.ViewModels
             this.WhenAnyValue(s => s.IsSelect).Subscribe(s => ResetExclude(s, nameof(IsSelect)));
             this.WhenAnyValue(s => s.IsSelect).Subscribe(s => SelectCommand(s));
 
+            this.WhenAnyValue(s => s.IsNewSelect).Subscribe(s => ResetExclude(s, nameof(IsNewSelect)));
+            this.WhenAnyValue(s => s.IsNewSelect).Subscribe(s => NewSelectCommand(s));
+
             this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => ResetExclude(s, nameof(IsTranslate)));
             this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => TranslateCommand(s));
 
@@ -72,6 +75,11 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (nameof(MainWindowViewModel.IsSelect) != propertyName)
                 {
                     IsSelect = false;
+                }
+
+                if (nameof(MainWindowViewModel.IsNewSelect) != propertyName)
+                {
+                    IsNewSelect = false;
                 }
 
                 if (nameof(MainWindowViewModel.IsScale) != propertyName)
@@ -149,6 +157,41 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 _selectDecorator?.Dispose();
                 _selectDecorator = null;
+            }
+        }
+
+        private void NewSelectCommand(bool value)
+        {
+            if (value == true)
+            {
+                var selector = (ISelector)new BaseSelector();
+
+                selector.Selecting += (s, e) =>
+                {
+                    if (s is IFeature feature)
+                    {
+                        Tip = feature.ToFeatureInfo();
+                    }
+                };
+
+                selector.Unselecting += (s, e) =>
+                {
+                    if (s is IFeature feature)
+                    {
+                        Tip = string.Empty;
+                    }
+                };
+
+                Behavior = new InteractiveBehavior(selector);
+
+                ActualController = new CustomController();
+
+                // _selectDecorator = new InteractiveFactory().CreateSelectDecorator(Map, _userLayer);
+            }
+            else
+            {
+                // _selectDecorator?.Dispose();
+                //  _selectDecorator = null;
             }
         }
 
@@ -415,6 +458,9 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public bool IsSelect { get; set; } = false;
+
+        [Reactive]
+        public bool IsNewSelect { get; set; } = false;
 
         [Reactive]
         public bool IsTranslate { get; set; } = false;

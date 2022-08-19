@@ -1,5 +1,4 @@
-﻿using Mapsui;
-using System;
+﻿using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
@@ -20,11 +19,15 @@ namespace Mapsui.Interactivity
         public MPoint WorldPosition { get; set; } = new MPoint();
 
         public Predicate<MPoint>? IsEnd { get; set; }
+
+        public MapInfo? MapInfo { get; set; }
     }
 
     public class HoverEventArgs : EventArgs
     {
         public MPoint WorldPosition { get; set; } = new MPoint();
+
+        public MapInfo? MapInfo { get; set; }
     }
 
     public delegate void StartedEventHandler(object sender, StartedEventArgs e);
@@ -41,6 +44,8 @@ namespace Mapsui.Interactivity
         event CompletedEventHandler? Completed;
 
         event HoverEventHandler? Hover;
+        event HoverEventHandler? HoverStart;
+        event HoverEventHandler? HoverStop;
 
         void OnStarted(MPoint worldPosition, double screenDistance);
 
@@ -50,6 +55,12 @@ namespace Mapsui.Interactivity
 
         void OnCompleted(MPoint worldPosition);
 
+        void OnCompleted(MapInfo? mapInfo);
+
         void OnHover(MPoint worldPosition);
+
+        void OnHoverStart(MapInfo? mapInfo);
+
+        void OnHoverStop(MapInfo? mapInfo);
     }
 }
