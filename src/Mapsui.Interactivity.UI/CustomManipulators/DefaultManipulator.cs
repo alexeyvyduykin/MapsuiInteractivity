@@ -5,7 +5,7 @@ namespace Mapsui.Interactivity.UI
 {
     internal class DefaultManipulator : MouseManipulator
     {
-        public DefaultManipulator(IView mapView) : base(mapView)
+        public DefaultManipulator(IView view) : base(view)
         {
             View.SetCursor(CursorType.Default);
         }

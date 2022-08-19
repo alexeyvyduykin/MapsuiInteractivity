@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mapsui.Interactivity.UI.Input.Core
+﻿namespace Mapsui.Interactivity.UI.Input.Core
 {
     public class DelegateViewCommand<T> : IViewCommand<T> where T : InputEventArgs
     {

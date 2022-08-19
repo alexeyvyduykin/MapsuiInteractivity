@@ -1,25 +1,23 @@
 ﻿using Mapsui.Interactivity.UI.Input.Core;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Mapsui.Interactivity.UI.Input
 {
-    public abstract class ControllerBase : IController
+    public abstract class BaseController : IController
     {
         private readonly object syncRoot = new();
 
-        protected ControllerBase()
+        protected BaseController()
         {
             InputCommandBindings = new List<InputCommandBinding>();
-            MouseDownManipulators = new List<ManipulatorBase<MouseEventArgs>>();
-            MouseHoverManipulators = new List<ManipulatorBase<MouseEventArgs>>();
+            MouseDownManipulators = new List<BaseManipulator<MouseEventArgs>>();
+            MouseHoverManipulators = new List<BaseManipulator<MouseEventArgs>>();
         }
 
         public List<InputCommandBinding> InputCommandBindings { get; private set; }
 
-        protected IList<ManipulatorBase<MouseEventArgs>> MouseDownManipulators { get; private set; }
+        protected IList<BaseManipulator<MouseEventArgs>> MouseDownManipulators { get; private set; }
 
-        protected IList<ManipulatorBase<MouseEventArgs>> MouseHoverManipulators { get; private set; }
+        protected IList<BaseManipulator<MouseEventArgs>> MouseHoverManipulators { get; private set; }
 
         public virtual bool HandleGesture(IView view, InputGesture gesture, InputEventArgs args)
         {
@@ -32,7 +30,7 @@ namespace Mapsui.Interactivity.UI.Input
             lock (GetSyncRoot(view))
             {
                 if (view.Map != null)
-                {                  
+                {
                     if (args.Handled)
                     {
                         return true;
@@ -49,7 +47,7 @@ namespace Mapsui.Interactivity.UI.Input
             lock (GetSyncRoot(view))
             {
                 if (view.Map != null)
-                {              
+                {
                     if (args.Handled)
                     {
                         return true;
@@ -71,7 +69,7 @@ namespace Mapsui.Interactivity.UI.Input
             lock (GetSyncRoot(view))
             {
                 if (view.Map != null)
-                {                
+                {
                     if (args.Handled)
                     {
                         return true;
@@ -93,7 +91,7 @@ namespace Mapsui.Interactivity.UI.Input
                 }
 
                 if (view.Map != null)
-                {               
+                {
                     if (args.Handled)
                     {
                         return true;
@@ -124,7 +122,7 @@ namespace Mapsui.Interactivity.UI.Input
                 }
 
                 if (view.Map != null)
-                {          
+                {
                     if (args.Handled)
                     {
                         return true;
@@ -152,7 +150,7 @@ namespace Mapsui.Interactivity.UI.Input
 
         public virtual void AddMouseManipulator(
             IView view,
-            ManipulatorBase<MouseEventArgs> manipulator,
+            BaseManipulator<MouseEventArgs> manipulator,
             MouseDownEventArgs args)
         {
             MouseDownManipulators.Add(manipulator);
@@ -161,7 +159,7 @@ namespace Mapsui.Interactivity.UI.Input
 
         public virtual void AddHoverManipulator(
             IView view,
-            ManipulatorBase<MouseEventArgs> manipulator,
+            BaseManipulator<MouseEventArgs> manipulator,
             MouseEventArgs args)
         {
             MouseHoverManipulators.Add(manipulator);

@@ -2,7 +2,7 @@
 
 namespace Mapsui.Interactivity.UI
 {
-    public class DefaultController : ControllerBase, IMapController
+    public class DefaultController : BaseController, IController
     {
         public DefaultController()
         {

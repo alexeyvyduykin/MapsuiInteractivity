@@ -8,7 +8,7 @@ namespace Mapsui.Interactivity.UI
         private bool _isEditing = false;
         private readonly int _vertexRadius = 4;
 
-        public EditingManipulator(IView mapView) : base(mapView) { }
+        public EditingManipulator(IView view) : base(view) { }
 
         public override void Completed(MouseEventArgs e)
         {

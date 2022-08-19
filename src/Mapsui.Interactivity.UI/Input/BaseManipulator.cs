@@ -2,9 +2,9 @@
 
 namespace Mapsui.Interactivity.UI.Input
 {
-    public abstract class ManipulatorBase<T> where T : InputEventArgs
+    public abstract class BaseManipulator<T> where T : InputEventArgs
     {
-        protected ManipulatorBase(IView view)
+        protected BaseManipulator(IView view)
         {
             View = view;
         }
@@ -18,12 +18,9 @@ namespace Mapsui.Interactivity.UI.Input
         public virtual void Started(T e) { }
     }
 
-    public abstract class MouseManipulator : ManipulatorBase<MouseEventArgs>
+    public abstract class MouseManipulator : BaseManipulator<MouseEventArgs>
     {
-        protected MouseManipulator(IView plotView)
-            : base(plotView)
-        {
-        }
+        protected MouseManipulator(IView view) : base(view) { }
 
         public MPoint? StartPosition { get; protected set; }
 

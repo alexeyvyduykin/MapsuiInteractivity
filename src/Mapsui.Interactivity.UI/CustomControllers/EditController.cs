@@ -2,7 +2,7 @@
 
 namespace Mapsui.Interactivity.UI
 {
-    public class EditController : ControllerBase, IMapController
+    public class EditController : BaseController, IController
     {
         public EditController()
         {

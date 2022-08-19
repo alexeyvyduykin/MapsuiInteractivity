@@ -2,7 +2,7 @@
 
 namespace Mapsui.Interactivity.UI
 {
-    public class DrawingController : ControllerBase, IMapController
+    public class DrawingController : BaseController, IController
     {
         public DrawingController()
         {

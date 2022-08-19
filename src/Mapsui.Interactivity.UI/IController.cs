@@ -3,10 +3,6 @@ using Mapsui.Interactivity.UI.Input.Core;
 
 namespace Mapsui.Interactivity.UI
 {
-    public interface IMapController : IController
-    {
-    }
-
     public interface IController
     {
         bool HandleMouseDown(IView view, MouseDownEventArgs args);
@@ -23,9 +19,9 @@ namespace Mapsui.Interactivity.UI
 
         bool HandleGesture(IView view, InputGesture gesture, InputEventArgs args);
 
-        void AddMouseManipulator(IView view, ManipulatorBase<MouseEventArgs> manipulator, MouseDownEventArgs args);
+        void AddMouseManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseDownEventArgs args);
 
-        void AddHoverManipulator(IView view, ManipulatorBase<MouseEventArgs> manipulator, MouseEventArgs args);
+        void AddHoverManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseEventArgs args);
 
         void Bind(MouseDownGesture gesture, IViewCommand<MouseDownEventArgs> command);
 
