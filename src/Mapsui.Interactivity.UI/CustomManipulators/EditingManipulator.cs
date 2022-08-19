@@ -16,9 +16,9 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                var worldPosition = View.ScreenToWorld(e.Position);
+                //var worldPosition = e.MapInfo?.WorldPosition;// View.ScreenToWorld(e.Position);
 
-                View.Behavior.OnCompleted(worldPosition);
+                View.Behavior.OnCompleted(e.MapInfo);
 
                 View.Map!.PanLock = false;
 
@@ -52,11 +52,11 @@ namespace Mapsui.Interactivity.UI
         {
             base.Started(e);
 
-            var mapInfo = View.GetMapInfo(e.Position)!;
+            var mapInfo = e.MapInfo;
 
             _isEditing = false;
 
-            if (mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
+            if (mapInfo != null && mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
             {
                 var distance = mapInfo.Resolution * _vertexRadius;
 
@@ -87,9 +87,9 @@ namespace Mapsui.Interactivity.UI
 
             if (e.Handled == false)
             {
-                var mapInfo = View.GetMapInfo(e.Position)!;
+                var mapInfo = e.MapInfo;
 
-                if (mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
+                if (mapInfo != null && mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
                 {
                     if (_isChecker == true)
                     {

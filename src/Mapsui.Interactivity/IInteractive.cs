@@ -1,6 +1,4 @@
-﻿using Mapsui;
-using System;
-using System.Collections.Generic;
+﻿using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
@@ -14,8 +12,8 @@ namespace Mapsui.Interactivity
 
         void Moving(MPoint worldPosition);
 
-        void Ending(MPoint worldPosition, Predicate<MPoint>? isEnd);
+        void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 
-        void Hovering(MPoint worldPosition);
+        void Hovering(MapInfo? mapInfo);
     }
 }

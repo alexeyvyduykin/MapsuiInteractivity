@@ -11,51 +11,8 @@ namespace Mapsui.Interactivity
         private ILayer? _lastLayer;
         private bool _isChecker;
 
-        public event EventHandler? Selecting;
-        public event EventHandler? Unselecting;
-
-        public void Click(MapInfo? mapInfo)
-        {
-            if (mapInfo != null
-                && mapInfo.Layer != null
-                && mapInfo.Feature != null)
-            {
-                var feature = mapInfo.Feature;
-
-                if (feature != _selectedFeature)
-                {
-                    if (_selectedFeature != null)
-                    {
-                        _selectedFeature["selected"] = false;
-                    }
-
-                    _selectedFeature = feature;
-
-                    _selectedFeature["selected"] = true;
-
-                    Selecting?.Invoke(_selectedFeature, EventArgs.Empty);
-                }
-                else if (_selectedFeature != null && feature == _selectedFeature)
-                {
-                    if (_selectedFeature.Fields.Contains("selected"))
-                    {
-                        var isSelected = !(bool)_selectedFeature["selected"]!;
-                        _selectedFeature["selected"] = isSelected;
-
-                        if (isSelected == true)
-                        {
-                            Selecting?.Invoke(_selectedFeature, EventArgs.Empty);
-                        }
-                        else
-                        {
-                            Unselecting?.Invoke(_selectedFeature, EventArgs.Empty);
-                        }
-                    }
-                }
-
-                mapInfo.Layer?.DataHasChanged();
-            }
-        }
+        public event EventHandler? Select;
+        public event EventHandler? Unselect;
 
         public void Pointerover(MapInfo? mapInfo)
         {
@@ -111,9 +68,47 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Ending(MPoint worldPosition, Predicate<MPoint>? isEnd)
+        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
+            if (mapInfo != null
+                && mapInfo.Layer != null
+                && mapInfo.Feature != null)
+            {
+                var feature = mapInfo.Feature;
 
+                if (feature != _selectedFeature)
+                {
+                    if (_selectedFeature != null)
+                    {
+                        _selectedFeature["selected"] = false;
+                    }
+
+                    _selectedFeature = feature;
+
+                    _selectedFeature["selected"] = true;
+
+                    Select?.Invoke(_selectedFeature, EventArgs.Empty);
+                }
+                else if (_selectedFeature != null && feature == _selectedFeature)
+                {
+                    if (_selectedFeature.Fields.Contains("selected"))
+                    {
+                        var isSelected = !(bool)_selectedFeature["selected"]!;
+                        _selectedFeature["selected"] = isSelected;
+
+                        if (isSelected == true)
+                        {
+                            Select?.Invoke(_selectedFeature, EventArgs.Empty);
+                        }
+                        else
+                        {
+                            Unselect?.Invoke(_selectedFeature, EventArgs.Empty);
+                        }
+                    }
+                }
+
+                mapInfo.Layer?.DataHasChanged();
+            }
         }
 
         public override IEnumerable<MPoint> GetActiveVertices()
@@ -121,7 +116,7 @@ namespace Mapsui.Interactivity
             throw new NotImplementedException();
         }
 
-        public override void Hovering(MPoint worldPosition)
+        public override void Hovering(MapInfo? mapInfo)
         {
 
         }

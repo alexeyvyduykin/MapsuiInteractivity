@@ -315,7 +315,7 @@ namespace Mapsui.Interactivity
             });
         }
 
-        private static IStyle CreateInteractiveLayerDecoratorStyle()
+        public static IStyle CreateInteractiveLayerDecoratorStyle()
         {
             return new ThemeStyle(f =>
             {

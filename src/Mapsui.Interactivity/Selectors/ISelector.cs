@@ -4,11 +4,9 @@ namespace Mapsui.Interactivity
 {
     public interface ISelector : IInteractive
     {
-        public event EventHandler? Selecting;
+        public event EventHandler? Select;
 
-        public event EventHandler? Unselecting;
-
-        void Click(MapInfo? mapInfo);
+        public event EventHandler? Unselect;
 
         void PointeroverStart(MapInfo? mapInfo);
 

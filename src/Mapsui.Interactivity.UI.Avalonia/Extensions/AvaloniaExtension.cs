@@ -68,13 +68,22 @@ namespace Mapsui.Interactivity.UI.Avalonia
 
         public static MouseDownEventArgs ToMouseDownEventArgs(this aInput.PointerPressedEventArgs e, aInput.IInputElement relativeTo)
         {
+            var position = e.GetPosition(relativeTo).ToMapsui();
+            MapInfo? mapInfo = null;
+
+            if (relativeTo is MapControl mapControl)
+            {
+                mapInfo = mapControl.GetMapInfo(position);
+            }
+
             return new MouseDownEventArgs
             {
 #pragma warning disable CS0618 // Тип или член устарел
                 ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
 #pragma warning restore CS0618 // Тип или член устарел
                 ClickCount = e.ClickCount,
-                Position = e.GetPosition(relativeTo).ToMapsui(),
+                Position = position,
+                MapInfo = mapInfo
             };
         }
 

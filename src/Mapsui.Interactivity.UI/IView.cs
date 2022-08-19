@@ -1,6 +1,4 @@
-﻿using Mapsui.UI;
-
-namespace Mapsui.Interactivity.UI
+﻿namespace Mapsui.Interactivity.UI
 {
     public interface IView
     {
@@ -13,7 +11,5 @@ namespace Mapsui.Interactivity.UI
         MPoint ScreenToWorld(MPoint screenPosition);
 
         MPoint WorldToScreen(MPoint worldPosition);
-
-        MapInfo? GetMapInfo(MPoint screenPosition, int margin = 0);
     }
 }

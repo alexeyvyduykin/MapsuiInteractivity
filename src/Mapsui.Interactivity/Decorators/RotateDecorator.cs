@@ -1,9 +1,6 @@
-﻿using Mapsui;
-using Mapsui.Nts;
+﻿using Mapsui.Nts;
+using Mapsui.UI;
 using NetTopologySuite.Geometries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Mapsui.Interactivity
 {
@@ -33,7 +30,7 @@ namespace Mapsui.Interactivity
             _startOffsetToVertex = new MPoint();
         }
 
-        public override void Ending(MPoint worldPosition, Predicate<MPoint>? isEnd)
+        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
             var extent = GetExtent(FeatureSource);
 
@@ -81,7 +78,7 @@ namespace Mapsui.Interactivity
             _isRotating = true;
         }
 
-        public override void Hovering(MPoint worldPosition)
+        public override void Hovering(MapInfo? mapInfo)
         {
 
         }

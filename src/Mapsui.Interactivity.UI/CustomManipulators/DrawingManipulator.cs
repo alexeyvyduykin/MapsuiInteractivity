@@ -23,7 +23,6 @@ namespace Mapsui.Interactivity.UI
             if (_skip == false)
             {
                 var screenPosition = e.Position;
-                var worldPosition = View.ScreenToWorld(screenPosition);
 
                 bool isClick(MPoint worldPosition)
                 {
@@ -39,7 +38,7 @@ namespace Mapsui.Interactivity.UI
                     return res;
                 }
 
-                View.Behavior.OnCompleted(worldPosition, isClick);
+                View.Behavior.OnCompleted(e.MapInfo, isClick);
             }
 
             e.Handled = true;
@@ -101,10 +100,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Delta(e);
 
-            var screenPosition = e.Position;
-            var worldPosition = View.ScreenToWorld(screenPosition);
-
-            View.Behavior.OnHover(worldPosition);
+            View.Behavior.OnHover(e.MapInfo);
 
             //e.Handled = true;
         }

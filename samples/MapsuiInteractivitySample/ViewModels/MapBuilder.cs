@@ -103,7 +103,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                     return new VectorStyle()
                     {
-                        Fill = new Brush(Color.Violet) { FillStyle = FillStyle.ForwardDiagonal },
+                        Fill = new Brush(new Color(backgroundColor)),
                         Outline = new Pen(Color.Violet, 6),
                         Line = new Pen(Color.Violet, 6),
                     };

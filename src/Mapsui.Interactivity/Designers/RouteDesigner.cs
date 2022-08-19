@@ -1,12 +1,9 @@
 ﻿using Mapsui.Interactivity.Helpers;
-using Mapsui;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.Projections;
+using Mapsui.UI;
 using NetTopologySuite.Geometries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Mapsui.Interactivity
 {
@@ -42,17 +39,17 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Ending(MPoint worldPosition, Predicate<MPoint>? isEnd)
+        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
             if (_skip == false)
             {
-                CreatingFeature(worldPosition, isEnd);
+                CreatingFeature(mapInfo?.WorldPosition!, isEnd);
             }
         }
 
-        public override void Hovering(MPoint worldPosition)
+        public override void Hovering(MapInfo? mapInfo)
         {
-            HoverCreatingFeature(worldPosition);
+            HoverCreatingFeature(mapInfo?.WorldPosition!);
         }
 
         //private void CreatingFeature(MPoint worldPosition)

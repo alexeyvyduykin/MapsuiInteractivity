@@ -7,6 +7,7 @@ using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
@@ -36,17 +37,17 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Ending(MPoint worldPosition, Predicate<MPoint>? isEnd)
+        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
             if (_skip == false)
             {
-                CreatingFeature(worldPosition);
+                CreatingFeature(mapInfo?.WorldPosition!);
             }
         }
 
-        public override void Hovering(MPoint worldPosition)
+        public override void Hovering(MapInfo? mapInfo)
         {
-            HoverCreatingFeature(worldPosition);
+            HoverCreatingFeature(mapInfo?.WorldPosition!);
         }
 
         //public void CreatingFeature(MPoint worldPosition)

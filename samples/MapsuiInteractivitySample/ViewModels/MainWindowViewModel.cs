@@ -9,6 +9,7 @@ using Mapsui.Projections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Linq;
 
 namespace MapsuiInteractivitySample.ViewModels
 {
@@ -166,21 +167,41 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 var selector = (ISelector)new BaseSelector();
 
-                selector.Selecting += (s, e) =>
+                selector.Select += (s, e) =>
                 {
                     if (s is IFeature feature)
                     {
                         Tip = feature.ToFeatureInfo();
+                        
+                        //if (feature is GeometryFeature gf)
+                        //{
+                        //    var translate = new InteractiveFactory().CreateTranslateDecorator(gf);
+
+                        //    var interactiveLayer = new InteractiveLayer(translate)
+                        //    {
+                        //        Name = nameof(InteractiveLayer),
+                        //        Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                        //    };
+
+                        //    Map.Layers.Add(interactiveLayer);
+
+                        //    Behavior = new InteractiveBehavior(translate); 
+                            
+                        //    ActualController = new EditController();
+                        //}
+
                     }
                 };
 
-                selector.Unselecting += (s, e) =>
+                selector.Unselect += (s, e) =>
                 {
                     if (s is IFeature feature)
                     {
                         Tip = string.Empty;
                     }
                 };
+
+                //CreateTranslator(selector);
 
                 Behavior = new InteractiveBehavior(selector);
 
@@ -193,6 +214,43 @@ namespace MapsuiInteractivitySample.ViewModels
                 // _selectDecorator?.Dispose();
                 //  _selectDecorator = null;
             }
+        }
+
+        private void CreateTranslator(ISelector selector)
+        {
+            selector.Select += (s, e) =>
+            {
+                if (s is GeometryFeature gf)
+                {
+                    var translate = new InteractiveFactory().CreateTranslateDecorator(gf);
+
+                    var interactiveLayer = new InteractiveLayer(translate)
+                    {
+                        Name = nameof(InteractiveLayer),
+                        Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                    };
+
+                    Map.Layers.Add(interactiveLayer);
+
+                    Behavior = new InteractiveBehavior(translate);
+
+                    ActualController = new EditController();
+                }
+            };
+
+            selector.Unselect += (s, e) =>
+            {
+                var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+
+                if (interactiveLayer != null)
+                {
+                    Map.Layers.Remove(interactiveLayer);
+                }
+
+                Behavior = new InteractiveBehavior(selector);
+
+                ActualController = new CustomController();
+            };
         }
 
         private void ScaleCommand(bool value)
