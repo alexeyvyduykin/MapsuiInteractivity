@@ -1,6 +1,4 @@
 ﻿using Mapsui.Nts;
-using System;
-using System.Collections.Generic;
 
 namespace Mapsui.Interactivity
 {

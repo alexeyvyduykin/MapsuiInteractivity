@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using HarfBuzzSharp;
-using Mapsui;
+﻿using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
@@ -205,7 +203,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 {
                     if (s is IFeature feature)
                     {
-                        Tip = feature.ToFeatureInfo();                       
+                        Tip = feature.ToFeatureInfo();
                     }
                 };
 
@@ -389,7 +387,7 @@ namespace MapsuiInteractivitySample.ViewModels
                     {
                         _decorator = new TranslateDecorator(gf);
 
-                        _decorator.EndDecorating += (s, e) =>
+                        _decorator.Cancel += (s, e) =>
                         {
                             var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -422,10 +420,10 @@ namespace MapsuiInteractivitySample.ViewModels
             }
             else
             {
-                _decorator?.Dispose(null);
-                _selector?.Unselected(); 
+                _decorator?.Canceling();
+                _selector?.Unselected();
                 Behavior = null;
-                ActualController = new DefaultController();           
+                ActualController = new DefaultController();
             }
         }
 
@@ -441,7 +439,7 @@ namespace MapsuiInteractivitySample.ViewModels
                     {
                         _decorator = new ScaleDecorator(gf);
 
-                        _decorator.EndDecorating += (s, e) =>
+                        _decorator.Cancel += (s, e) =>
                         {
                             var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -474,7 +472,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
             else
             {
-                _decorator?.Dispose(null);
+                _decorator?.Canceling();
                 _selector?.Unselected();
                 Behavior = null;
                 ActualController = new DefaultController();
@@ -493,7 +491,7 @@ namespace MapsuiInteractivitySample.ViewModels
                     {
                         _decorator = new RotateDecorator(gf);
 
-                        _decorator.EndDecorating += (s, e) =>
+                        _decorator.Cancel += (s, e) =>
                         {
                             var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -526,7 +524,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
             else
             {
-                _decorator?.Dispose(null);
+                _decorator?.Canceling();
                 _selector?.Unselected();
                 Behavior = null;
                 ActualController = new DefaultController();
@@ -545,7 +543,7 @@ namespace MapsuiInteractivitySample.ViewModels
                     {
                         _decorator = new EditDecorator(gf);
 
-                        _decorator.EndDecorating += (s, e) =>
+                        _decorator.Cancel += (s, e) =>
                         {
                             var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -578,7 +576,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
             else
             {
-                _decorator?.Dispose(null);
+                _decorator?.Canceling();
                 _selector?.Unselected();
                 Behavior = null;
                 ActualController = new DefaultController();

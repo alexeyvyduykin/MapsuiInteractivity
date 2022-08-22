@@ -6,6 +6,8 @@ namespace Mapsui.Interactivity
     {
         event EventHandler? InvalidateLayer;
 
+        event EventHandler? Cancel;
+
         IEnumerable<MPoint> GetActiveVertices();
 
         void Starting(MPoint worldPosition);
@@ -16,6 +18,6 @@ namespace Mapsui.Interactivity
 
         void Hovering(MapInfo? mapInfo);
 
-        void Dispose(MapInfo? mapInfo);
+        void Canceling();
     }
 }

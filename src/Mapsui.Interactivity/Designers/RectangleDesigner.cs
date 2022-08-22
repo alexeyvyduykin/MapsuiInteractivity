@@ -130,10 +130,5 @@ namespace Mapsui.Interactivity
         }
 
         public double Area() => MathHelper.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
-
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

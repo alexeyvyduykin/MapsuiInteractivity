@@ -5,15 +5,13 @@ namespace Mapsui.Interactivity.UI
 {
     public class CustomController : BaseController, IController
     {
-        public CustomController(/*IInteractive interactive*/)
+        public CustomController()
         {
-            //var behavior = new InteractiveBehavior(interactive);
-
             var click = new DelegateViewCommand<MouseDownEventArgs>(
-                (view, controller, args) => controller.AddMouseManipulator(view, new ClickManipulator(view/*, behavior*/), args));
+                (view, controller, args) => controller.AddMouseManipulator(view, new ClickManipulator(view), args));
 
             var hover = new DelegateViewCommand<MouseEventArgs>(
-                (view, controller, args) => controller.AddHoverManipulator(view, new PointeroverManipulator(view/*, behavior*/), args));
+                (view, controller, args) => controller.AddHoverManipulator(view, new PointeroverManipulator(view), args));
 
             this.BindMouseDown(MouseButton.Left, click);
             this.BindMouseEnter(hover);

@@ -1,6 +1,5 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
-using Mapsui.UI;
 
 namespace Mapsui.Interactivity.UI
 {
@@ -30,14 +29,10 @@ namespace Mapsui.Interactivity.UI
                 var clickPoint = e.MapInfo?.WorldPosition;
                 var clickFeature = e.MapInfo?.Feature;
 
-                //var res1 = MPoint.Equals(clickPoint, _clickPoint);
-                var res1= IsClick(clickPoint, _clickPoint);
-                var res2 = IFeature.Equals(_clickFeature, clickFeature);
-
-                if (res1 == true
-                    && res2 == true)
+                if (IsClick(clickPoint, _clickPoint) == true
+                    && IFeature.Equals(_clickFeature, clickFeature) == true)
                 {
-                    View.Behavior.OnDispose();
+                    View.Behavior.OnCancel();
                 }
             }
 

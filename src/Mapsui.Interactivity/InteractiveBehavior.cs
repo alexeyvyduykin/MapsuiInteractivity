@@ -7,8 +7,7 @@ namespace Mapsui.Interactivity
         public event StartedEventHandler? Started;
         public event DeltaEventHandler? Delta;
         public event CompletedEventHandler? Completed;
-        public event EventHandler? Dispose;
-        public event CompletedEventHandler? Click;
+        public event EventHandler? Cancel;
         public event HoverEventHandler? Hover;
         public event HoverEventHandler? HoverStart;
         public event HoverEventHandler? HoverStop;
@@ -47,23 +46,15 @@ namespace Mapsui.Interactivity
             };
 
             Completed += (s, e) =>
-            {                    
-                interactive.Ending(e.MapInfo, e.IsEnd);                
-            };
-
-            Click += (s, e) => 
             {
-                if (interactive is IDecorator decorator) 
-                {
-           //         decorator.Dispose(e.MapInfo);
-                }
+                interactive.Ending(e.MapInfo, e.IsEnd);
             };
 
-            Dispose += (s, e) =>
+            Cancel += (s, e) =>
             {
                 if (interactive is IDecorator decorator)
-                {                     
-               //     decorator.Dispose(null);
+                {
+                    //     decorator.Dispose(null);
                 }
             };
 
@@ -109,14 +100,9 @@ namespace Mapsui.Interactivity
             Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
         }
 
-        public void OnDispose()
+        public void OnCancel()
         {
-            Dispose?.Invoke(this, new EventArgs());
-        }
-
-        public void OnClick(MapInfo? mapInfo)
-        {
-            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
+            Cancel?.Invoke(this, EventArgs.Empty);
         }
 
         public void OnHover(MapInfo? mapInfo)
@@ -140,11 +126,10 @@ namespace Mapsui.Interactivity
         public event StartedEventHandler? Started;
         public event DeltaEventHandler? Delta;
         public event CompletedEventHandler? Completed;
-        public event CompletedEventHandler? Click;
         public event HoverEventHandler? Hover;
         public event HoverEventHandler? HoverStart;
         public event HoverEventHandler? HoverStop;
-        public event EventHandler? Dispose;
+        public event EventHandler? Cancel;
 
         public NewInteractiveBehavior(ISelector selector, IInteractive interactive)
         {
@@ -177,12 +162,7 @@ namespace Mapsui.Interactivity
 
             Completed += (s, e) =>
             {
-                interactive.Ending(e.MapInfo, e.IsEnd);         
-            };
-
-            Click += (s, e) =>
-            {            
-                selector.Ending(e.MapInfo, e.IsEnd);
+                interactive.Ending(e.MapInfo, e.IsEnd);
             };
 
             Hover += (s, e) =>
@@ -222,12 +202,6 @@ namespace Mapsui.Interactivity
             Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
         }
 
-        public void OnClick(MapInfo? mapInfo)
-        {
-            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
-        }
-
-
         public void OnHover(MapInfo? mapInfo)
         {
             Hover?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
@@ -243,9 +217,9 @@ namespace Mapsui.Interactivity
             HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
         }
 
-        public void OnDispose()
+        public void OnCancel()
         {
-            throw new NotImplementedException();
+            Cancel?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -254,8 +228,7 @@ namespace Mapsui.Interactivity
         public event StartedEventHandler? Started;
         public event DeltaEventHandler? Delta;
         public event CompletedEventHandler? Completed;
-        public event EventHandler? Dispose;
-        public event CompletedEventHandler? Click;
+        public event EventHandler? Cancel;
         public event HoverEventHandler? Hover;
         public event HoverEventHandler? HoverStart;
         public event HoverEventHandler? HoverStop;
@@ -298,19 +271,11 @@ namespace Mapsui.Interactivity
                 interactive.Ending(e.MapInfo, e.IsEnd);
             };
 
-            Click += (s, e) =>
+            Cancel += (s, e) =>
             {
                 if (interactive is IDecorator decorator)
                 {
-                    //         decorator.Dispose(e.MapInfo);
-                }
-            };
-
-            Dispose += (s, e) =>
-            {
-                if (interactive is IDecorator decorator)
-                {
-                    decorator.Dispose(null);
+                    decorator.Canceling();
                 }
             };
 
@@ -356,14 +321,9 @@ namespace Mapsui.Interactivity
             Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
         }
 
-        public void OnDispose()
+        public void OnCancel()
         {
-            Dispose?.Invoke(this, new EventArgs());
-        }
-
-        public void OnClick(MapInfo? mapInfo)
-        {
-            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
+            Cancel?.Invoke(this, new EventArgs());
         }
 
         public void OnHover(MapInfo? mapInfo)
@@ -381,6 +341,4 @@ namespace Mapsui.Interactivity
             HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
         }
     }
-
-
 }

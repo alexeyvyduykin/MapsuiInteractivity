@@ -77,9 +77,5 @@ namespace Mapsui.Interactivity
 
             return new MPoint(right, top);
         }
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            EndDecoratingCallback();
-        }
     }
 }

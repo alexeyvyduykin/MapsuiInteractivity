@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Mapsui.Interactivity.Helpers
+﻿namespace Mapsui.Interactivity.Helpers
 {
     internal static class MathHelper
     {

@@ -1,7 +1,5 @@
-﻿using Mapsui;
-using Mapsui.Layers;
+﻿using Mapsui.Layers;
 using Mapsui.Nts;
-using System;
 
 namespace Mapsui.Interactivity
 {

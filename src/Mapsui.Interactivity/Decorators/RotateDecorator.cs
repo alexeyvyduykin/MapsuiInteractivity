@@ -97,10 +97,5 @@ namespace Mapsui.Interactivity
 
             return new MRect(minX, minY, maxX, maxY);
         }
-
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            EndDecoratingCallback();
-        }
     }
 }

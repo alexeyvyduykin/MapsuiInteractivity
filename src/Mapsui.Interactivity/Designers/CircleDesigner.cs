@@ -1,13 +1,9 @@
 ﻿using Mapsui.Interactivity.Helpers;
-using Mapsui;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.Projections;
-using NetTopologySuite.Geometries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Mapsui.UI;
+using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
@@ -159,11 +155,6 @@ namespace Mapsui.Interactivity
             }
 
             return 0;
-        }
-
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            throw new NotImplementedException();
         }
     }
 }

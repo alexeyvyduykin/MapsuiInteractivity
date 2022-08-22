@@ -61,7 +61,7 @@ namespace Mapsui.Interactivity
             if (_selectedFeature != null)
             {
                 _selectedFeature["selected"] = false;
-                
+
                 _lastFeature!["pointerover"] = false;
 
                 _lastLayer?.DataHasChanged();
@@ -113,11 +113,6 @@ namespace Mapsui.Interactivity
 
                 mapInfo?.Layer?.DataHasChanged();
             }
-        }
-
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            throw new NotImplementedException();
         }
     }
 }

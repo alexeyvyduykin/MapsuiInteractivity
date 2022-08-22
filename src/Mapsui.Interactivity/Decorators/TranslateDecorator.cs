@@ -1,10 +1,7 @@
-﻿using Mapsui;
-using Mapsui.Nts;
+﻿using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
-using System;
-using System.Collections.Generic;
 
 namespace Mapsui.Interactivity
 {
@@ -65,11 +62,6 @@ namespace Mapsui.Interactivity
         public override void Hovering(MapInfo? mapInfo)
         {
 
-        }
-
-        public override void Dispose(MapInfo? mapInfo)
-        {
-            EndDecoratingCallback();
         }
     }
 }

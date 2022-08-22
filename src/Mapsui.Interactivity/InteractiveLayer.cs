@@ -1,9 +1,7 @@
-﻿using Mapsui;
-using Mapsui.Fetcher;
+﻿using Mapsui.Fetcher;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using System.Collections.Generic;
 
 namespace Mapsui.Interactivity
 {

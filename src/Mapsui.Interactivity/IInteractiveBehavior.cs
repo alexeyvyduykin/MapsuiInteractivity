@@ -36,21 +36,18 @@ namespace Mapsui.Interactivity
         event StartedEventHandler? Started;
         event DeltaEventHandler? Delta;
         event CompletedEventHandler? Completed;
-        event EventHandler? Dispose;
+        event EventHandler? Cancel;
         event HoverEventHandler? Hover;
         event HoverEventHandler? HoverStart;
         event HoverEventHandler? HoverStop;
-        event CompletedEventHandler? Click;
 
         void OnStarted(MPoint worldPosition, double screenDistance);
 
         void OnDelta(MPoint worldPosition);
 
         void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
-        
-        void OnDispose();
 
-        void OnClick(MapInfo? mapInfo);
+        void OnCancel();
 
         void OnHover(MapInfo? mapInfo);
 

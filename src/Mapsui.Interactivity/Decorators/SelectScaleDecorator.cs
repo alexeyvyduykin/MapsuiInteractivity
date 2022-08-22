@@ -1,8 +1,6 @@
-﻿using Mapsui;
-using Mapsui.Layers;
+﻿using Mapsui.Layers;
 using Mapsui.Nts;
 using NetTopologySuite.Geometries;
-using System;
 
 namespace Mapsui.Interactivity
 {

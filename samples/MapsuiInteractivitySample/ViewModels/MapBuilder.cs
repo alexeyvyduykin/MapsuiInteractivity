@@ -5,7 +5,6 @@ using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
-using Mapsui.Utilities;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 
@@ -23,8 +22,8 @@ namespace MapsuiInteractivitySample.ViewModels
         private static readonly Color lineColor = new(20, 120, 120);
         private static readonly Color outlineColor = new(20, 20, 20);
 
-        private static SymbolStyle? _redStylePin;
-        private static SymbolStyle? _greenStylePin;
+        //private static SymbolStyle? _redStylePin;
+        //private static SymbolStyle? _greenStylePin;
 
         public static Map Create()
         {
@@ -76,9 +75,9 @@ namespace MapsuiInteractivitySample.ViewModels
                             if (isSelect == true)
                             {
                                 if (gf.Geometry is Point)
-                                {       
+                                {
                                     return new SymbolStyle
-                                    {         
+                                    {
                                         SymbolType = SymbolType.Triangle,
                                         Fill = new Brush(Color.Green),
                                         SymbolScale = 1.0,
