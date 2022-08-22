@@ -5,12 +5,7 @@ namespace Mapsui.Interactivity.UI
 {
     internal class ClickManipulator : MouseManipulator
     {
-        //private readonly IInteractiveBehavior _behavior;
-
-        public ClickManipulator(IView view/*, IInteractiveBehavior behavior*/) : base(view)
-        {
-            //_behavior = behavior;
-        }
+        public ClickManipulator(IView view) : base(view) { }
 
         public override void Completed(MouseEventArgs e)
         {

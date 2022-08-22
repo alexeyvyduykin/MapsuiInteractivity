@@ -1,6 +1,5 @@
 ﻿using Mapsui.Layers;
 using Mapsui.UI;
-using System.Diagnostics;
 
 namespace Mapsui.Interactivity
 {
@@ -13,60 +12,6 @@ namespace Mapsui.Interactivity
 
         public event EventHandler? Select;
         public event EventHandler? Unselect;
-
-        public void Pointerover(MapInfo? mapInfo)
-        {
-            if (mapInfo != null
-                && mapInfo.Layer != null
-                && mapInfo.Feature != null
-                )
-            {
-                if (_lastFeature != null && _lastFeature != mapInfo.Feature)
-                {
-                    _lastFeature["pointerover"] = false;
-                    _lastFeature = mapInfo.Feature;
-                    _lastLayer = mapInfo.Layer;
-
-                    if (_lastFeature != null)
-                    {
-                        _lastFeature["pointerover"] = true;
-                    }
-
-                    mapInfo.Layer?.DataHasChanged();
-                }
-
-                if (_isChecker == true)
-                {
-                    _lastFeature = mapInfo.Feature;
-                    _lastLayer = mapInfo.Layer;
-
-                    if (_lastFeature != null)
-                    {
-                        _lastFeature["pointerover"] = true;
-
-                        mapInfo.Layer?.DataHasChanged();
-                    }
-
-                    _isChecker = false;
-                }
-
-            }
-            else
-            {
-                if (_isChecker == false)
-                {
-
-                    if (_lastFeature != null)
-                    {
-                        _lastFeature["pointerover"] = false;
-
-                        _lastLayer?.DataHasChanged();
-                    }
-
-                    _isChecker = true;
-                }
-            }
-        }
 
         public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
@@ -111,6 +56,20 @@ namespace Mapsui.Interactivity
             }
         }
 
+        public void Unselected()
+        {
+            if (_selectedFeature != null)
+            {
+                _selectedFeature["selected"] = false;
+                
+                _lastFeature!["pointerover"] = false;
+
+                _lastLayer?.DataHasChanged();
+
+                Unselect?.Invoke(_selectedFeature, EventArgs.Empty);
+            }
+        }
+
         public override IEnumerable<MPoint> GetActiveVertices()
         {
             throw new NotImplementedException();
@@ -140,8 +99,6 @@ namespace Mapsui.Interactivity
             {
                 _lastFeature["pointerover"] = true;
 
-                Debug.WriteLine("pointerover = true");
-
                 mapInfo?.Layer?.DataHasChanged();
             }
         }
@@ -152,12 +109,15 @@ namespace Mapsui.Interactivity
             {
                 _lastFeature["pointerover"] = false;
 
-                Debug.WriteLine("pointerover = false");
-
                 _lastLayer?.DataHasChanged();
 
                 mapInfo?.Layer?.DataHasChanged();
             }
+        }
+
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

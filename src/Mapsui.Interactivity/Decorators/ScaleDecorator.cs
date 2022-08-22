@@ -5,7 +5,7 @@ using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    internal class ScaleDecorator : BaseDecorator
+    public class ScaleDecorator : BaseDecorator
     {
         private readonly MPoint _center;
         private MPoint _scaleTopRight;
@@ -76,6 +76,10 @@ namespace Mapsui.Interactivity
             var top = geometry.Coordinates.Max(s => s.Y);
 
             return new MPoint(right, top);
+        }
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            EndDecoratingCallback();
         }
     }
 }

@@ -120,5 +120,10 @@ namespace Mapsui.Interactivity
                 return Math.Abs((b.X - a.X) * (b.X - c.X) + (b.Y - a.Y) * (b.Y - c.Y)) < 1E-6;// == 0.0;
             }
         }
+
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            EndDecoratingCallback();
+        }
     }
 }

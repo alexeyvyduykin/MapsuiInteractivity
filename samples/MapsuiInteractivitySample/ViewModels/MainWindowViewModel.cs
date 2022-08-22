@@ -1,4 +1,6 @@
-﻿using Mapsui;
+﻿using Avalonia.Controls;
+using HarfBuzzSharp;
+using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
@@ -46,6 +48,18 @@ namespace MapsuiInteractivitySample.ViewModels
 
             this.WhenAnyValue(s => s.IsEdit).Subscribe(s => ResetExclude(s, nameof(IsEdit)));
             this.WhenAnyValue(s => s.IsEdit).Subscribe(s => EditCommand(s));
+
+            this.WhenAnyValue(s => s.IsTranslateDecorator).Subscribe(s => ResetExclude(s, nameof(IsTranslateDecorator)));
+            this.WhenAnyValue(s => s.IsTranslateDecorator).Subscribe(s => TranslateDecoratorCommand(s));
+
+            this.WhenAnyValue(s => s.IsRotateDecorator).Subscribe(s => ResetExclude(s, nameof(IsRotateDecorator)));
+            this.WhenAnyValue(s => s.IsRotateDecorator).Subscribe(s => RotateDecoratorCommand(s));
+
+            this.WhenAnyValue(s => s.IsScaleDecorator).Subscribe(s => ResetExclude(s, nameof(IsScaleDecorator)));
+            this.WhenAnyValue(s => s.IsScaleDecorator).Subscribe(s => ScaleDecoratorCommand(s));
+
+            this.WhenAnyValue(s => s.IsEditDecorator).Subscribe(s => ResetExclude(s, nameof(IsEditDecorator)));
+            this.WhenAnyValue(s => s.IsEditDecorator).Subscribe(s => EditDecoratorCommand(s));
 
             this.WhenAnyValue(s => s.IsPoint).Subscribe(s => ResetExclude(s, nameof(IsPoint)));
             this.WhenAnyValue(s => s.IsPoint).Subscribe(s => DrawingPointCommand(s));
@@ -101,6 +115,26 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (nameof(MainWindowViewModel.IsEdit) != propertyName)
                 {
                     IsEdit = false;
+                }
+
+                if (nameof(MainWindowViewModel.IsScaleDecorator) != propertyName)
+                {
+                    IsScaleDecorator = false;
+                }
+
+                if (nameof(MainWindowViewModel.IsRotateDecorator) != propertyName)
+                {
+                    IsRotateDecorator = false;
+                }
+
+                if (nameof(MainWindowViewModel.IsTranslateDecorator) != propertyName)
+                {
+                    IsTranslateDecorator = false;
+                }
+
+                if (nameof(MainWindowViewModel.IsEditDecorator) != propertyName)
+                {
+                    IsEditDecorator = false;
                 }
 
                 if (nameof(MainWindowViewModel.IsPoint) != propertyName)
@@ -171,25 +205,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 {
                     if (s is IFeature feature)
                     {
-                        Tip = feature.ToFeatureInfo();
-                        
-                        //if (feature is GeometryFeature gf)
-                        //{
-                        //    var translate = new InteractiveFactory().CreateTranslateDecorator(gf);
-
-                        //    var interactiveLayer = new InteractiveLayer(translate)
-                        //    {
-                        //        Name = nameof(InteractiveLayer),
-                        //        Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
-                        //    };
-
-                        //    Map.Layers.Add(interactiveLayer);
-
-                        //    Behavior = new InteractiveBehavior(translate); 
-                            
-                        //    ActualController = new EditController();
-                        //}
-
+                        Tip = feature.ToFeatureInfo();                       
                     }
                 };
 
@@ -201,18 +217,14 @@ namespace MapsuiInteractivitySample.ViewModels
                     }
                 };
 
-                //CreateTranslator(selector);
-
                 Behavior = new InteractiveBehavior(selector);
 
                 ActualController = new CustomController();
-
-                // _selectDecorator = new InteractiveFactory().CreateSelectDecorator(Map, _userLayer);
             }
             else
             {
-                // _selectDecorator?.Dispose();
-                //  _selectDecorator = null;
+                Behavior = null;
+                ActualController = new DefaultController();
             }
         }
 
@@ -232,7 +244,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
                     Map.Layers.Add(interactiveLayer);
 
-                    Behavior = new InteractiveBehavior(translate);
+                    Behavior = new NewInteractiveBehavior(selector, translate);
+                    //Behavior = new InteractiveBehavior(translate);
 
                     ActualController = new EditController();
                 }
@@ -358,6 +371,217 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 _selectEditDecorator?.Dispose();
                 _selectEditDecorator = null;
+            }
+        }
+
+        BaseSelector? _selector;
+        IDecorator? _decorator;
+
+        private void TranslateDecoratorCommand(bool value)
+        {
+            if (value == true)
+            {
+                _selector = new BaseSelector();
+
+                _selector.Select += (s, e) =>
+                {
+                    if (s is GeometryFeature gf)
+                    {
+                        _decorator = new TranslateDecorator(gf);
+
+                        _decorator.EndDecorating += (s, e) =>
+                        {
+                            var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+
+                            if (interactiveLayer != null)
+                            {
+                                Map.Layers.Remove(interactiveLayer);
+                            }
+
+                            Behavior = new InteractiveBehavior(_selector);
+                            ActualController = new CustomController();
+
+                            ((BaseSelector)_selector).Unselected();
+                        };
+
+                        var interactiveLayer = new InteractiveLayer(_decorator)
+                        {
+                            Name = nameof(InteractiveLayer),
+                            Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                        };
+
+                        Map.Layers.Add(interactiveLayer);
+
+                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        ActualController = new EditController();
+                    }
+                };
+
+                Behavior = new InteractiveBehavior(_selector);
+                ActualController = new CustomController();
+            }
+            else
+            {
+                _decorator?.Dispose(null);
+                _selector?.Unselected(); 
+                Behavior = null;
+                ActualController = new DefaultController();           
+            }
+        }
+
+        private void ScaleDecoratorCommand(bool value)
+        {
+            if (value == true)
+            {
+                _selector = new BaseSelector();
+
+                _selector.Select += (s, e) =>
+                {
+                    if (s is GeometryFeature gf)
+                    {
+                        _decorator = new ScaleDecorator(gf);
+
+                        _decorator.EndDecorating += (s, e) =>
+                        {
+                            var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+
+                            if (interactiveLayer != null)
+                            {
+                                Map.Layers.Remove(interactiveLayer);
+                            }
+
+                            Behavior = new InteractiveBehavior(_selector);
+                            ActualController = new CustomController();
+
+                            ((BaseSelector)_selector).Unselected();
+                        };
+
+                        var interactiveLayer = new InteractiveLayer(_decorator)
+                        {
+                            Name = nameof(InteractiveLayer),
+                            Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                        };
+
+                        Map.Layers.Add(interactiveLayer);
+
+                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        ActualController = new EditController();
+                    }
+                };
+
+                Behavior = new InteractiveBehavior(_selector);
+                ActualController = new CustomController();
+            }
+            else
+            {
+                _decorator?.Dispose(null);
+                _selector?.Unselected();
+                Behavior = null;
+                ActualController = new DefaultController();
+            }
+        }
+
+        private void RotateDecoratorCommand(bool value)
+        {
+            if (value == true)
+            {
+                _selector = new BaseSelector();
+
+                _selector.Select += (s, e) =>
+                {
+                    if (s is GeometryFeature gf)
+                    {
+                        _decorator = new RotateDecorator(gf);
+
+                        _decorator.EndDecorating += (s, e) =>
+                        {
+                            var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+
+                            if (interactiveLayer != null)
+                            {
+                                Map.Layers.Remove(interactiveLayer);
+                            }
+
+                            Behavior = new InteractiveBehavior(_selector);
+                            ActualController = new CustomController();
+
+                            ((BaseSelector)_selector).Unselected();
+                        };
+
+                        var interactiveLayer = new InteractiveLayer(_decorator)
+                        {
+                            Name = nameof(InteractiveLayer),
+                            Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                        };
+
+                        Map.Layers.Add(interactiveLayer);
+
+                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        ActualController = new EditController();
+                    }
+                };
+
+                Behavior = new InteractiveBehavior(_selector);
+                ActualController = new CustomController();
+            }
+            else
+            {
+                _decorator?.Dispose(null);
+                _selector?.Unselected();
+                Behavior = null;
+                ActualController = new DefaultController();
+            }
+        }
+
+        private void EditDecoratorCommand(bool value)
+        {
+            if (value == true)
+            {
+                _selector = new BaseSelector();
+
+                _selector.Select += (s, e) =>
+                {
+                    if (s is GeometryFeature gf)
+                    {
+                        _decorator = new EditDecorator(gf);
+
+                        _decorator.EndDecorating += (s, e) =>
+                        {
+                            var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+
+                            if (interactiveLayer != null)
+                            {
+                                Map.Layers.Remove(interactiveLayer);
+                            }
+
+                            Behavior = new InteractiveBehavior(_selector);
+                            ActualController = new CustomController();
+
+                            ((BaseSelector)_selector).Unselected();
+                        };
+
+                        var interactiveLayer = new InteractiveLayer(_decorator)
+                        {
+                            Name = nameof(InteractiveLayer),
+                            Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
+                        };
+
+                        Map.Layers.Add(interactiveLayer);
+
+                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        ActualController = new EditController();
+                    }
+                };
+
+                Behavior = new InteractiveBehavior(_selector);
+                ActualController = new CustomController();
+            }
+            else
+            {
+                _decorator?.Dispose(null);
+                _selector?.Unselected();
+                Behavior = null;
+                ActualController = new DefaultController();
             }
         }
 
@@ -531,6 +755,18 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public bool IsEdit { get; set; } = false;
+
+        [Reactive]
+        public bool IsTranslateDecorator { get; set; } = false;
+
+        [Reactive]
+        public bool IsRotateDecorator { get; set; } = false;
+
+        [Reactive]
+        public bool IsScaleDecorator { get; set; } = false;
+
+        [Reactive]
+        public bool IsEditDecorator { get; set; } = false;
 
         [Reactive]
         public bool IsPoint { get; set; } = false;

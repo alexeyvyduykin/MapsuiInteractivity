@@ -20,5 +20,7 @@ namespace Mapsui.Interactivity
         public abstract void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 
         public abstract void Hovering(MapInfo? mapInfo);
+
+        public abstract void Dispose(MapInfo? mapInfo);
     }
 }

@@ -66,5 +66,10 @@ namespace Mapsui.Interactivity
         {
 
         }
+
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            EndDecoratingCallback();
+        }
     }
 }

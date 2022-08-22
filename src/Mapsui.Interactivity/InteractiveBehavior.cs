@@ -7,6 +7,8 @@ namespace Mapsui.Interactivity
         public event StartedEventHandler? Started;
         public event DeltaEventHandler? Delta;
         public event CompletedEventHandler? Completed;
+        public event EventHandler? Dispose;
+        public event CompletedEventHandler? Click;
         public event HoverEventHandler? Hover;
         public event HoverEventHandler? HoverStart;
         public event HoverEventHandler? HoverStop;
@@ -49,6 +51,22 @@ namespace Mapsui.Interactivity
                 interactive.Ending(e.MapInfo, e.IsEnd);                
             };
 
+            Click += (s, e) => 
+            {
+                if (interactive is IDecorator decorator) 
+                {
+           //         decorator.Dispose(e.MapInfo);
+                }
+            };
+
+            Dispose += (s, e) =>
+            {
+                if (interactive is IDecorator decorator)
+                {                     
+               //     decorator.Dispose(null);
+                }
+            };
+
             Hover += (s, e) =>
             {
                 interactive.Hovering(e.MapInfo);
@@ -71,6 +89,11 @@ namespace Mapsui.Interactivity
             };
         }
 
+        private void InteractiveBehavior_Dispose(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         public void OnDelta(MPoint worldPosition)
         {
             Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
@@ -84,6 +107,16 @@ namespace Mapsui.Interactivity
         public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
             Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
+        }
+
+        public void OnDispose()
+        {
+            Dispose?.Invoke(this, new EventArgs());
+        }
+
+        public void OnClick(MapInfo? mapInfo)
+        {
+            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
         }
 
         public void OnHover(MapInfo? mapInfo)
@@ -101,4 +134,253 @@ namespace Mapsui.Interactivity
             HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
         }
     }
+
+    public class NewInteractiveBehavior : IInteractiveBehavior
+    {
+        public event StartedEventHandler? Started;
+        public event DeltaEventHandler? Delta;
+        public event CompletedEventHandler? Completed;
+        public event CompletedEventHandler? Click;
+        public event HoverEventHandler? Hover;
+        public event HoverEventHandler? HoverStart;
+        public event HoverEventHandler? HoverStop;
+        public event EventHandler? Dispose;
+
+        public NewInteractiveBehavior(ISelector selector, IInteractive interactive)
+        {
+            if (interactive is IDesigner)
+            {
+                Started += (s, e) =>
+                {
+                    interactive.Starting(e.WorldPosition);
+                };
+            }
+            else if (interactive is IDecorator decorator)
+            {
+                Started += (s, e) =>
+                {
+                    var vertices = decorator.GetActiveVertices();
+
+                    var vertexTouched = vertices.OrderBy(v => v.Distance(e.WorldPosition)).FirstOrDefault(v => v.Distance(e.WorldPosition) < e.ScreenDistance);
+
+                    if (vertexTouched != null)
+                    {
+                        interactive.Starting(e.WorldPosition);
+                    }
+                };
+            }
+
+            Delta += (s, e) =>
+            {
+                interactive.Moving(e.WorldPosition);
+            };
+
+            Completed += (s, e) =>
+            {
+                interactive.Ending(e.MapInfo, e.IsEnd);         
+            };
+
+            Click += (s, e) =>
+            {            
+                selector.Ending(e.MapInfo, e.IsEnd);
+            };
+
+            Hover += (s, e) =>
+            {
+                interactive.Hovering(e.MapInfo);
+            };
+
+            HoverStart += (s, e) =>
+            {
+                if (interactive is ISelector selector1)
+                {
+                    selector1.PointeroverStart(e.MapInfo);
+                }
+            };
+
+            HoverStop += (s, e) =>
+            {
+                if (interactive is ISelector selector2)
+                {
+                    selector2.PointeroverStop(e.MapInfo);
+                }
+            };
+        }
+
+        public void OnDelta(MPoint worldPosition)
+        {
+            Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
+        }
+
+        public void OnStarted(MPoint worldPosition, double screenDistance)
+        {
+            Started?.Invoke(this, new StartedEventArgs() { WorldPosition = worldPosition, ScreenDistance = screenDistance });
+        }
+
+        public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+        {
+            Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
+        }
+
+        public void OnClick(MapInfo? mapInfo)
+        {
+            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
+        }
+
+
+        public void OnHover(MapInfo? mapInfo)
+        {
+            Hover?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnHoverStart(MapInfo? mapInfo)
+        {
+            HoverStart?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnHoverStop(MapInfo? mapInfo)
+        {
+            HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnDispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NewNewInteractiveBehavior : IInteractiveBehavior
+    {
+        public event StartedEventHandler? Started;
+        public event DeltaEventHandler? Delta;
+        public event CompletedEventHandler? Completed;
+        public event EventHandler? Dispose;
+        public event CompletedEventHandler? Click;
+        public event HoverEventHandler? Hover;
+        public event HoverEventHandler? HoverStart;
+        public event HoverEventHandler? HoverStop;
+
+        public NewNewInteractiveBehavior(IInteractive interactive)
+        {
+            if (interactive is IDesigner)
+            {
+                Started += (s, e) =>
+                {
+                    interactive.Starting(e.WorldPosition);
+                };
+            }
+            else if (interactive is IDecorator decorator)
+            {
+                Started += (s, e) =>
+                {
+                    var vertices = decorator.GetActiveVertices();
+
+                    var vertexTouched = vertices.OrderBy(v => v.Distance(e.WorldPosition)).FirstOrDefault(v => v.Distance(e.WorldPosition) < e.ScreenDistance);
+
+                    if (vertexTouched != null)
+                    {
+                        interactive.Starting(e.WorldPosition);
+                    }
+                };
+            }
+            else
+            {
+                //throw new Exception();
+            }
+
+            Delta += (s, e) =>
+            {
+                interactive.Moving(e.WorldPosition);
+            };
+
+            Completed += (s, e) =>
+            {
+                interactive.Ending(e.MapInfo, e.IsEnd);
+            };
+
+            Click += (s, e) =>
+            {
+                if (interactive is IDecorator decorator)
+                {
+                    //         decorator.Dispose(e.MapInfo);
+                }
+            };
+
+            Dispose += (s, e) =>
+            {
+                if (interactive is IDecorator decorator)
+                {
+                    decorator.Dispose(null);
+                }
+            };
+
+            Hover += (s, e) =>
+            {
+                interactive.Hovering(e.MapInfo);
+            };
+
+            HoverStart += (s, e) =>
+            {
+                if (interactive is ISelector selector)
+                {
+                    selector.PointeroverStart(e.MapInfo);
+                }
+            };
+
+            HoverStop += (s, e) =>
+            {
+                if (interactive is ISelector selector)
+                {
+                    selector.PointeroverStop(e.MapInfo);
+                }
+            };
+        }
+
+        private void InteractiveBehavior_Dispose(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnDelta(MPoint worldPosition)
+        {
+            Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
+        }
+
+        public void OnStarted(MPoint worldPosition, double screenDistance)
+        {
+            Started?.Invoke(this, new StartedEventArgs() { WorldPosition = worldPosition, ScreenDistance = screenDistance });
+        }
+
+        public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+        {
+            Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
+        }
+
+        public void OnDispose()
+        {
+            Dispose?.Invoke(this, new EventArgs());
+        }
+
+        public void OnClick(MapInfo? mapInfo)
+        {
+            Click?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnHover(MapInfo? mapInfo)
+        {
+            Hover?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnHoverStart(MapInfo? mapInfo)
+        {
+            HoverStart?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+
+        public void OnHoverStop(MapInfo? mapInfo)
+        {
+            HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+        }
+    }
+
+
 }

@@ -15,5 +15,7 @@ namespace Mapsui.Interactivity
         void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 
         void Hovering(MapInfo? mapInfo);
+
+        void Dispose(MapInfo? mapInfo);
     }
 }

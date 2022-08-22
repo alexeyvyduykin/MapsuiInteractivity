@@ -160,5 +160,10 @@ namespace Mapsui.Interactivity
 
             return 0;
         }
+
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

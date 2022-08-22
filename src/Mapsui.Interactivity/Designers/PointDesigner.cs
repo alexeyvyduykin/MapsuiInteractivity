@@ -58,5 +58,10 @@ namespace Mapsui.Interactivity
         {
             Feature = worldPosition.ToPoint().ToFeature();
         }
+
+        public override void Dispose(MapInfo? mapInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

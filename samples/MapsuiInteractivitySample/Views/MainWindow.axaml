@@ -33,18 +33,24 @@
 		<Grid HorizontalAlignment="Left" 
 			  VerticalAlignment="Top"
 			  Background="Black"
-			  RowDefinitions="*,*,*,*,*,*,10,*,*,*,*,*">
+			  RowDefinitions="*,*,*,*,*,*,10,*,*,*,*,10,*,*,*,*,*">
 			<ToggleButton Grid.Row="0" IsChecked="{Binding IsSelect}" Content="Select"/>
-			<ToggleButton Grid.Row="1" IsChecked="{Binding IsNewSelect}" Content="NewSelect"/>
+			<ToggleButton Grid.Row="1" IsChecked="{Binding IsNewSelect}" Content="NewSelect"/>		
 			<ToggleButton Grid.Row="2" IsChecked="{Binding IsTranslate}" Content="Translate"/>
 			<ToggleButton Grid.Row="3" IsChecked="{Binding IsRotate}" Content="Rotate"/>
 			<ToggleButton Grid.Row="4" IsChecked="{Binding IsScale}" Content="Scale"/>
 			<ToggleButton Grid.Row="5" IsChecked="{Binding IsEdit}" Content="Edit"/>
-			<ToggleButton Grid.Row="7" IsChecked="{Binding IsPoint}" Content="Point"/>
-			<ToggleButton Grid.Row="8" IsChecked="{Binding IsRectangle}" Content="Rectangle"/>
-			<ToggleButton Grid.Row="9" IsChecked="{Binding IsCircle}" Content="Circle"/>
-			<ToggleButton Grid.Row="10" IsChecked="{Binding IsPolygon}" Content="Polygon"/>
-			<ToggleButton Grid.Row="11" IsChecked="{Binding IsRoute}" Content="Route"/>
+
+			<ToggleButton Grid.Row="7" IsChecked="{Binding IsTranslateDecorator}" Content="TranslateDecorator"/>
+			<ToggleButton Grid.Row="8" IsChecked="{Binding IsRotateDecorator}" Content="RotateDecorator"/>
+			<ToggleButton Grid.Row="9" IsChecked="{Binding IsScaleDecorator}" Content="ScaleDecorator"/>
+			<ToggleButton Grid.Row="10" IsChecked="{Binding IsEditDecorator}" Content="EditDecorator"/>
+						
+			<ToggleButton Grid.Row="12" IsChecked="{Binding IsPoint}" Content="Point"/>
+			<ToggleButton Grid.Row="13" IsChecked="{Binding IsRectangle}" Content="Rectangle"/>
+			<ToggleButton Grid.Row="14" IsChecked="{Binding IsCircle}" Content="Circle"/>
+			<ToggleButton Grid.Row="15" IsChecked="{Binding IsPolygon}" Content="Polygon"/>
+			<ToggleButton Grid.Row="16" IsChecked="{Binding IsRoute}" Content="Route"/>
 		</Grid>
 	
 		<Border x:Name="tipBorder"

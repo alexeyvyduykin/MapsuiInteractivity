@@ -1,5 +1,6 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
+using Mapsui.UI;
 
 namespace Mapsui.Interactivity.UI
 {
@@ -7,6 +8,8 @@ namespace Mapsui.Interactivity.UI
     {
         private bool _isEditing = false;
         private readonly int _vertexRadius = 4;
+        private IFeature? _clickFeature;
+        private MPoint? _clickPoint;
 
         public EditingManipulator(IView view) : base(view) { }
 
@@ -16,18 +19,41 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                //var worldPosition = e.MapInfo?.WorldPosition;// View.ScreenToWorld(e.Position);
-
                 View.Behavior.OnCompleted(e.MapInfo);
 
                 View.Map!.PanLock = false;
 
                 _isEditing = false;
             }
+            else
+            {
+                var clickPoint = e.MapInfo?.WorldPosition;
+                var clickFeature = e.MapInfo?.Feature;
+
+                //var res1 = MPoint.Equals(clickPoint, _clickPoint);
+                var res1= IsClick(clickPoint, _clickPoint);
+                var res2 = IFeature.Equals(_clickFeature, clickFeature);
+
+                if (res1 == true
+                    && res2 == true)
+                {
+                    View.Behavior.OnDispose();
+                }
+            }
 
             View.SetCursor(CursorType.Default);
 
             e.Handled = true;
+        }
+
+        private static bool IsClick(MPoint? currentPosition, MPoint? previousPosition)
+        {
+            if (currentPosition == null || previousPosition == null)
+                return false;
+
+            return
+                Math.Abs(currentPosition.X - previousPosition.X) < 1 &&
+                Math.Abs(currentPosition.Y - previousPosition.Y) < 1;
         }
 
         public override void Delta(MouseEventArgs e)
@@ -63,6 +89,12 @@ namespace Mapsui.Interactivity.UI
                 View.Behavior.OnStarted(mapInfo.WorldPosition!, distance);
 
                 _isEditing = true;
+            }
+
+            if (mapInfo != null && mapInfo.Feature != null)
+            {
+                _clickPoint = mapInfo.WorldPosition;
+                _clickFeature = mapInfo.Feature;
             }
 
             if (_isEditing == true)

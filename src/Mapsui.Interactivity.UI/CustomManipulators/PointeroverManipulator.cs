@@ -1,17 +1,16 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
+using Mapsui.UI;
 
 namespace Mapsui.Interactivity.UI
 {
     internal class PointeroverManipulator : MouseManipulator
     {
         private bool _isChecker = false;
-        //private readonly IInteractiveBehavior _behavior;
+        private IFeature? _lastFeature;
+        private MapInfo? _lastMapInfo;
 
-        public PointeroverManipulator(IView view/*, IInteractiveBehavior behavior*/) : base(view)
-        {
-            //_behavior = behavior;
-        }
+        public PointeroverManipulator(IView view) : base(view) { }
 
         public override void Delta(MouseEventArgs e)
         {
@@ -21,13 +20,37 @@ namespace Mapsui.Interactivity.UI
             {
                 var mapInfo = e.MapInfo;
 
-                if (mapInfo != null && mapInfo.Layer != null)
+                if (mapInfo != null
+                    && mapInfo.Layer != null
+                    && mapInfo.Feature != null)
                 {
+                    if (_lastFeature != null && _lastFeature != mapInfo.Feature)
+                    {
+                        if (_lastMapInfo != null)
+                        {
+                            View.Behavior.OnHoverStop(_lastMapInfo);
+                        }
+
+                        _lastFeature = mapInfo.Feature;
+
+                        if (_lastFeature != null)
+                        {
+                            View.Behavior.OnHoverStart(mapInfo);
+                            _lastMapInfo = mapInfo;
+                        }
+                    }
+
                     if (_isChecker == true)
                     {
+                        _lastFeature = mapInfo.Feature;
+
                         View.SetCursor(CursorType.Hand);
 
-                        View.Behavior.OnHoverStart(mapInfo);
+                        if (_lastFeature != null)
+                        {
+                            View.Behavior.OnHoverStart(mapInfo);
+                            _lastMapInfo = mapInfo;
+                        }
 
                         _isChecker = false;
                     }
@@ -40,7 +63,10 @@ namespace Mapsui.Interactivity.UI
                     {
                         View.SetCursor(CursorType.Default);
 
-                        View.Behavior.OnHoverStop(mapInfo);
+                        if (_lastFeature != null)
+                        {
+                            View.Behavior.OnHoverStop(mapInfo);
+                        }
 
                         _isChecker = true;
                     }

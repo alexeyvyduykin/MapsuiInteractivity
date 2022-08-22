@@ -76,8 +76,14 @@ namespace MapsuiInteractivitySample.ViewModels
                             if (isSelect == true)
                             {
                                 if (gf.Geometry is Point)
-                                {
-                                    return CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
+                                {       
+                                    return new SymbolStyle
+                                    {         
+                                        SymbolType = SymbolType.Triangle,
+                                        Fill = new Brush(Color.Green),
+                                        SymbolScale = 1.0,
+                                    };
+                                    //return CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
                                 }
 
                                 return new VectorStyle()
@@ -98,7 +104,13 @@ namespace MapsuiInteractivitySample.ViewModels
                 {
                     if (gf.Geometry is Point)
                     {
-                        return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
+                        return new SymbolStyle
+                        {
+                            SymbolType = SymbolType.Triangle,
+                            Fill = new Brush(Color.Green),
+                            SymbolScale = 1.0,
+                        };
+                        //return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
                     }
 
                     return new VectorStyle()
@@ -113,7 +125,13 @@ namespace MapsuiInteractivitySample.ViewModels
                 {
                     if (gf.Geometry is Point)
                     {
-                        return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
+                        return new SymbolStyle
+                        {
+                            SymbolType = SymbolType.Triangle,
+                            Fill = new Brush(Color.Green),
+                            SymbolScale = 1.0,
+                        };
+                        //return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
                     }
 
                     return new VectorStyle()
@@ -126,7 +144,13 @@ namespace MapsuiInteractivitySample.ViewModels
 
                 if (gf.Geometry is Point)
                 {
-                    return _redStylePin ??= CreateSvgStyle(@"Assets.PinRed.svg", 0.5);
+                    return new SymbolStyle
+                    {
+                        SymbolType = SymbolType.Triangle,
+                        Fill = new Brush(Color.Red),
+                        SymbolScale = 1.0,
+                    };
+                    //return _redStylePin ??= CreateSvgStyle(@"Assets.PinRed.svg", 0.5);
                 }
 
                 var defaultStyle = new VectorStyle
@@ -175,16 +199,16 @@ namespace MapsuiInteractivitySample.ViewModels
             return layer;
         }
 
-        private static SymbolStyle CreateSvgStyle(string embeddedResourcePath, double scale)
-        {
-            var bitmapId = typeof(MainWindowViewModel).LoadSvgId(embeddedResourcePath);
+        //private static SymbolStyle CreateSvgStyle(string embeddedResourcePath, double scale)
+        //{
+        //    var bitmapId = typeof(MainWindowViewModel).LoadSvgId(embeddedResourcePath);
 
-            return new SymbolStyle
-            {
-                BitmapId = bitmapId,
-                SymbolScale = scale,
-                SymbolOffset = new Offset(0.0, 0.5, true)
-            };
-        }
+        //    return new SymbolStyle
+        //    {
+        //        BitmapId = bitmapId,
+        //        SymbolScale = scale,
+        //        SymbolOffset = new Offset(0.0, 0.5, true)
+        //    };
+        //}
     }
 }
