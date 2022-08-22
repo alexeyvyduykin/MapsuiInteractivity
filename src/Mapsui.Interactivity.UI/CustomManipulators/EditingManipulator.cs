@@ -57,9 +57,7 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                var worldPosition = View.ScreenToWorld(e.Position);
-
-                View.Behavior.OnDelta(worldPosition);
+                View.Behavior.OnDelta(e.MapInfo);
 
                 View.SetCursor(CursorType.HandGrab);
 
@@ -81,7 +79,7 @@ namespace Mapsui.Interactivity.UI
             {
                 var distance = mapInfo.Resolution * _vertexRadius;
 
-                View.Behavior.OnStarted(mapInfo.WorldPosition!, distance);
+                View.Behavior.OnStarted(mapInfo, distance);
 
                 _isEditing = true;
             }

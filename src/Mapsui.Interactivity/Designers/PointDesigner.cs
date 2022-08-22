@@ -18,13 +18,13 @@ namespace Mapsui.Interactivity
             return Array.Empty<MPoint>();
         }
 
-        public override void Starting(MPoint worldPosition)
+        public override void Starting(MapInfo? mapInfo)
         {
             _skip = false;
             _counter = 0;
         }
 
-        public override void Moving(MPoint worldPosition)
+        public override void Moving(MapInfo? mapInfo)
         {
             if (_counter++ > 0)
             {

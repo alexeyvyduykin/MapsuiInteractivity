@@ -34,10 +34,12 @@ namespace Mapsui.Interactivity
 
         public override IEnumerable<MPoint> GetActiveVertices() => new[] { _scaleTopRight };
 
-        public override void Moving(MPoint worldPosition)
+        public override void Moving(MapInfo? mapInfo)
         {
-            if (_isScaling == true && _startGeometry != null)
+            if (_isScaling == true && _startGeometry != null && mapInfo?.WorldPosition != null)
             {
+                var worldPosition = mapInfo.WorldPosition;
+
                 var p1 = worldPosition - _startOffsetToVertex;
 
                 var scale = _center.Distance(p1);
@@ -52,17 +54,22 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Starting(MPoint worldPosition)
+        public override void Starting(MapInfo? mapInfo)
         {
-            _startScaleTopRight = _scaleTopRight;
+            var worldPosition = mapInfo?.WorldPosition;
 
-            _startOffsetToVertex = worldPosition - _startScaleTopRight;
+            if (worldPosition != null)
+            {
+                _startScaleTopRight = _scaleTopRight;
 
-            _startGeometry = FeatureSource.Geometry!.Copy();
+                _startOffsetToVertex = worldPosition - _startScaleTopRight;
 
-            _startScale = _center.Distance(_startScaleTopRight);
+                _startGeometry = FeatureSource.Geometry!.Copy();
 
-            _isScaling = true;
+                _startScale = _center.Distance(_startScaleTopRight);
+
+                _isScaling = true;
+            }
         }
 
         public override void Hovering(MapInfo? mapInfo)

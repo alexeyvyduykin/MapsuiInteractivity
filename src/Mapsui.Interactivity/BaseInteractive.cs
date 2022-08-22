@@ -19,9 +19,9 @@ namespace Mapsui.Interactivity
 
         public abstract IEnumerable<MPoint> GetActiveVertices();
 
-        public abstract void Starting(MPoint worldPosition);
+        public abstract void Starting(MapInfo? mapInfo);
 
-        public abstract void Moving(MPoint worldPosition);
+        public abstract void Moving(MapInfo? mapInfo);
 
         public abstract void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 

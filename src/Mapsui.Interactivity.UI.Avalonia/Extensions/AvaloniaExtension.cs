@@ -44,35 +44,35 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             return new MouseWheelEventArgs
             {
-                Position = e.GetPosition(relativeTo).ToMapsui(),
                 Delta = (int)(e.Delta.Y + e.Delta.X) * 120
             };
         }
 
         public static MouseEventArgs ToMouseEventArgs(this aInput.PointerEventArgs e, aInput.IInputElement relativeTo)
         {
-            var position = e.GetPosition(relativeTo).ToMapsui();
             MapInfo? mapInfo = null;
 
             if (relativeTo is MapControl mapControl)
             {
+                var position = e.GetPosition(relativeTo).ToMapsui();
+
                 mapInfo = mapControl.GetMapInfo(position);
             }
 
             return new MouseEventArgs
             {
-                Position = position,
                 MapInfo = mapInfo,
             };
         }
 
         public static MouseDownEventArgs ToMouseDownEventArgs(this aInput.PointerPressedEventArgs e, aInput.IInputElement relativeTo)
         {
-            var position = e.GetPosition(relativeTo).ToMapsui();
             MapInfo? mapInfo = null;
 
             if (relativeTo is MapControl mapControl)
             {
+                var position = e.GetPosition(relativeTo).ToMapsui();
+
                 mapInfo = mapControl.GetMapInfo(position);
             }
 
@@ -82,24 +82,23 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
 #pragma warning restore CS0618 // Тип или член устарел
                 ClickCount = e.ClickCount,
-                Position = position,
                 MapInfo = mapInfo
             };
         }
 
         public static MouseEventArgs ToMouseReleasedEventArgs(this aInput.PointerReleasedEventArgs e, aInput.IInputElement relativeTo)
         {
-            var position = e.GetPosition(relativeTo).ToMapsui();
             MapInfo? mapInfo = null;
 
             if (relativeTo is MapControl mapControl)
             {
+                var position = e.GetPosition(relativeTo).ToMapsui();
+
                 mapInfo = mapControl.GetMapInfo(position);
             }
 
             return new MouseEventArgs
             {
-                Position = position,
                 MapInfo = mapInfo,
             };
         }

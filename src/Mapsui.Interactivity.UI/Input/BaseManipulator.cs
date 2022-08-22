@@ -27,7 +27,7 @@ namespace Mapsui.Interactivity.UI.Input
         public override void Started(MouseEventArgs e)
         {
             base.Started(e);
-            StartPosition = e.Position;
+            StartPosition = e.MapInfo?.ScreenPosition;
         }
     }
 }

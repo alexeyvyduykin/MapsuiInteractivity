@@ -41,10 +41,12 @@ namespace Mapsui.Interactivity
 
         public override IEnumerable<MPoint> GetActiveVertices() => new[] { _rotateRight };
 
-        public override void Moving(MPoint worldPosition)
+        public override void Moving(MapInfo? mapInfo)
         {
-            if (_isRotating == true && _startGeometry != null)
+            if (_isRotating == true && _startGeometry != null && mapInfo?.WorldPosition != null)
             {
+                var worldPosition = mapInfo.WorldPosition;
+
                 var p1 = worldPosition - _startOffsetToVertex;
 
                 var distance = _startRotateRight.Distance(p1);
@@ -63,19 +65,24 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Starting(MPoint worldPosition)
+        public override void Starting(MapInfo? mapInfo)
         {
-            _startRotateRight = _rotateRight;
+            var worldPosition = mapInfo?.WorldPosition;
 
-            _startOffsetToVertex = worldPosition - _startRotateRight;
+            if (worldPosition != null)
+            {
+                _startRotateRight = _rotateRight;
 
-            _startGeometry = FeatureSource.Geometry!.Copy();
+                _startOffsetToVertex = worldPosition - _startRotateRight;
 
-            var extent = GetExtent(FeatureSource);
+                _startGeometry = FeatureSource.Geometry!.Copy();
 
-            _halfDiagonal = Diagonal(extent) / 2.0;
+                var extent = GetExtent(FeatureSource);
 
-            _isRotating = true;
+                _halfDiagonal = Diagonal(extent) / 2.0;
+
+                _isRotating = true;
+            }
         }
 
         public override void Hovering(MapInfo? mapInfo)

@@ -135,8 +135,6 @@ namespace Mapsui.Interactivity.UI.Avalonia
             Cursor = new Cursor(cursorType.ToStandartCursor());
         }
 
-        public MPoint ScreenToWorld(MPoint screenPosition) => Viewport.ScreenToWorld(screenPosition);
-
         public MPoint WorldToScreen(MPoint worldPosition) => Viewport.WorldToScreen(worldPosition);
     }
 }

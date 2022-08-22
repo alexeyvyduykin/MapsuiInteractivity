@@ -32,10 +32,12 @@ namespace Mapsui.Interactivity
 
         public override IEnumerable<MPoint> GetActiveVertices() => _points;
 
-        public override void Moving(MPoint worldPosition)
+        public override void Moving(MapInfo? mapInfo)
         {
-            if (_isEditing == true && _startGeometry != null)
+            if (_isEditing == true && _startGeometry != null && mapInfo?.WorldPosition != null)
             {
+                var worldPosition = mapInfo.WorldPosition;
+
                 var p1 = worldPosition - _startOffsetToVertex;
 
                 var delta = p1 - _startPoint!;
@@ -86,17 +88,22 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Starting(MPoint worldPosition)
+        public override void Starting(MapInfo? mapInfo)
         {
-            _startPoint = _points.OrderBy(v => v.Distance(worldPosition)).First();
+            var worldPosition = mapInfo?.WorldPosition;
 
-            _index = _points.IndexOf(_startPoint);
+            if (worldPosition != null)
+            {
+                _startPoint = _points.OrderBy(v => v.Distance(worldPosition)).First();
 
-            _startOffsetToVertex = worldPosition - _startPoint;
+                _index = _points.IndexOf(_startPoint);
 
-            _startGeometry = FeatureSource.Geometry!.Copy();
+                _startOffsetToVertex = worldPosition - _startPoint;
 
-            _isEditing = true;
+                _startGeometry = FeatureSource.Geometry!.Copy();
+
+                _isEditing = true;
+            }
         }
 
         public override void Hovering(MapInfo? mapInfo)

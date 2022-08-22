@@ -18,7 +18,7 @@ namespace Mapsui.Interactivity
             {
                 Started += (s, e) =>
                 {
-                    interactive.Starting(e.WorldPosition);
+                    interactive.Starting(e.MapInfo);
                 };
             }
             else if (interactive is IDecorator decorator)
@@ -27,11 +27,16 @@ namespace Mapsui.Interactivity
                 {
                     var vertices = decorator.GetActiveVertices();
 
-                    var vertexTouched = vertices.OrderBy(v => v.Distance(e.WorldPosition)).FirstOrDefault(v => v.Distance(e.WorldPosition) < e.ScreenDistance);
+                    var worldPosition = e.MapInfo?.WorldPosition;
 
-                    if (vertexTouched != null)
+                    if (worldPosition != null)
                     {
-                        interactive.Starting(e.WorldPosition);
+                        var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < e.ScreenDistance);
+
+                        if (vertexTouched != null)
+                        {
+                            interactive.Starting(e.MapInfo);
+                        }
                     }
                 };
             }
@@ -42,7 +47,7 @@ namespace Mapsui.Interactivity
 
             Delta += (s, e) =>
             {
-                interactive.Moving(e.WorldPosition);
+                interactive.Moving(e.MapInfo);
             };
 
             Completed += (s, e) =>
@@ -85,19 +90,30 @@ namespace Mapsui.Interactivity
             throw new NotImplementedException();
         }
 
-        public void OnDelta(MPoint worldPosition)
+        public void OnDelta(MapInfo? mapInfo)
         {
-            Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
+            Delta?.Invoke(this, new DeltaEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
-        public void OnStarted(MPoint worldPosition, double screenDistance)
+        public void OnStarted(MapInfo? mapInfo, double screenDistance)
         {
-            Started?.Invoke(this, new StartedEventArgs() { WorldPosition = worldPosition, ScreenDistance = screenDistance });
+            Started?.Invoke(this, new StartedEventArgs()
+            {
+                MapInfo = mapInfo,
+                ScreenDistance = screenDistance
+            });
         }
 
         public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
-            Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
+            Completed?.Invoke(this, new CompletedEventArgs()
+            {
+                MapInfo = mapInfo,
+                IsEnd = isEnd
+            });
         }
 
         public void OnCancel()
@@ -107,17 +123,26 @@ namespace Mapsui.Interactivity
 
         public void OnHover(MapInfo? mapInfo)
         {
-            Hover?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            Hover?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
         public void OnHoverStart(MapInfo? mapInfo)
         {
-            HoverStart?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            HoverStart?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
         public void OnHoverStop(MapInfo? mapInfo)
         {
-            HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            HoverStop?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
     }
 
@@ -137,7 +162,7 @@ namespace Mapsui.Interactivity
             {
                 Started += (s, e) =>
                 {
-                    interactive.Starting(e.WorldPosition);
+                    interactive.Starting(e.MapInfo);
                 };
             }
             else if (interactive is IDecorator decorator)
@@ -146,18 +171,23 @@ namespace Mapsui.Interactivity
                 {
                     var vertices = decorator.GetActiveVertices();
 
-                    var vertexTouched = vertices.OrderBy(v => v.Distance(e.WorldPosition)).FirstOrDefault(v => v.Distance(e.WorldPosition) < e.ScreenDistance);
+                    var worldPosition = e.MapInfo?.WorldPosition;
 
-                    if (vertexTouched != null)
+                    if (worldPosition != null)
                     {
-                        interactive.Starting(e.WorldPosition);
+                        var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < e.ScreenDistance);
+
+                        if (vertexTouched != null)
+                        {
+                            interactive.Starting(e.MapInfo);
+                        }
                     }
                 };
             }
 
             Delta += (s, e) =>
             {
-                interactive.Moving(e.WorldPosition);
+                interactive.Moving(e.MapInfo);
             };
 
             Completed += (s, e) =>
@@ -187,34 +217,54 @@ namespace Mapsui.Interactivity
             };
         }
 
-        public void OnDelta(MPoint worldPosition)
+        public void OnDelta(MapInfo? mapInfo)
         {
-            Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
+            Delta?.Invoke(this, new DeltaEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
-        public void OnStarted(MPoint worldPosition, double screenDistance)
+        public void OnStarted(MapInfo? mapInfo, double screenDistance)
         {
-            Started?.Invoke(this, new StartedEventArgs() { WorldPosition = worldPosition, ScreenDistance = screenDistance });
+            Started?.Invoke(this, new StartedEventArgs()
+            {
+                MapInfo = mapInfo,
+                ScreenDistance = screenDistance
+            });
         }
 
         public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
-            Completed?.Invoke(this, new CompletedEventArgs() { MapInfo = mapInfo, IsEnd = isEnd });
+            Completed?.Invoke(this, new CompletedEventArgs()
+            {
+                MapInfo = mapInfo,
+                IsEnd = isEnd
+            });
         }
 
         public void OnHover(MapInfo? mapInfo)
         {
-            Hover?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            Hover?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
         public void OnHoverStart(MapInfo? mapInfo)
         {
-            HoverStart?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            HoverStart?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
         public void OnHoverStop(MapInfo? mapInfo)
         {
-            HoverStop?.Invoke(this, new HoverEventArgs() { MapInfo = mapInfo });
+            HoverStop?.Invoke(this, new HoverEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
         public void OnCancel()
@@ -239,7 +289,7 @@ namespace Mapsui.Interactivity
             {
                 Started += (s, e) =>
                 {
-                    interactive.Starting(e.WorldPosition);
+                    interactive.Starting(e.MapInfo);
                 };
             }
             else if (interactive is IDecorator decorator)
@@ -248,11 +298,16 @@ namespace Mapsui.Interactivity
                 {
                     var vertices = decorator.GetActiveVertices();
 
-                    var vertexTouched = vertices.OrderBy(v => v.Distance(e.WorldPosition)).FirstOrDefault(v => v.Distance(e.WorldPosition) < e.ScreenDistance);
+                    var worldPosition = e.MapInfo?.WorldPosition;
 
-                    if (vertexTouched != null)
+                    if (worldPosition != null)
                     {
-                        interactive.Starting(e.WorldPosition);
+                        var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < e.ScreenDistance);
+
+                        if (vertexTouched != null)
+                        {
+                            interactive.Starting(e.MapInfo);
+                        }
                     }
                 };
             }
@@ -263,7 +318,7 @@ namespace Mapsui.Interactivity
 
             Delta += (s, e) =>
             {
-                interactive.Moving(e.WorldPosition);
+                interactive.Moving(e.MapInfo);
             };
 
             Completed += (s, e) =>
@@ -306,14 +361,21 @@ namespace Mapsui.Interactivity
             throw new NotImplementedException();
         }
 
-        public void OnDelta(MPoint worldPosition)
+        public void OnDelta(MapInfo? mapInfo)
         {
-            Delta?.Invoke(this, new DeltaEventArgs() { WorldPosition = worldPosition });
+            Delta?.Invoke(this, new DeltaEventArgs()
+            {
+                MapInfo = mapInfo
+            });
         }
 
-        public void OnStarted(MPoint worldPosition, double screenDistance)
+        public void OnStarted(MapInfo? mapInfo, double screenDistance)
         {
-            Started?.Invoke(this, new StartedEventArgs() { WorldPosition = worldPosition, ScreenDistance = screenDistance });
+            Started?.Invoke(this, new StartedEventArgs()
+            {
+                MapInfo = mapInfo,
+                ScreenDistance = screenDistance
+            });
         }
 
         public void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)

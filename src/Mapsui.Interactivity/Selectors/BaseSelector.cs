@@ -80,12 +80,12 @@ namespace Mapsui.Interactivity
 
         }
 
-        public override void Moving(MPoint worldPosition)
+        public override void Moving(MapInfo? mapInfo)
         {
 
         }
 
-        public override void Starting(MPoint worldPosition)
+        public override void Starting(MapInfo? mapInfo)
         {
 
         }

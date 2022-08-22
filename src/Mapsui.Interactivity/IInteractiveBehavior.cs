@@ -4,21 +4,21 @@ namespace Mapsui.Interactivity
 {
     public class DeltaEventArgs : EventArgs
     {
-        public MPoint WorldPosition { get; set; } = new MPoint();
+        public MapInfo? MapInfo { get; set; }
     }
 
     public class StartedEventArgs : EventArgs
     {
-        public MPoint WorldPosition { get; set; } = new MPoint();
+        public MapInfo? MapInfo { get; set; }
 
         public double ScreenDistance { get; set; }
     }
 
     public class CompletedEventArgs : EventArgs
     {
-        public Predicate<MPoint>? IsEnd { get; set; }
-
         public MapInfo? MapInfo { get; set; }
+
+        public Predicate<MPoint>? IsEnd { get; set; }
     }
 
     public class HoverEventArgs : EventArgs
@@ -41,9 +41,9 @@ namespace Mapsui.Interactivity
         event HoverEventHandler? HoverStart;
         event HoverEventHandler? HoverStop;
 
-        void OnStarted(MPoint worldPosition, double screenDistance);
+        void OnStarted(MapInfo? mapInfo, double screenDistance);
 
-        void OnDelta(MPoint worldPosition);
+        void OnDelta(MapInfo? mapInfo);
 
         void OnCompleted(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 

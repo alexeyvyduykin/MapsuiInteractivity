@@ -8,8 +8,6 @@
 
         IInteractiveBehavior Behavior { get; set; }
 
-        MPoint ScreenToWorld(MPoint screenPosition);
-
         MPoint WorldToScreen(MPoint worldPosition);
     }
 }
