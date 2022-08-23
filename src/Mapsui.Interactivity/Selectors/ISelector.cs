@@ -11,5 +11,7 @@ namespace Mapsui.Interactivity
         void PointeroverStart(MapInfo? mapInfo);
 
         void PointeroverStop(MapInfo? mapInfo);
+
+        void Unselected();
     }
 }

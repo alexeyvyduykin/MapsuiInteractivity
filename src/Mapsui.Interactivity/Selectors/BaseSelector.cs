@@ -8,7 +8,6 @@ namespace Mapsui.Interactivity
         private IFeature? _selectedFeature;
         private IFeature? _lastFeature;
         private ILayer? _lastLayer;
-        private bool _isChecker;
 
         public event EventHandler? Select;
         public event EventHandler? Unselect;

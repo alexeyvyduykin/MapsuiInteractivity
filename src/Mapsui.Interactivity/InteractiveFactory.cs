@@ -1,4 +1,5 @@
-﻿using Mapsui.Nts;
+﻿using Mapsui.Layers;
+using Mapsui.Nts;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
 using NetTopologySuite.Geometries;
@@ -67,6 +68,13 @@ namespace Mapsui.Interactivity
             var decorator = new TranslateDecorator(feature);
 
             return decorator;
+        }
+
+        public IDecoratingSelector CreateDecoratingSelector(LayerCollection layers, Func<GeometryFeature, IDecorator> builder)
+        {
+            IDecoratingSelector selector = new DecoratingSelector(layers, builder);
+
+            return selector;
         }
 
         public IDecorator CreateRotateDecorator(GeometryFeature feature)
