@@ -30,23 +30,30 @@
 							  VerticalAlignment="Stretch"
 							  HorizontalAlignment="Stretch" />
 
-		<Grid HorizontalAlignment="Left" 
+		<Grid HorizontalAlignment="Left"
 			  VerticalAlignment="Top"
-			  Background="Black"
-			  RowDefinitions="*,*,*,*,*,10,*,*,*,*,*">
-			<ToggleButton Grid.Row="0" IsChecked="{Binding IsSelect}" Content="Select"/>
-			<ToggleButton Grid.Row="1" IsChecked="{Binding IsTranslate}" Content="Translate"/>
-			<ToggleButton Grid.Row="2" IsChecked="{Binding IsRotate}" Content="Rotate"/>
-			<ToggleButton Grid.Row="3" IsChecked="{Binding IsScale}" Content="Scale"/>
-			<ToggleButton Grid.Row="4" IsChecked="{Binding IsEdit}" Content="Edit"/>
-				
-			<ToggleButton Grid.Row="6" IsChecked="{Binding IsPoint}" Content="Point"/>
-			<ToggleButton Grid.Row="7" IsChecked="{Binding IsRectangle}" Content="Rectangle"/>
-			<ToggleButton Grid.Row="8" IsChecked="{Binding IsCircle}" Content="Circle"/>
-			<ToggleButton Grid.Row="9" IsChecked="{Binding IsPolygon}" Content="Polygon"/>
-			<ToggleButton Grid.Row="10" IsChecked="{Binding IsRoute}" Content="Route"/>
+			  Background="Black">
+
+			<ItemsControl Items="{Binding RadioButtons}">
+				<ItemsControl.Styles>
+					<Style Selector="ItemsControl > ContentPresenter:nth-child(1)">
+						<Setter Property="Margin" Value="0,0,0,10"></Setter>
+					</Style>
+					<Style Selector="ItemsControl > ContentPresenter:nth-child(5)">
+						<Setter Property="Margin" Value="0,0,0,10"></Setter>
+					</Style>
+				</ItemsControl.Styles>
+
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="vm:RadioButtonItem">
+						<ToggleButton IsChecked="{Binding IsSelected}"
+									  Content="{Binding Name}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
 		</Grid>
-	
+
 		<Border x:Name="tipBorder"
 				HorizontalAlignment="Center"
 				Width="200"
@@ -55,7 +62,7 @@
 				Background="AliceBlue"
 				BorderThickness="1"
 				BorderBrush="Black">
-			<TextBlock TextWrapping="Wrap" 
+			<TextBlock TextWrapping="Wrap"
 					   Foreground="Black"
 					   Text="{Binding Tip}"></TextBlock>
 		</Border>

@@ -3,16 +3,18 @@ using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
 using Mapsui.Layers;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace MapsuiInteractivitySample.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly WritableLayer _userLayer;
-        private IDecoratingSelector? _selector;
+        private ISelector? _selector;
 
         public MainWindowViewModel()
         {
@@ -20,452 +22,301 @@ namespace MapsuiInteractivitySample.ViewModels
 
             _userLayer = (WritableLayer)Map.Layers[0];
 
-            this.WhenAnyValue(s => s.IsSelect).Subscribe(s => ResetExclude(s, nameof(IsSelect)));
-            this.WhenAnyValue(s => s.IsSelect).Subscribe(s => SelectCommand(s));
+            var radioButtonList = new RadioButtonList();
 
-            this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => ResetExclude(s, nameof(IsTranslate)));
-            this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => TranslateCommand(s));
+            radioButtonList.Register(new RadioButtonItem("Select"), SelectCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Translate"), TranslateCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Scale"), ScaleCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Rotate"), RotateCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Edit"), EditCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Point"), DrawingPointCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Rectangle"), DrawingRectangleCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Circle"), DrawingCircleCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Polygon"), DrawingPolygonCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Route"), DrawingRouteCommand, Reset);
 
-            this.WhenAnyValue(s => s.IsRotate).Subscribe(s => ResetExclude(s, nameof(IsRotate)));
-            this.WhenAnyValue(s => s.IsRotate).Subscribe(s => RotateCommand(s));
-
-            this.WhenAnyValue(s => s.IsScale).Subscribe(s => ResetExclude(s, nameof(IsScale)));
-            this.WhenAnyValue(s => s.IsScale).Subscribe(s => ScaleCommand(s));
-
-            this.WhenAnyValue(s => s.IsEdit).Subscribe(s => ResetExclude(s, nameof(IsEdit)));
-            this.WhenAnyValue(s => s.IsEdit).Subscribe(s => EditCommand(s));
-
-            this.WhenAnyValue(s => s.IsPoint).Subscribe(s => ResetExclude(s, nameof(IsPoint)));
-            this.WhenAnyValue(s => s.IsPoint).Subscribe(s => DrawingPointCommand(s));
-
-            this.WhenAnyValue(s => s.IsRectangle).Subscribe(s => ResetExclude(s, nameof(IsRectangle)));
-            this.WhenAnyValue(s => s.IsRectangle).Subscribe(s => DrawingRectangleCommand(s));
-
-            this.WhenAnyValue(s => s.IsCircle).Subscribe(s => ResetExclude(s, nameof(IsCircle)));
-            this.WhenAnyValue(s => s.IsCircle).Subscribe(s => DrawingCircleCommand(s));
-
-            this.WhenAnyValue(s => s.IsPolygon).Subscribe(s => ResetExclude(s, nameof(IsPolygon)));
-            this.WhenAnyValue(s => s.IsPolygon).Subscribe(s => DrawingPolygonCommand(s));
-
-            this.WhenAnyValue(s => s.IsRoute).Subscribe(s => ResetExclude(s, nameof(IsRoute)));
-            this.WhenAnyValue(s => s.IsRoute).Subscribe(s => DrawingRouteCommand(s));
+            RadioButtons = new List<RadioButtonItem>(radioButtonList.Items);
 
             ActualController = new DefaultController();
         }
 
-        private void ResetExclude(bool propertyValue, string propertyName)
+        private void Reset()
         {
+            if (_selector is IDecoratingSelector decoratingSelector)
+            {
+                decoratingSelector.Decorator?.Canceling();
+            }
+
+            _selector?.Unselected();
+            _selector = null;
+
+            Behavior = null;
             ActualController = new DefaultController();
-
-            Tip = string.Empty;
-
-            if (propertyValue == true)
-            {
-                if (nameof(MainWindowViewModel.IsSelect) != propertyName)
-                {
-                    IsSelect = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsScale) != propertyName)
-                {
-                    IsScale = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsRotate) != propertyName)
-                {
-                    IsRotate = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsTranslate) != propertyName)
-                {
-                    IsTranslate = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsEdit) != propertyName)
-                {
-                    IsEdit = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsPoint) != propertyName)
-                {
-                    IsPoint = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsRectangle) != propertyName)
-                {
-                    IsRectangle = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsCircle) != propertyName)
-                {
-                    IsCircle = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsPolygon) != propertyName)
-                {
-                    IsPolygon = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsRoute) != propertyName)
-                {
-                    IsRoute = false;
-                }
-            }
         }
 
-        private void SelectCommand(bool value)
+        private void SelectCommand()
         {
-            if (value == true)
+            _selector = new BaseSelector();
+
+            _selector.Select += (s, e) =>
             {
-                var selector = new BaseSelector();
-
-                selector.Select += (s, e) =>
+                if (s is IFeature feature)
                 {
-                    if (s is IFeature feature)
-                    {
-                        Tip = feature.ToFeatureInfo();
-                    }
-                };
+                    Tip = feature.ToFeatureInfo();
+                }
+            };
 
-                selector.Unselect += (s, e) =>
-                {
-                    if (s is IFeature feature)
-                    {
-                        Tip = string.Empty;
-                    }
-                };
-
-                Behavior = new InteractiveBehavior(selector);
-                ActualController = new CustomController();
-            }
-            else
+            _selector.Unselect += (s, e) =>
             {
-                Behavior = null;
-                ActualController = new DefaultController();
-            }
+                if (s is IFeature feature)
+                {
+                    Tip = string.Empty;
+                }
+            };
+
+            Behavior = new InteractiveBehavior(_selector);
+            ActualController = new CustomController();
         }
 
-        private void TranslateCommand(bool value)
+        private void TranslateCommand()
         {
-            if (value == true)
+            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new TranslateDecorator(gf));
+
+            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
             {
-                _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new TranslateDecorator(gf));
-
-                _selector.SelectedDecorator += (s, e) =>
+                if (s is IDecorator decorator)
                 {
-                    if (s is IDecorator decorator)
-                    {
-                        Behavior = new InteractiveBehavior(decorator);
-                        ActualController = new EditController();
-                        Tip = $"Translate mode";
-                    }
-                };
+                    Behavior = new InteractiveBehavior(decorator);
+                    ActualController = new EditController();
+                    Tip = $"Translate mode";
+                }
+            };
 
-                _selector.Unselect += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(_selector);
-                    ActualController = new CustomController();
-                    Tip = String.Empty;
-                };
-
+            _selector.Unselect += (s, e) =>
+            {
                 Behavior = new InteractiveBehavior(_selector);
                 ActualController = new CustomController();
-            }
-            else
-            {
-                _selector?.Decorator?.Canceling();
-                _selector?.Unselected();
-                Behavior = null;
-                ActualController = new DefaultController();
-            }
+                Tip = String.Empty;
+            };
+
+            Behavior = new InteractiveBehavior(_selector);
+            ActualController = new CustomController();
         }
 
-        private void ScaleCommand(bool value)
+        private void ScaleCommand()
         {
-            if (value == true)
+            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new ScaleDecorator(gf));
+
+            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
             {
-                _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new ScaleDecorator(gf));
-
-                _selector.SelectedDecorator += (s, e) =>
+                if (s is IDecorator decorator)
                 {
-                    if (s is IDecorator decorator)
-                    {
-                        Behavior = new InteractiveBehavior(decorator);
-                        ActualController = new EditController();
-                        Tip = $"Scale mode";
-                    }
-                };
+                    Behavior = new InteractiveBehavior(decorator);
+                    ActualController = new EditController();
+                    Tip = $"Scale mode";
+                }
+            };
 
-                _selector.Unselect += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(_selector);
-                    ActualController = new CustomController();
-                    Tip = string.Empty;
-                };
-
+            _selector.Unselect += (s, e) =>
+            {
                 Behavior = new InteractiveBehavior(_selector);
                 ActualController = new CustomController();
-            }
-            else
-            {
-                _selector?.Decorator?.Canceling();
-                _selector?.Unselected();
-                Behavior = null;
-                ActualController = new DefaultController();
-            }
+                Tip = string.Empty;
+            };
+
+            Behavior = new InteractiveBehavior(_selector);
+            ActualController = new CustomController();
         }
 
-        private void RotateCommand(bool value)
+        private void RotateCommand()
         {
-            if (value == true)
+            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new RotateDecorator(gf));
+
+            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
             {
-                _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new RotateDecorator(gf));
-
-                _selector.SelectedDecorator += (s, e) =>
+                if (s is IDecorator decorator)
                 {
-                    if (s is IDecorator decorator)
-                    {
-                        Behavior = new InteractiveBehavior(decorator);
-                        ActualController = new EditController();
-                        Tip = $"Rotate mode";
-                    }
-                };
+                    Behavior = new InteractiveBehavior(decorator);
+                    ActualController = new EditController();
+                    Tip = $"Rotate mode";
+                }
+            };
 
-                _selector.Unselect += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(_selector);
-                    ActualController = new CustomController();
-                    Tip = string.Empty;
-                };
-
+            _selector.Unselect += (s, e) =>
+            {
                 Behavior = new InteractiveBehavior(_selector);
                 ActualController = new CustomController();
-            }
-            else
-            {
-                _selector?.Decorator?.Canceling();
-                _selector?.Unselected();
-                Behavior = null;
-                ActualController = new DefaultController();
-            }
+                Tip = string.Empty;
+            };
+
+            Behavior = new InteractiveBehavior(_selector);
+            ActualController = new CustomController();
         }
 
-        private void EditCommand(bool value)
+        private void EditCommand()
         {
-            if (value == true)
+            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new EditDecorator(gf));
+
+            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
             {
-                _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new EditDecorator(gf));
-
-                _selector.SelectedDecorator += (s, e) =>
+                if (s is IDecorator decorator)
                 {
-                    if (s is IDecorator decorator)
-                    {
-                        Behavior = new InteractiveBehavior(decorator);
-                        ActualController = new EditController();
-                        Tip = $"Edit mode";
-                    }
-                };
+                    Behavior = new InteractiveBehavior(decorator);
+                    ActualController = new EditController();
+                    Tip = $"Edit mode";
+                }
+            };
 
-                _selector.Unselect += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(_selector);
-                    ActualController = new CustomController();
-                    Tip = string.Empty;
-                };
-
+            _selector.Unselect += (s, e) =>
+            {
                 Behavior = new InteractiveBehavior(_selector);
                 ActualController = new CustomController();
-            }
-            else
-            {
-                _selector?.Decorator?.Canceling();
-                _selector?.Unselected();
-                Behavior = null;
-                ActualController = new DefaultController();
-            }
+                Tip = string.Empty;
+            };
+
+            Behavior = new InteractiveBehavior(_selector);
+            ActualController = new CustomController();
         }
 
-        private void DrawingPointCommand(bool value)
+        private void DrawingPointCommand()
         {
-            if (value == true)
+            var designer = new InteractiveFactory().CreatePointDesigner(Map);
+
+            designer.EndCreating += (s, e) =>
             {
-                var designer = new InteractiveFactory().CreatePointDesigner(Map);
+                _userLayer.Add(designer.Feature.Copy());
+            };
 
-                designer.EndCreating += (s, e) =>
-                {
-                    _userLayer.Add(designer.Feature.Copy());
-                };
+            Tip = "Нажмите, чтобы нарисовать точку";
 
-                Tip = "Нажмите, чтобы нарисовать точку";
+            Behavior = new InteractiveBehavior(designer);
 
-                Behavior = new InteractiveBehavior(designer);
-
-                ActualController = new DrawingController();
-            }
+            ActualController = new DrawingController();
         }
 
-        private void DrawingRectangleCommand(bool value)
+        private void DrawingRectangleCommand()
         {
-            if (value == true)
+            var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map);
+
+            designer.HoverCreating += (s, e) =>
             {
-                var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map);
+                var area = designer.Area();
 
-                designer.HoverCreating += (s, e) =>
-                {
-                    var area = designer.Area();
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+            };
 
-                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-                };
+            designer.EndCreating += (s, e) =>
+            {
+                _userLayer.Add(designer.Feature.Copy());
 
-                designer.EndCreating += (s, e) =>
-                {
-                    _userLayer.Add(designer.Feature.Copy());
+                Tip = string.Empty;
 
-                    Tip = string.Empty;
+                RadioButtons.Where(s => string.Equals(s.Name, "Rectangle")).First().IsSelected = false;
+            };
 
-                    IsRectangle = false;
-                };
+            Tip = "Нажмите и перетащите, чтобы нарисовать прямоугольник";
 
-                Tip = "Нажмите и перетащите, чтобы нарисовать прямоугольник";
+            Behavior = new InteractiveBehavior(designer);
 
-                Behavior = new InteractiveBehavior(designer);
-
-                ActualController = new DrawingController();
-            }
+            ActualController = new DrawingController();
         }
 
-        private void DrawingCircleCommand(bool value)
+        private void DrawingCircleCommand()
         {
-            if (value == true)
+            var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map);
+
+            designer.HoverCreating += (s, e) =>
             {
-                var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map);
+                var area = designer.Area();
 
-                designer.HoverCreating += (s, e) =>
-                {
-                    var area = designer.Area();
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+            };
 
-                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-                };
+            designer.EndCreating += (s, e) =>
+            {
+                _userLayer.Add(designer.Feature.Copy());
 
-                designer.EndCreating += (s, e) =>
-                {
-                    _userLayer.Add(designer.Feature.Copy());
+                Tip = string.Empty;
 
-                    Tip = string.Empty;
+                RadioButtons.Where(s => string.Equals(s.Name, "Circle")).First().IsSelected = false;
+            };
 
-                    IsCircle = false;
-                };
+            Tip = "Нажмите и перетащите, чтобы нарисовать круг";
 
-                Tip = "Нажмите и перетащите, чтобы нарисовать круг";
+            Behavior = new InteractiveBehavior(designer);
 
-                Behavior = new InteractiveBehavior(designer);
-
-                ActualController = new DrawingController();
-            }
+            ActualController = new DrawingController();
         }
 
-        private void DrawingRouteCommand(bool value)
+        private void DrawingRouteCommand()
         {
-            if (value == true)
+            var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map);
+
+            designer.HoverCreating += (s, e) =>
             {
-                var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map);
+                var distance = designer.Distance();
 
-                designer.HoverCreating += (s, e) =>
-                {
-                    var distance = designer.Distance();
+                var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
 
-                    var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
+                Tip = $"Расстояние: {res}";
+            };
 
-                    Tip = $"Расстояние: {res}";
-                };
+            designer.EndCreating += (s, e) =>
+            {
+                _userLayer.Add(designer.Feature.Copy());
 
-                designer.EndCreating += (s, e) =>
-                {
-                    _userLayer.Add(designer.Feature.Copy());
+                Tip = string.Empty;
 
-                    Tip = string.Empty;
+                RadioButtons.Where(s => string.Equals(s.Name, "Route")).First().IsSelected = false;
+            };
 
-                    IsRoute = false;
-                };
+            Tip = "Кликните, чтобы начать измерение";
 
-                Tip = "Кликните, чтобы начать измерение";
+            Behavior = new InteractiveBehavior(designer);
 
-                Behavior = new InteractiveBehavior(designer);
-
-                ActualController = new DrawingController();
-            }
+            ActualController = new DrawingController();
         }
 
-        private void DrawingPolygonCommand(bool value)
+        private void DrawingPolygonCommand()
         {
-            if (value == true)
+            var designer = (IAreaDesigner)new InteractiveFactory().CreatePolygonDesigner(Map);
+
+            designer.BeginCreating += (s, e) =>
             {
-                var designer = (IAreaDesigner)new InteractiveFactory().CreatePolygonDesigner(Map);
+                Tip = "Нажмите, чтобы продолжить рисовать фигуру";
+            };
 
-                designer.BeginCreating += (s, e) =>
+            designer.Creating += (s, e) =>
+            {
+                var area = designer.Area();
+
+                if (area != 0.0)
                 {
-                    Tip = "Нажмите, чтобы продолжить рисовать фигуру";
-                };
+                    Tip = $"Щелкните по первой точке, чтобы закрыть эту фигуру. Область: {area:N2} km²";
+                }
+            };
 
-                designer.Creating += (s, e) =>
-                {
-                    var area = designer.Area();
+            designer.EndCreating += (s, e) =>
+            {
+                _userLayer.Add(designer.Feature.Copy());
 
-                    if (area != 0.0)
-                    {
-                        Tip = $"Щелкните по первой точке, чтобы закрыть эту фигуру. Область: {area:N2} km²";
-                    }
-                };
+                Tip = string.Empty;
 
-                designer.EndCreating += (s, e) =>
-                {
-                    _userLayer.Add(designer.Feature.Copy());
+                RadioButtons.Where(s => string.Equals(s.Name, "Polygon")).First().IsSelected = false;
+            };
 
-                    Tip = string.Empty;
+            Tip = "Нажмите и перетащите, чтобы нарисовать полигон";
 
-                    IsPolygon = false;
-                };
+            Behavior = new InteractiveBehavior(designer);
 
-                Tip = "Нажмите и перетащите, чтобы нарисовать полигон";
-
-                Behavior = new InteractiveBehavior(designer);
-
-                ActualController = new DrawingController();
-            }
+            ActualController = new DrawingController();
         }
 
         [Reactive]
         public Map Map { get; set; }
 
         [Reactive]
-        public bool IsSelect { get; set; } = false;
-
-        [Reactive]
-        public bool IsTranslate { get; set; } = false;
-
-        [Reactive]
-        public bool IsRotate { get; set; } = false;
-
-        [Reactive]
-        public bool IsScale { get; set; } = false;
-
-        [Reactive]
-        public bool IsEdit { get; set; } = false;
-
-        [Reactive]
-        public bool IsPoint { get; set; } = false;
-
-        [Reactive]
-        public bool IsRectangle { get; set; } = false;
-
-        [Reactive]
-        public bool IsCircle { get; set; } = false;
-
-        [Reactive]
-        public bool IsPolygon { get; set; } = false;
-
-        [Reactive]
-        public bool IsRoute { get; set; } = false;
+        public List<RadioButtonItem> RadioButtons { get; set; }
 
         [Reactive]
         public IController ActualController { get; set; }
