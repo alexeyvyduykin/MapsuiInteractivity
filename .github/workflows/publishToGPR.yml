@@ -22,22 +22,22 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GPR_PAT}}
         
     - name: Build (Mapsui.Interactivity)
-      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+      run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
     - name: Build (Mapsui.Interactivity.UI)
-      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+      run: dotnet build src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
     - name: Build (Mapsui.Interactivity.UI.Avalonia)
-      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+      run: dotnet build src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
       
     - name: Create the package (Mapsui.Interactivity)
-      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
     - name: Create the package (Mapsui.Interactivity.UI)
-      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
     - name: Create the package (Mapsui.Interactivity.UI.Avalonia)
-      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
         
     - name: Publish the package to GPR (Mapsui.Interactivity)
-      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity/bin/Release/*.nupkg
+      run: dotnet nuget push src/Mapsui.Interactivity/bin/Release/*.nupkg
     - name: Publish the package to GPR (Mapsui.Interactivity.UI)
-      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity.UI/bin/Release/*.nupkg
+      run: dotnet nuget push src/Mapsui.Interactivity.UI/bin/Release/*.nupkg
     - name: Publish the package to GPR (Mapsui.Interactivity.UI.Avalonia)
-      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/bin/Release/*.nupkg
+      run: dotnet nuget push src/Mapsui.Interactivity.UI.Avalonia/bin/Release/*.nupkg
