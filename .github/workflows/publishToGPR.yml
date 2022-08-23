@@ -1,0 +1,43 @@
+name: Publish the package to GPR
+
+on:
+  push:
+    branches: [ release/* ]
+  pull_request:
+    branches: [ release/* ]
+
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    # Authenticates packages to push to GPR
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+        source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GPR_PAT}}
+        
+    - name: Build (Mapsui.Interactivity)
+      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+    - name: Build (Mapsui.Interactivity.UI)
+      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+    - name: Build (Mapsui.Interactivity.UI.Avalonia)
+      run: dotnet build MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+      
+    - name: Create the package (Mapsui.Interactivity)
+      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+    - name: Create the package (Mapsui.Interactivity.UI)
+      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+    - name: Create the package (Mapsui.Interactivity.UI.Avalonia)
+      run: dotnet pack --configuration Release MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+        
+    - name: Publish the package to GPR (Mapsui.Interactivity)
+      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity/bin/Release/*.nupkg
+    - name: Publish the package to GPR (Mapsui.Interactivity.UI)
+      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity.UI/bin/Release/*.nupkg
+    - name: Publish the package to GPR (Mapsui.Interactivity.UI.Avalonia)
+      run: dotnet nuget push MapsuiInteractivity/src/Mapsui.Interactivity.UI.Avalonia/bin/Release/*.nupkg
