@@ -185,7 +185,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Map.Layers.Add(interactiveLayer);
 
-                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        Behavior = new InteractiveBehavior(_decorator);
                         ActualController = new EditController();
                         Tip = $"Translate mode";
                     }
@@ -239,7 +239,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Map.Layers.Add(interactiveLayer);
 
-                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        Behavior = new InteractiveBehavior(_decorator);
                         ActualController = new EditController();
                         Tip = $"Scale mode";
                     }
@@ -293,7 +293,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Map.Layers.Add(interactiveLayer);
 
-                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        Behavior = new InteractiveBehavior(_decorator);
                         ActualController = new EditController();
                         Tip = $"Rotate mode";
                     }
@@ -347,7 +347,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Map.Layers.Add(interactiveLayer);
 
-                        Behavior = new NewNewInteractiveBehavior(_decorator);
+                        Behavior = new InteractiveBehavior(_decorator);
                         ActualController = new EditController();
                         Tip = $"Edit mode";
                     }
