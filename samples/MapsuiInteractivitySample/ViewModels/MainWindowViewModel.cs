@@ -4,8 +4,6 @@ using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
 using Mapsui.Layers;
 using Mapsui.Nts;
-using Mapsui.Nts.Extensions;
-using Mapsui.Projections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -16,12 +14,8 @@ namespace MapsuiInteractivitySample.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly WritableLayer _userLayer;
-
-        private ISelectDecorator? _selectDecorator;
-        private ISelectScaleDecorator? _selectScaleDecorator;
-        private ISelectTranslateDecorator? _selectTranslateDecorator;
-        private ISelectRotateDecorator? _selectRotateDecorator;
-        private ISelectEditDecorator? _selectEditDecorator;
+        private BaseSelector? _selector;
+        private IDecorator? _decorator;
 
         public MainWindowViewModel()
         {
@@ -31,9 +25,6 @@ namespace MapsuiInteractivitySample.ViewModels
 
             this.WhenAnyValue(s => s.IsSelect).Subscribe(s => ResetExclude(s, nameof(IsSelect)));
             this.WhenAnyValue(s => s.IsSelect).Subscribe(s => SelectCommand(s));
-
-            this.WhenAnyValue(s => s.IsNewSelect).Subscribe(s => ResetExclude(s, nameof(IsNewSelect)));
-            this.WhenAnyValue(s => s.IsNewSelect).Subscribe(s => NewSelectCommand(s));
 
             this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => ResetExclude(s, nameof(IsTranslate)));
             this.WhenAnyValue(s => s.IsTranslate).Subscribe(s => TranslateCommand(s));
@@ -46,18 +37,6 @@ namespace MapsuiInteractivitySample.ViewModels
 
             this.WhenAnyValue(s => s.IsEdit).Subscribe(s => ResetExclude(s, nameof(IsEdit)));
             this.WhenAnyValue(s => s.IsEdit).Subscribe(s => EditCommand(s));
-
-            this.WhenAnyValue(s => s.IsTranslateDecorator).Subscribe(s => ResetExclude(s, nameof(IsTranslateDecorator)));
-            this.WhenAnyValue(s => s.IsTranslateDecorator).Subscribe(s => TranslateDecoratorCommand(s));
-
-            this.WhenAnyValue(s => s.IsRotateDecorator).Subscribe(s => ResetExclude(s, nameof(IsRotateDecorator)));
-            this.WhenAnyValue(s => s.IsRotateDecorator).Subscribe(s => RotateDecoratorCommand(s));
-
-            this.WhenAnyValue(s => s.IsScaleDecorator).Subscribe(s => ResetExclude(s, nameof(IsScaleDecorator)));
-            this.WhenAnyValue(s => s.IsScaleDecorator).Subscribe(s => ScaleDecoratorCommand(s));
-
-            this.WhenAnyValue(s => s.IsEditDecorator).Subscribe(s => ResetExclude(s, nameof(IsEditDecorator)));
-            this.WhenAnyValue(s => s.IsEditDecorator).Subscribe(s => EditDecoratorCommand(s));
 
             this.WhenAnyValue(s => s.IsPoint).Subscribe(s => ResetExclude(s, nameof(IsPoint)));
             this.WhenAnyValue(s => s.IsPoint).Subscribe(s => DrawingPointCommand(s));
@@ -90,11 +69,6 @@ namespace MapsuiInteractivitySample.ViewModels
                     IsSelect = false;
                 }
 
-                if (nameof(MainWindowViewModel.IsNewSelect) != propertyName)
-                {
-                    IsNewSelect = false;
-                }
-
                 if (nameof(MainWindowViewModel.IsScale) != propertyName)
                 {
                     IsScale = false;
@@ -113,26 +87,6 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (nameof(MainWindowViewModel.IsEdit) != propertyName)
                 {
                     IsEdit = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsScaleDecorator) != propertyName)
-                {
-                    IsScaleDecorator = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsRotateDecorator) != propertyName)
-                {
-                    IsRotateDecorator = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsTranslateDecorator) != propertyName)
-                {
-                    IsTranslateDecorator = false;
-                }
-
-                if (nameof(MainWindowViewModel.IsEditDecorator) != propertyName)
-                {
-                    IsEditDecorator = false;
                 }
 
                 if (nameof(MainWindowViewModel.IsPoint) != propertyName)
@@ -166,37 +120,6 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             if (value == true)
             {
-                ActualController = new DefaultController();
-
-                _selectDecorator = new InteractiveFactory().CreateSelectDecorator(Map, _userLayer);
-
-                _selectDecorator.Select += (s, e) =>
-                {
-                    var decorator = (ISelectDecorator)s!;
-
-                    var feature = (GeometryFeature)decorator.SelectedFeature!;
-
-                    var center = SphericalMercator.ToLonLat(feature.Geometry!.Centroid.ToMPoint());
-
-                    Tip = $"Выбран объект с центром в: {center.X}, {center.Y}";
-                };
-
-                _selectDecorator.Unselect += (s, e) =>
-                {
-                    Tip = string.Empty;
-                };
-            }
-            else
-            {
-                _selectDecorator?.Dispose();
-                _selectDecorator = null;
-            }
-        }
-
-        private void NewSelectCommand(bool value)
-        {
-            if (value == true)
-            {
                 var selector = (ISelector)new BaseSelector();
 
                 selector.Select += (s, e) =>
@@ -226,156 +149,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
         }
 
-        private void CreateTranslator(ISelector selector)
-        {
-            selector.Select += (s, e) =>
-            {
-                if (s is GeometryFeature gf)
-                {
-                    var translate = new InteractiveFactory().CreateTranslateDecorator(gf);
-
-                    var interactiveLayer = new InteractiveLayer(translate)
-                    {
-                        Name = nameof(InteractiveLayer),
-                        Style = InteractiveFactory.CreateInteractiveLayerDecoratorStyle(),
-                    };
-
-                    Map.Layers.Add(interactiveLayer);
-
-                    Behavior = new NewInteractiveBehavior(selector, translate);
-                    //Behavior = new InteractiveBehavior(translate);
-
-                    ActualController = new EditController();
-                }
-            };
-
-            selector.Unselect += (s, e) =>
-            {
-                var interactiveLayer = Map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
-
-                if (interactiveLayer != null)
-                {
-                    Map.Layers.Remove(interactiveLayer);
-                }
-
-                Behavior = new InteractiveBehavior(selector);
-
-                ActualController = new CustomController();
-            };
-        }
-
-        private void ScaleCommand(bool value)
-        {
-            if (value == true)
-            {
-                ActualController = new EditController();
-
-                _selectScaleDecorator = new InteractiveFactory().CreateSelectScaleDecorator(Map, _userLayer);
-
-                _selectScaleDecorator.Select += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(((ISelectScaleDecorator)s!).Scale!);
-
-                    Tip = $"Scale mode";
-                };
-
-                _selectScaleDecorator.Unselect += (s, e) =>
-                {
-                    Tip = string.Empty;
-                };
-            }
-            else
-            {
-                _selectScaleDecorator?.Dispose();
-                _selectScaleDecorator = null;
-            }
-        }
-
         private void TranslateCommand(bool value)
-        {
-            if (value == true)
-            {
-                ActualController = new EditController();
-
-                _selectTranslateDecorator = new InteractiveFactory().CreateSelectTranslateDecorator(Map, _userLayer);
-
-                _selectTranslateDecorator.Select += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(((ISelectTranslateDecorator)s!).Translate!);
-
-                    Tip = $"Translate mode";
-                };
-
-                _selectTranslateDecorator.Unselect += (s, e) =>
-                {
-                    Tip = string.Empty;
-                };
-            }
-            else
-            {
-                _selectTranslateDecorator?.Dispose();
-                _selectTranslateDecorator = null;
-            }
-        }
-
-        private void RotateCommand(bool value)
-        {
-            if (value == true)
-            {
-                ActualController = new EditController();
-
-                _selectRotateDecorator = new InteractiveFactory().CreateSelectRotateDecorator(Map, _userLayer);
-
-                _selectRotateDecorator.Select += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(((ISelectRotateDecorator)s!).Rotate!);
-
-                    Tip = $"Rotate mode";
-                };
-
-                _selectRotateDecorator.Unselect += (s, e) =>
-                {
-                    Tip = string.Empty;
-                };
-            }
-            else
-            {
-                _selectRotateDecorator?.Dispose();
-                _selectRotateDecorator = null;
-            }
-        }
-
-        private void EditCommand(bool value)
-        {
-            if (value == true)
-            {
-                ActualController = new EditController();
-
-                _selectEditDecorator = new InteractiveFactory().CreateSelectEditDecorator(Map, _userLayer);
-
-                _selectEditDecorator.Select += (s, e) =>
-                {
-                    Behavior = new InteractiveBehavior(((ISelectEditDecorator)s!).Edit!);
-
-                    Tip = $"Edit mode";
-                };
-
-                _selectEditDecorator.Unselect += (s, e) =>
-                {
-                    Tip = string.Empty;
-                };
-            }
-            else
-            {
-                _selectEditDecorator?.Dispose();
-                _selectEditDecorator = null;
-            }
-        }
-
-        BaseSelector? _selector;
-        IDecorator? _decorator;
-
-        private void TranslateDecoratorCommand(bool value)
         {
             if (value == true)
             {
@@ -398,6 +172,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                             Behavior = new InteractiveBehavior(_selector);
                             ActualController = new CustomController();
+                            Tip = String.Empty;
 
                             ((BaseSelector)_selector).Unselected();
                         };
@@ -412,6 +187,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Behavior = new NewNewInteractiveBehavior(_decorator);
                         ActualController = new EditController();
+                        Tip = $"Translate mode";
                     }
                 };
 
@@ -427,7 +203,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
         }
 
-        private void ScaleDecoratorCommand(bool value)
+        private void ScaleCommand(bool value)
         {
             if (value == true)
             {
@@ -450,6 +226,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                             Behavior = new InteractiveBehavior(_selector);
                             ActualController = new CustomController();
+                            Tip = string.Empty;
 
                             ((BaseSelector)_selector).Unselected();
                         };
@@ -464,6 +241,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Behavior = new NewNewInteractiveBehavior(_decorator);
                         ActualController = new EditController();
+                        Tip = $"Scale mode";
                     }
                 };
 
@@ -479,7 +257,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
         }
 
-        private void RotateDecoratorCommand(bool value)
+        private void RotateCommand(bool value)
         {
             if (value == true)
             {
@@ -502,6 +280,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                             Behavior = new InteractiveBehavior(_selector);
                             ActualController = new CustomController();
+                            Tip = string.Empty;
 
                             ((BaseSelector)_selector).Unselected();
                         };
@@ -516,6 +295,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Behavior = new NewNewInteractiveBehavior(_decorator);
                         ActualController = new EditController();
+                        Tip = $"Rotate mode";
                     }
                 };
 
@@ -531,7 +311,7 @@ namespace MapsuiInteractivitySample.ViewModels
             }
         }
 
-        private void EditDecoratorCommand(bool value)
+        private void EditCommand(bool value)
         {
             if (value == true)
             {
@@ -554,6 +334,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                             Behavior = new InteractiveBehavior(_selector);
                             ActualController = new CustomController();
+                            Tip = string.Empty;
 
                             ((BaseSelector)_selector).Unselected();
                         };
@@ -568,6 +349,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
                         Behavior = new NewNewInteractiveBehavior(_decorator);
                         ActualController = new EditController();
+                        Tip = $"Edit mode";
                     }
                 };
 
@@ -732,15 +514,11 @@ namespace MapsuiInteractivitySample.ViewModels
             }
         }
 
-
         [Reactive]
         public Map Map { get; set; }
 
         [Reactive]
         public bool IsSelect { get; set; } = false;
-
-        [Reactive]
-        public bool IsNewSelect { get; set; } = false;
 
         [Reactive]
         public bool IsTranslate { get; set; } = false;
@@ -753,18 +531,6 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public bool IsEdit { get; set; } = false;
-
-        [Reactive]
-        public bool IsTranslateDecorator { get; set; } = false;
-
-        [Reactive]
-        public bool IsRotateDecorator { get; set; } = false;
-
-        [Reactive]
-        public bool IsScaleDecorator { get; set; } = false;
-
-        [Reactive]
-        public bool IsEditDecorator { get; set; } = false;
 
         [Reactive]
         public bool IsPoint { get; set; } = false;
