@@ -40,10 +40,6 @@ namespace Mapsui.Interactivity
                     }
                 };
             }
-            else
-            {
-                //throw new Exception();
-            }
 
             Delta += (s, e) =>
             {

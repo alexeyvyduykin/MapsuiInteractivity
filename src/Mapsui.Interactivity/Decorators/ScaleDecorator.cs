@@ -1,4 +1,5 @@
-﻿using Mapsui.Nts;
+﻿using Mapsui.Interactivity.Utilities;
+using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
@@ -70,11 +71,6 @@ namespace Mapsui.Interactivity
 
                 _isScaling = true;
             }
-        }
-
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
         }
 
         private static MPoint GetTopRight(Geometry geometry)

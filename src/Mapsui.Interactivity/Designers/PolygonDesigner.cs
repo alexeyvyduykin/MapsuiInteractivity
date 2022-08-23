@@ -1,4 +1,4 @@
-﻿using Mapsui.Interactivity.Helpers;
+﻿using Mapsui.Interactivity.Utilities;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.Projections;
@@ -12,6 +12,7 @@ namespace Mapsui.Interactivity
         private bool _skip;
         private int _counter;
         private bool _isDrawing = false;
+        private bool _firstClick = true;
 
         private GeometryFeature? _extraLineString;
         private GeometryFeature? _extraPolygon;
@@ -56,13 +57,6 @@ namespace Mapsui.Interactivity
             HoverCreatingFeature(mapInfo?.WorldPosition!);
         }
 
-        //private void CreatingFeature(MPoint worldPosition)
-        //{
-        //    CreatingFeature(worldPosition, point => true);
-        //}
-
-        private bool _firstClick = true;
-
         private void CreatingFeature(MPoint worldPosition, Predicate<MPoint>? isEnd)
         {
             if (_firstClick == true)
@@ -77,7 +71,7 @@ namespace Mapsui.Interactivity
             }
             else
             {
-                var res = IsEndDrawing(/*worldPosition,*/ isEnd);
+                var res = IsEndDrawing(isEnd);
 
                 if (res == true)
                 {
@@ -112,7 +106,7 @@ namespace Mapsui.Interactivity
             }
         }
 
-        private bool IsEndDrawing(/*MPoint worldPosition,*/ Predicate<MPoint>? isEnd)
+        private bool IsEndDrawing(Predicate<MPoint>? isEnd)
         {
             var polygonGeometry = (LineString)Feature.Geometry!;
 
@@ -193,6 +187,6 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public double Area() => MathHelper.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
+        public double Area() => EarthMath.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
     }
 }

@@ -3,9 +3,9 @@ using Mapsui.Interactivity.UI.Input.Core;
 
 namespace Mapsui.Interactivity.UI
 {
-    public class CustomController : BaseController, IController
+    public class SelectingController : BaseController, IController
     {
-        public CustomController()
+        public SelectingController()
         {
             var click = new DelegateViewCommand<MouseDownEventArgs>(
                 (view, controller, args) => controller.AddMouseManipulator(view, new ClickManipulator(view), args));

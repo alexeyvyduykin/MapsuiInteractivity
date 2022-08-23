@@ -8,34 +8,34 @@ namespace Mapsui.Interactivity
 {
     public class InteractiveFactory
     {
-        public IDesigner CreatePolygonDesigner(IMap map)
+        public IDesigner CreatePolygonDesigner(LayerCollection layers)
         {
-            return CreateDesigner(map, new PolygonDesigner());
+            return CreateDesigner(layers, new PolygonDesigner());
         }
 
-        public IDesigner CreateRouteDesigner(IMap map)
+        public IDesigner CreateRouteDesigner(LayerCollection layers)
         {
-            return CreateDesigner(map, new RouteDesigner());
+            return CreateDesigner(layers, new RouteDesigner());
         }
 
-        public IDesigner CreateCircleDesigner(IMap map)
+        public IDesigner CreateCircleDesigner(LayerCollection layers)
         {
-            return CreateDesigner(map, new CircleDesigner());
+            return CreateDesigner(layers, new CircleDesigner());
         }
 
-        public IDesigner CreatePointDesigner(IMap map)
+        public IDesigner CreatePointDesigner(LayerCollection layers)
         {
-            return CreateDesigner(map, new PointDesigner());
+            return CreateDesigner(layers, new PointDesigner());
         }
 
-        public IDesigner CreateRectangleDesigner(IMap map)
+        public IDesigner CreateRectangleDesigner(LayerCollection layers)
         {
-            return CreateDesigner(map, new RectangleDesigner());
+            return CreateDesigner(layers, new RectangleDesigner());
         }
 
-        private IDesigner CreateDesigner(IMap map, IDesigner designer)
+        private IDesigner CreateDesigner(LayerCollection layers, IDesigner designer)
         {
-            RemoveInteractiveLayer(map);
+            RemoveInteractiveLayer(layers);
 
             var interactiveLayer = new InteractiveLayer(designer)
             {
@@ -45,29 +45,15 @@ namespace Mapsui.Interactivity
 
             designer.BeginCreating += (s, e) =>
             {
-                map.Layers.Add(interactiveLayer);
+                layers.Add(interactiveLayer);
             };
 
             designer.EndCreating += (s, e) =>
             {
-                map.Layers.Remove(interactiveLayer);
+                layers.Remove(interactiveLayer);
             };
 
             return designer;
-        }
-
-        public IDecorator CreateScaleDecorator(GeometryFeature feature)
-        {
-            var decorator = new ScaleDecorator(feature);
-
-            return decorator;
-        }
-
-        public IDecorator CreateTranslateDecorator(GeometryFeature feature)
-        {
-            var decorator = new TranslateDecorator(feature);
-
-            return decorator;
         }
 
         public IDecoratingSelector CreateDecoratingSelector(LayerCollection layers, Func<GeometryFeature, IDecorator> builder)
@@ -77,27 +63,13 @@ namespace Mapsui.Interactivity
             return selector;
         }
 
-        public IDecorator CreateRotateDecorator(GeometryFeature feature)
+        private void RemoveInteractiveLayer(LayerCollection layers)
         {
-            var decorator = new RotateDecorator(feature);
-
-            return decorator;
-        }
-
-        public IDecorator CreateEditDecorator(GeometryFeature feature)
-        {
-            var decorator = new EditDecorator(feature);
-
-            return decorator;
-        }
-
-        private void RemoveInteractiveLayer(IMap map)
-        {
-            var interactiveLayer = map.Layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+            var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
             if (interactiveLayer != null)
             {
-                map.Layers.Remove(interactiveLayer);
+                layers.Remove(interactiveLayer);
             }
         }
 

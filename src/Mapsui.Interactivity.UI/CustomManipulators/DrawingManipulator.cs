@@ -22,7 +22,7 @@ namespace Mapsui.Interactivity.UI
 
             if (_skip == false)
             {
-                var screenPosition = e.MapInfo?.ScreenPosition;// e.Position;
+                var screenPosition = e.MapInfo?.ScreenPosition;
 
                 bool isClick(MPoint worldPosition)
                 {

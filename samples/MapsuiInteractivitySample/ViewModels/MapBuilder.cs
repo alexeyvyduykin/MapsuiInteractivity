@@ -1,5 +1,6 @@
 ﻿using Mapsui;
 using Mapsui.Interactivity;
+using Mapsui.Interactivity.Utilities;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;

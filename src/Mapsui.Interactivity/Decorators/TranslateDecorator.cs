@@ -1,4 +1,5 @@
-﻿using Mapsui.Nts;
+﻿using Mapsui.Interactivity.Utilities;
+using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
@@ -64,11 +65,6 @@ namespace Mapsui.Interactivity
 
                 _isTranslating = true;
             }
-        }
-
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
         }
     }
 }

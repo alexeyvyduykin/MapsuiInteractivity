@@ -1,4 +1,5 @@
 ﻿using Mapsui.Nts;
+using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
@@ -19,6 +20,11 @@ namespace Mapsui.Interactivity
             _featureSource.RenderedGeometry.Clear();
 
             Invalidate();
+        }
+
+        public override void Hovering(MapInfo? mapInfo)
+        {
+
         }
 
         public GeometryFeature FeatureSource => _featureSource;

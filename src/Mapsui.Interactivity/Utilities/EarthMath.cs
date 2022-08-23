@@ -1,6 +1,6 @@
-﻿namespace Mapsui.Interactivity.Helpers
+﻿namespace Mapsui.Interactivity.Utilities
 {
-    internal static class MathHelper
+    internal static class EarthMath
     {
         private const double EarthRadius = 6371.009; // 6378.137;
         private const double ToRadians = Math.PI / 180.0;

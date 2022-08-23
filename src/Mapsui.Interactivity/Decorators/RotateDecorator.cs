@@ -1,4 +1,5 @@
-﻿using Mapsui.Nts;
+﻿using Mapsui.Interactivity.Utilities;
+using Mapsui.Nts;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
@@ -83,11 +84,6 @@ namespace Mapsui.Interactivity
 
                 _isRotating = true;
             }
-        }
-
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
         }
 
         private static double Diagonal(MRect box)

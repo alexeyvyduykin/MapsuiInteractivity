@@ -2,9 +2,9 @@
 
 namespace Mapsui.Interactivity.UI
 {
-    public class EditController : BaseController, IController
+    public class EditingController : BaseController, IController
     {
-        public EditController()
+        public EditingController()
         {
             this.BindMouseDown(MouseButton.Left, MapCommands.Editing);
             this.BindMouseEnter(MapCommands.HoverEditing);

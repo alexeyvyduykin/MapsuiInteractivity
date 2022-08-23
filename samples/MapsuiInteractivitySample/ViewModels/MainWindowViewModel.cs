@@ -75,7 +75,7 @@ namespace MapsuiInteractivitySample.ViewModels
             };
 
             Behavior = new InteractiveBehavior(_selector);
-            ActualController = new CustomController();
+            ActualController = new SelectingController();
         }
 
         private void TranslateCommand()
@@ -87,7 +87,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (s is IDecorator decorator)
                 {
                     Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditController();
+                    ActualController = new EditingController();
                     Tip = $"Translate mode";
                 }
             };
@@ -95,12 +95,12 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector.Unselect += (s, e) =>
             {
                 Behavior = new InteractiveBehavior(_selector);
-                ActualController = new CustomController();
+                ActualController = new SelectingController();
                 Tip = String.Empty;
             };
 
             Behavior = new InteractiveBehavior(_selector);
-            ActualController = new CustomController();
+            ActualController = new SelectingController();
         }
 
         private void ScaleCommand()
@@ -112,7 +112,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (s is IDecorator decorator)
                 {
                     Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditController();
+                    ActualController = new EditingController();
                     Tip = $"Scale mode";
                 }
             };
@@ -120,12 +120,12 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector.Unselect += (s, e) =>
             {
                 Behavior = new InteractiveBehavior(_selector);
-                ActualController = new CustomController();
+                ActualController = new SelectingController();
                 Tip = string.Empty;
             };
 
             Behavior = new InteractiveBehavior(_selector);
-            ActualController = new CustomController();
+            ActualController = new SelectingController();
         }
 
         private void RotateCommand()
@@ -137,7 +137,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (s is IDecorator decorator)
                 {
                     Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditController();
+                    ActualController = new EditingController();
                     Tip = $"Rotate mode";
                 }
             };
@@ -145,12 +145,12 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector.Unselect += (s, e) =>
             {
                 Behavior = new InteractiveBehavior(_selector);
-                ActualController = new CustomController();
+                ActualController = new SelectingController();
                 Tip = string.Empty;
             };
 
             Behavior = new InteractiveBehavior(_selector);
-            ActualController = new CustomController();
+            ActualController = new SelectingController();
         }
 
         private void EditCommand()
@@ -162,7 +162,7 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (s is IDecorator decorator)
                 {
                     Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditController();
+                    ActualController = new EditingController();
                     Tip = $"Edit mode";
                 }
             };
@@ -170,17 +170,17 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector.Unselect += (s, e) =>
             {
                 Behavior = new InteractiveBehavior(_selector);
-                ActualController = new CustomController();
+                ActualController = new SelectingController();
                 Tip = string.Empty;
             };
 
             Behavior = new InteractiveBehavior(_selector);
-            ActualController = new CustomController();
+            ActualController = new SelectingController();
         }
 
         private void DrawingPointCommand()
         {
-            var designer = new InteractiveFactory().CreatePointDesigner(Map);
+            var designer = new InteractiveFactory().CreatePointDesigner(Map.Layers);
 
             designer.EndCreating += (s, e) =>
             {
@@ -196,7 +196,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRectangleCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map);
+            var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map.Layers);
 
             designer.HoverCreating += (s, e) =>
             {
@@ -223,7 +223,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingCircleCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map);
+            var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map.Layers);
 
             designer.HoverCreating += (s, e) =>
             {
@@ -250,7 +250,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRouteCommand()
         {
-            var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map);
+            var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map.Layers);
 
             designer.HoverCreating += (s, e) =>
             {
@@ -279,7 +279,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingPolygonCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreatePolygonDesigner(Map);
+            var designer = (IAreaDesigner)new InteractiveFactory().CreatePolygonDesigner(Map.Layers);
 
             designer.BeginCreating += (s, e) =>
             {

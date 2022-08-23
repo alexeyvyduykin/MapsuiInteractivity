@@ -69,10 +69,7 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override IEnumerable<MPoint> GetActiveVertices()
-        {
-            throw new NotImplementedException();
-        }
+        public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
 
         public override void Hovering(MapInfo? mapInfo)
         {

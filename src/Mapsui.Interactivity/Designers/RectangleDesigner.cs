@@ -1,4 +1,4 @@
-﻿using Mapsui.Interactivity.Helpers;
+﻿using Mapsui.Interactivity.Utilities;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using Mapsui.Projections;
@@ -10,6 +10,7 @@ namespace Mapsui.Interactivity
     internal class RectangleDesigner : BaseDesigner, IAreaDesigner
     {
         private bool _isDrawing = false;
+        private bool _firstClick = true;
         private bool _skip;
         private int _counter;
         private List<Coordinate> _featureCoordinates = new();
@@ -45,14 +46,7 @@ namespace Mapsui.Interactivity
             HoverCreatingFeature(mapInfo?.WorldPosition!);
         }
 
-        //public void CreatingFeature(MPoint worldPosition)
-        //{
-        //    CreatingFeature(worldPosition, point => true);
-        //}
-
-        private bool _firstClick = true;
-
-        private void CreatingFeature(MPoint worldPosition/*, Predicate<MPoint> isEnd*/)
+        private void CreatingFeature(MPoint worldPosition)
         {
             if (_firstClick == true)
             {
@@ -117,7 +111,7 @@ namespace Mapsui.Interactivity
                 _featureCoordinates = new() { p0, p1, p2, p3 };
                 Feature.Geometry = _featureCoordinates.ToPolygon();
 
-                Feature.RenderedGeometry?.Clear(); // You need to clear the cache to see changes.
+                Feature.RenderedGeometry?.Clear();
             }
         }
 
@@ -129,6 +123,6 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public double Area() => MathHelper.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
+        public double Area() => EarthMath.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
     }
 }
