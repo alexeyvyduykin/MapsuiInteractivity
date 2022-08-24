@@ -1,0 +1,29 @@
+name: Publish the package to GPR (from release)
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    # Authenticates packages to push to GPR
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+        source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        
+    - name: Build
+      run: dotnet build src/*/*.csproj
+      
+    - name: Create the package
+      run: dotnet pack --configuration Release src/*/*.csproj
+        
+    - name: Publish the package to GPR
+      run: dotnet nuget push src/*/bin/Release/*.nupkg
