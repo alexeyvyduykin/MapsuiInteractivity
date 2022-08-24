@@ -20,10 +20,22 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         
     - name: Build
-      run: dotnet build src/*/*.csproj
+      run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+    - name: Build
+      run: dotnet build src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+    - name: Build
+      run: dotnet build src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
       
     - name: Create the package
-      run: dotnet pack --configuration Release src/*/*.csproj
-        
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+      
     - name: Publish the package to GPR
-      run: dotnet nuget push src/*/bin/Release/*.nupkg --skip-duplicate
+      run: dotnet nuget push src/Mapsui.Interactivity/bin/Release/*.nupkg --skip-duplicate
+    - name: Publish the package to GPR
+      run: dotnet nuget push src/Mapsui.Interactivity.UI/bin/Release/*.nupkg --skip-duplicate
+    - name: Publish the package to GPR
+      run: dotnet nuget push src/Mapsui.Interactivity.UI.Avalonia/bin/Release/*.nupkg --skip-duplicate
