@@ -1,0 +1,31 @@
+name: Publish the package to GPR
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    # Authenticates packages to push to GPR
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+        source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GPR_PAT}}
+        
+    - name: Build (Mapsui.Interactivity)
+      run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+      
+    - name: Create the package (Mapsui.Interactivity)
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+        
+    - name: Publish the package to GPR (Mapsui.Interactivity)
+      run: dotnet nuget push src/Mapsui.Interactivity/bin/Release/*.nupkg
