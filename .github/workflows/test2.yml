@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 6.0.x
         source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.MapsuiInteractivity}}
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         
     - name: Build (Mapsui.Interactivity)
       run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
