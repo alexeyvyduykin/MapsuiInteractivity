@@ -18,6 +18,7 @@ jobs:
         source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        RELEASE_VERSION: ${GITHUB_REF#refs/*/}
         
     - name: Build
       run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
@@ -27,11 +28,11 @@ jobs:
       run: dotnet build src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
       
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj -p:Version="$RELEASE_VERSION"
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj -p:Version="$RELEASE_VERSION"
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj -p:Version="$RELEASE_VERSION"
       
     - name: Publish the package to GPR
       run: dotnet nuget push src/Mapsui.Interactivity/bin/Release/*.nupkg --skip-duplicate
