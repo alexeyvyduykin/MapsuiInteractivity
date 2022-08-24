@@ -28,11 +28,11 @@ jobs:
       run: dotnet build src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj
       
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj /p:PackageVersion=$RELEASE_VERSION
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity/Mapsui.Interactivity.csproj /p:PackageVersion=${{github.event.release.tag_name}}
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj /p:PackageVersion=$RELEASE_VERSION
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI/Mapsui.Interactivity.UI.csproj /p:PackageVersion=${{github.event.release.tag_name}}
     - name: Create the package
-      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj /p:PackageVersion=$RELEASE_VERSION
+      run: dotnet pack --configuration Release src/Mapsui.Interactivity.UI.Avalonia/Mapsui.Interactivity.UI.Avalonia.csproj /p:PackageVersion=${{github.event.release.tag_name}}
       
     - name: Publish the package to GPR
       run: dotnet nuget push src/Mapsui.Interactivity/bin/Release/*.nupkg --skip-duplicate
