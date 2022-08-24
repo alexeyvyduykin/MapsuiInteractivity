@@ -18,7 +18,7 @@ jobs:
         source-url: https://nuget.pkg.github.com/alexeyvyduykin/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        RELEASE_VERSION: ${GITHUB_REF#refs/*/}
+        RELEASE_VERSION: ${{github.event.release.tag_name}}
         
     - name: Build
       run: dotnet build src/Mapsui.Interactivity/Mapsui.Interactivity.csproj
