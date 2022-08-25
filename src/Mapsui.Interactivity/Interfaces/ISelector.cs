@@ -8,6 +8,10 @@ namespace Mapsui.Interactivity
 
         public event EventHandler? Unselect;
 
+        public event EventHandler? HoveringBegin;
+
+        public event EventHandler? HoveringEnd;
+
         void PointeroverStart(MapInfo? mapInfo);
 
         void PointeroverStop(MapInfo? mapInfo);

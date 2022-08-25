@@ -62,16 +62,26 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 if (s is IFeature feature)
                 {
-                    Tip = feature.ToFeatureInfo();
+                    Tip = $"Select{Environment.NewLine}{feature.ToFeatureInfo()}";
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
+                Tip = string.Empty;
+            };
+
+            _selector.HoveringBegin += (s, e) =>
+            {
                 if (s is IFeature feature)
                 {
-                    Tip = string.Empty;
+                    Tip = $"HoveringBegin{Environment.NewLine}{feature.ToFeatureInfo()}";
                 }
+            };
+
+            _selector.HoveringEnd += (s, e) =>
+            {
+                Tip = string.Empty;
             };
 
             Behavior = new InteractiveBehavior(_selector);

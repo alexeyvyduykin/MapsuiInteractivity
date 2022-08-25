@@ -11,6 +11,8 @@ namespace Mapsui.Interactivity
 
         public event EventHandler? Select;
         public event EventHandler? Unselect;
+        public event EventHandler? HoveringBegin;
+        public event EventHandler? HoveringEnd;
 
         public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
@@ -95,6 +97,8 @@ namespace Mapsui.Interactivity
             {
                 _lastFeature["pointerover"] = true;
 
+                HoveringBegin?.Invoke(_lastFeature, EventArgs.Empty);
+
                 mapInfo?.Layer?.DataHasChanged();
             }
         }
@@ -106,6 +110,8 @@ namespace Mapsui.Interactivity
                 _lastFeature["pointerover"] = false;
 
                 _lastLayer?.DataHasChanged();
+
+                HoveringEnd?.Invoke(_lastFeature, EventArgs.Empty);
 
                 mapInfo?.Layer?.DataHasChanged();
             }
