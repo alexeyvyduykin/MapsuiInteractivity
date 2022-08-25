@@ -8,7 +8,29 @@ namespace Mapsui.Interactivity.UI.Avalonia
     {
         public InteractiveMapControl() : base()
         {
+            MapSourceProperty.Changed.Subscribe(OnMapSourceChanged);
             ControllerProperty.Changed.Subscribe(OnControllerChanged);
+        }
+
+        public Map MapSource
+        {
+            get { return (Map)GetValue(MapSourceProperty); }
+            set { SetValue(MapSourceProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for MapSource.  This enables animation, styling, binding, etc...
+        public static readonly StyledProperty<Map> MapSourceProperty =
+            AvaloniaProperty.Register<InteractiveMapControl, Map>(nameof(MapSource));
+
+        private static void OnMapSourceChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Sender is InteractiveMapControl mapControl)
+            {
+                if (e.NewValue != null && e.NewValue is Map map)
+                {
+                    mapControl.Map = map;
+                }
+            }
         }
 
         public IController Controller
