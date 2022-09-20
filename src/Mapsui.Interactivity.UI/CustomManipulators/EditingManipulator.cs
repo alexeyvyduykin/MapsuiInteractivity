@@ -5,6 +5,8 @@ namespace Mapsui.Interactivity.UI
 {
     internal class EditingManipulator : MouseManipulator
     {
+        private bool _skip;
+        private int _counter;
         private bool _isEditing = false;
         private readonly int _vertexRadius = 4;
         private IFeature? _clickFeature;
@@ -29,7 +31,8 @@ namespace Mapsui.Interactivity.UI
                 var clickPoint = e.MapInfo?.WorldPosition;
                 var clickFeature = e.MapInfo?.Feature;
 
-                if (IsClick(clickPoint, _clickPoint) == true
+                if (_skip == false
+                    && IsClick(clickPoint, _clickPoint) == true
                     && IFeature.Equals(_clickFeature, clickFeature) == true)
                 {
                     View.Behavior.OnCancel();
@@ -55,6 +58,13 @@ namespace Mapsui.Interactivity.UI
         {
             base.Delta(e);
 
+            if (_counter++ > 0)
+            {
+                _skip = true;
+
+                return;
+            }
+
             if (_isEditing == true)
             {
                 View.Behavior.OnDelta(e.MapInfo);
@@ -74,6 +84,9 @@ namespace Mapsui.Interactivity.UI
             var mapInfo = e.MapInfo;
 
             _isEditing = false;
+
+            _skip = false;
+            _counter = 0;
 
             if (mapInfo != null && mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
             {

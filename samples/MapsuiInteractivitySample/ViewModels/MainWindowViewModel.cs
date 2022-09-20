@@ -41,7 +41,6 @@ namespace MapsuiInteractivitySample.ViewModels
             ActualController = new DefaultController();
 
             Layers = Map.Layers.Select(s => new LayerViewModel(s)).ToList();
-
             SelectedLayer = Layers.FirstOrDefault();
 
             this.WhenAnyValue(s => s.SelectedLayer)
@@ -355,7 +354,7 @@ namespace MapsuiInteractivitySample.ViewModels
         public LayerViewModel? SelectedLayer { get; set; }
 
         [Reactive]
-        public IList<FeatureViewModel> Features { get; set; }
+        public IList<FeatureViewModel> Features { get; set; } = new List<FeatureViewModel>();
 
         [Reactive]
         public FeatureViewModel? SelectedFeatures { get; set; }
