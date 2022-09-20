@@ -63,12 +63,22 @@ namespace MapsuiInteractivitySample.ViewModels
                 if (s is IFeature feature)
                 {
                     Tip = $"Select{Environment.NewLine}{feature.ToFeatureInfo()}";
+
+                    if (IsWktInfo == true)
+                    {
+                        WktInfo = feature.ToWkt();
+                    }
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
                 Tip = string.Empty;
+
+                if (IsWktInfo == true)
+                {
+                    WktInfo = string.Empty;
+                }
             };
 
             _selector.HoveringBegin += (s, e) =>
@@ -336,5 +346,11 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public string Tip { get; set; } = string.Empty;
+
+        [Reactive]
+        public bool IsWktInfo { get; set; }
+
+        [Reactive]
+        public string? WktInfo { get; set; }
     }
 }

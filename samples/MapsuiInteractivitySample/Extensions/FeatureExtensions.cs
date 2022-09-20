@@ -1,4 +1,6 @@
 ﻿using Mapsui;
+using Mapsui.Nts;
+using NetTopologySuite.IO;
 using System;
 using System.Linq;
 
@@ -32,6 +34,18 @@ namespace MapsuiInteractivitySample
             }
 
             return res;
+        }
+
+        public static string ToWkt(this IFeature feature)
+        {
+            if (feature is GeometryFeature gf)
+            {
+                WKTWriter writer = new WKTWriter();
+
+                return writer.Write(gf.Geometry);
+            }
+
+            return string.Empty;
         }
     }
 }

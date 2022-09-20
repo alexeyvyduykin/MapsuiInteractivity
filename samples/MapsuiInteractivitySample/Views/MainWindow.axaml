@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="using:MapsuiInteractivitySample"
+		xmlns:views="using:MapsuiInteractivitySample.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MapsuiInteractivitySample.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -13,59 +14,6 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<Window.Styles>
-		<Style Selector="ToggleButton">
-			<Setter Property="Padding" Value="8,4,8,4"/>
-			<Setter Property="HorizontalAlignment" Value="Stretch"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		</Style>
-	</Window.Styles>
+	<views:MainView DataContext="{Binding}"/>
 
-	<Grid>
-
-		<local:UserMapControl x:Name="MapControl"
-							  MapSource="{Binding Map}"
-							  Controller="{Binding ActualController}"
-							  Behavior="{Binding Behavior}"
-							  VerticalAlignment="Stretch"
-							  HorizontalAlignment="Stretch" />
-
-		<Grid HorizontalAlignment="Left"
-			  VerticalAlignment="Top"
-			  Background="Black">
-
-			<ItemsControl Items="{Binding RadioButtons}">
-				<ItemsControl.Styles>
-					<Style Selector="ItemsControl > ContentPresenter:nth-child(1)">
-						<Setter Property="Margin" Value="0,0,0,10"></Setter>
-					</Style>
-					<Style Selector="ItemsControl > ContentPresenter:nth-child(5)">
-						<Setter Property="Margin" Value="0,0,0,10"></Setter>
-					</Style>
-				</ItemsControl.Styles>
-
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="vm:RadioButtonItem">
-						<ToggleButton IsChecked="{Binding IsSelected}"
-									  Content="{Binding Name}"/>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-
-		</Grid>
-
-		<Border x:Name="tipBorder"
-				HorizontalAlignment="Center"
-				Width="200"
-				VerticalAlignment="Bottom"
-				Padding="8"
-				Background="AliceBlue"
-				BorderThickness="1"
-				BorderBrush="Black">
-			<TextBlock TextWrapping="Wrap"
-					   Foreground="Black"
-					   Text="{Binding Tip}"></TextBlock>
-		</Border>
-
-	</Grid>
 </Window>
