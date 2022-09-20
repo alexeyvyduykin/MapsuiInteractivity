@@ -28,6 +28,49 @@
 							  VerticalAlignment="Stretch"
 							  HorizontalAlignment="Stretch" />
 
+		<Grid Width="200" 
+			  RowDefinitions="Auto,Auto" 
+			  HorizontalAlignment="Right"				
+			  VerticalAlignment="Stretch"				
+			  Background="Black">
+			<StackPanel>
+				<Grid ColumnDefinitions="60,60,80">
+					<TextBlock Text="Name" Grid.Column="0"/>
+					<TextBlock Text="Visible" Grid.Column="1"/>
+					<TextBlock Text="Selectable" Grid.Column="2"/>
+				</Grid>
+				<ListBox Items="{Binding Layers}"
+						 SelectedItem="{Binding SelectedLayer}">
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="vm:LayerViewModel">
+							<DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
+								<TextBlock Text="{Binding Name}"
+										   Width="60"
+										   VerticalAlignment="Center"/>
+								<CheckBox IsChecked="{Binding IsVisible}"
+										  Width="60"
+										  Margin="4,0,0,0" VerticalAlignment="Center"/>
+								<CheckBox IsChecked="{Binding IsSelectable}"
+										  Margin="4,0,0,0"
+										  Width="60"
+										  VerticalAlignment="Center"/>
+							</DockPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+			<StackPanel Grid.Row="1">
+				<ListBox Items="{Binding Features}"
+						 SelectedItem="{Binding SelectedFeature}">
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="vm:FeatureViewModel">														
+							<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>						
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</Grid>
+		
 		<StackPanel HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Background="Black">

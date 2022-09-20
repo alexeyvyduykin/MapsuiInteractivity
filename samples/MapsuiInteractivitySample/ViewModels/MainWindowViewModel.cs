@@ -3,6 +3,7 @@ using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
 using Mapsui.Layers;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,18 @@ namespace MapsuiInteractivitySample.ViewModels
             RadioButtons = new List<RadioButtonItem>(radioButtonList.Items);
 
             ActualController = new DefaultController();
+
+            Layers = Map.Layers.Select(s => new LayerViewModel(s)).ToList();
+
+            SelectedLayer = Layers.FirstOrDefault();
+
+            this.WhenAnyValue(s => s.SelectedLayer)
+                .Where(s => s != null)
+                .Subscribe(s =>
+                {
+                    Features = s!.GetFeatures().Select(s => new FeatureViewModel(s)).ToList();
+                    SelectedFeatures = Features.FirstOrDefault();
+                });
         }
 
         private void Reset()
@@ -334,6 +347,18 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public Map Map { get; set; }
+
+        [Reactive]
+        public IList<LayerViewModel> Layers { get; set; }
+
+        [Reactive]
+        public LayerViewModel? SelectedLayer { get; set; }
+
+        [Reactive]
+        public IList<FeatureViewModel> Features { get; set; }
+
+        [Reactive]
+        public FeatureViewModel? SelectedFeatures { get; set; }
 
         [Reactive]
         public List<RadioButtonItem> RadioButtons { get; set; }
