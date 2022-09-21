@@ -61,8 +61,6 @@ namespace Mapsui.Interactivity.UI
             if (_counter++ > 0)
             {
                 _skip = true;
-
-                return;
             }
 
             if (_isEditing == true)

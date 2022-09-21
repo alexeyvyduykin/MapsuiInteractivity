@@ -8,6 +8,7 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace MapsuiInteractivitySample.ViewModels
@@ -16,6 +17,9 @@ namespace MapsuiInteractivitySample.ViewModels
     {
         private readonly WritableLayer _userLayer;
         private ISelector? _selector;
+        private IFeature? _lastSelectedFeature;
+        private IFeature? _lastPointeroverFeature;
+        private ILayer? _lastPointeroverLayer;
 
         public MainWindowViewModel()
         {
@@ -48,8 +52,77 @@ namespace MapsuiInteractivitySample.ViewModels
                 .Subscribe(s =>
                 {
                     Features = s!.GetFeatures().Select(s => new FeatureViewModel(s)).ToList();
-                    SelectedFeatures = Features.FirstOrDefault();
+                    SelectedFeature = Features.FirstOrDefault();
                 });
+
+            this.WhenAnyValue(s => s.SelectedFeature)
+                .Where(s => s != null)
+                .Select(s => s!.Name)
+                .Subscribe(name =>
+                {
+                    var layerName = SelectedLayer?.Name;
+                    var layer = Map.Layers.Where(s => string.Equals(s.Name, layerName)).FirstOrDefault();
+
+                    if (layer is WritableLayer wl)
+                    {
+                        var feature = wl.GetFeatures().Where(s => string.Equals(s["Name"], name)).FirstOrDefault();
+
+                        if (_lastSelectedFeature != null)
+                        {
+                            _lastSelectedFeature["selected"] = false;
+                        }
+
+                        if (feature != null)
+                        {
+                            feature["selected"] = true;
+
+                            _lastSelectedFeature = feature;
+                        }
+
+                        layer.DataHasChanged();
+                    }
+                });
+
+            PointerEnterFeature = ReactiveCommand.Create<FeatureViewModel>(PointeroverEnterImpl);
+
+            PointerLeaveFeature = ReactiveCommand.Create(PointeroverLeaveImpl);
+        }
+
+        private void PointeroverEnterImpl(FeatureViewModel featureViewModel)
+        {
+            var name = featureViewModel.Name;
+            var layerName = SelectedLayer?.Name;
+            var layer = Map.Layers.Where(s => string.Equals(s.Name, layerName)).FirstOrDefault();
+
+            if (layer is WritableLayer wl)
+            {
+                var feature = wl.GetFeatures().Where(s => string.Equals(s["Name"], name)).FirstOrDefault();
+
+                if (_lastPointeroverFeature != null)
+                {
+                    _lastPointeroverFeature["pointerover"] = false;
+                }
+
+                if (feature != null)
+                {
+                    feature["pointerover"] = true;
+
+                    _lastPointeroverFeature = feature;
+                    _lastPointeroverLayer = layer;
+                }
+
+                layer.DataHasChanged();
+            }
+        }
+
+        private void PointeroverLeaveImpl()
+        {
+            if (_lastPointeroverFeature != null)
+            {
+                _lastPointeroverFeature["pointerover"] = false;
+
+                _lastPointeroverLayer?.DataHasChanged();
+            }
         }
 
         private void Reset()
@@ -357,7 +430,11 @@ namespace MapsuiInteractivitySample.ViewModels
         public IList<FeatureViewModel> Features { get; set; } = new List<FeatureViewModel>();
 
         [Reactive]
-        public FeatureViewModel? SelectedFeatures { get; set; }
+        public FeatureViewModel? SelectedFeature { get; set; }
+
+        public ReactiveCommand<FeatureViewModel, Unit> PointerEnterFeature { get; }
+
+        public ReactiveCommand<Unit, Unit> PointerLeaveFeature { get; }
 
         [Reactive]
         public List<RadioButtonItem> RadioButtons { get; set; }
