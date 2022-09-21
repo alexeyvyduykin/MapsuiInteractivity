@@ -76,7 +76,7 @@ namespace Mapsui.Interactivity
             {
                 if (interactive is ISelector selector)
                 {
-                    selector.PointeroverStop(e.MapInfo);
+                    selector.PointeroverStop();
                 }
             };
         }

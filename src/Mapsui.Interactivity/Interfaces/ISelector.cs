@@ -1,21 +1,26 @@
-﻿using Mapsui.UI;
+﻿using Mapsui.Layers;
+using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
     public interface ISelector : IInteractive
     {
-        public event EventHandler? Select;
+        event EventHandler? Select;
 
-        public event EventHandler? Unselect;
+        event EventHandler? Unselect;
 
-        public event EventHandler? HoveringBegin;
+        event EventHandler? HoveringBegin;
 
-        public event EventHandler? HoveringEnd;
+        event EventHandler? HoveringEnd;
+
+        void Selected(IFeature feature, ILayer layer);
+
+        void Unselected();
 
         void PointeroverStart(MapInfo? mapInfo);
 
-        void PointeroverStop(MapInfo? mapInfo);
+        void PointeroverStart(IFeature feature, ILayer layer);
 
-        void Unselected();
+        void PointeroverStop();
     }
 }

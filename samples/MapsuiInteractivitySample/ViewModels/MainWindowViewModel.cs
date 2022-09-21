@@ -17,9 +17,6 @@ namespace MapsuiInteractivitySample.ViewModels
     {
         private readonly WritableLayer _userLayer;
         private ISelector? _selector;
-        private IFeature? _lastSelectedFeature;
-        private IFeature? _lastPointeroverFeature;
-        private ILayer? _lastPointeroverLayer;
 
         public MainWindowViewModel()
         {
@@ -44,10 +41,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
             ActualController = new DefaultController();
 
-            Layers = Map.Layers.Select(s => new LayerViewModel(s)).ToList();
-            SelectedLayer = Layers.FirstOrDefault();
-
             this.WhenAnyValue(s => s.SelectedLayer)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Where(s => s != null)
                 .Subscribe(s =>
                 {
@@ -56,73 +51,57 @@ namespace MapsuiInteractivitySample.ViewModels
                 });
 
             this.WhenAnyValue(s => s.SelectedFeature)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Where(s => s != null)
                 .Select(s => s!.Name)
-                .Subscribe(name =>
-                {
-                    var layerName = SelectedLayer?.Name;
-                    var layer = Map.Layers.Where(s => string.Equals(s.Name, layerName)).FirstOrDefault();
+                .Subscribe(name => SelectFeatureImpl(name));
 
-                    if (layer is WritableLayer wl)
-                    {
-                        var feature = wl.GetFeatures().Where(s => string.Equals(s["Name"], name)).FirstOrDefault();
-
-                        if (_lastSelectedFeature != null)
-                        {
-                            _lastSelectedFeature["selected"] = false;
-                        }
-
-                        if (feature != null)
-                        {
-                            feature["selected"] = true;
-
-                            _lastSelectedFeature = feature;
-                        }
-
-                        layer.DataHasChanged();
-                    }
-                });
-
-            PointerEnterFeature = ReactiveCommand.Create<FeatureViewModel>(PointeroverEnterImpl);
+            PointerEnterFeature = ReactiveCommand.Create<string>(PointeroverEnterImpl);
 
             PointerLeaveFeature = ReactiveCommand.Create(PointeroverLeaveImpl);
+
+            Layers = Map.Layers.Select(s => new LayerViewModel(s)).ToList();
+
+            SelectedLayer = Layers.FirstOrDefault();
         }
 
-        private void PointeroverEnterImpl(FeatureViewModel featureViewModel)
+        private void SelectFeatureImpl(string name)
         {
-            var name = featureViewModel.Name;
-            var layerName = SelectedLayer?.Name;
+            var (feature, layer) = Find(name, SelectedLayer?.Name);
+
+            if (feature != null && layer != null)
+            {
+                _selector?.Selected(feature, layer);
+            }
+        }
+
+        public void PointeroverEnterImpl(string name)
+        {
+            var (feature, layer) = Find(name, SelectedLayer?.Name);
+
+            if (feature != null && layer != null)
+            {
+                _selector?.PointeroverStart(feature, layer);
+            }
+        }
+
+        public void PointeroverLeaveImpl()
+        {
+            _selector?.PointeroverStop();
+        }
+
+        private (IFeature? feature, ILayer? layer) Find(string? featureName, string? layerName)
+        {
             var layer = Map.Layers.Where(s => string.Equals(s.Name, layerName)).FirstOrDefault();
+
+            IFeature? feature = null;
 
             if (layer is WritableLayer wl)
             {
-                var feature = wl.GetFeatures().Where(s => string.Equals(s["Name"], name)).FirstOrDefault();
-
-                if (_lastPointeroverFeature != null)
-                {
-                    _lastPointeroverFeature["pointerover"] = false;
-                }
-
-                if (feature != null)
-                {
-                    feature["pointerover"] = true;
-
-                    _lastPointeroverFeature = feature;
-                    _lastPointeroverLayer = layer;
-                }
-
-                layer.DataHasChanged();
+                feature = wl.GetFeatures().Where(s => string.Equals(s["Name"], featureName)).FirstOrDefault();
             }
-        }
 
-        private void PointeroverLeaveImpl()
-        {
-            if (_lastPointeroverFeature != null)
-            {
-                _lastPointeroverFeature["pointerover"] = false;
-
-                _lastPointeroverLayer?.DataHasChanged();
-            }
+            return (feature, layer);
         }
 
         private void Reset()
@@ -432,7 +411,7 @@ namespace MapsuiInteractivitySample.ViewModels
         [Reactive]
         public FeatureViewModel? SelectedFeature { get; set; }
 
-        public ReactiveCommand<FeatureViewModel, Unit> PointerEnterFeature { get; }
+        public ReactiveCommand<string, Unit> PointerEnterFeature { get; }
 
         public ReactiveCommand<Unit, Unit> PointerLeaveFeature { get; }
 

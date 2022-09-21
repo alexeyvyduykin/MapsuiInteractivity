@@ -5,14 +5,59 @@ namespace Mapsui.Interactivity
 {
     public class BaseSelector : BaseInteractive, ISelector
     {
-        private IFeature? _selectedFeature;
-        private IFeature? _lastFeature;
-        private ILayer? _lastLayer;
+        private IFeature? _lastSelectedFeature;
+        private IFeature? _lastPointeroverFeature;
+        private ILayer? _lastPointeroverLayer;
 
         public event EventHandler? Select;
         public event EventHandler? Unselect;
         public event EventHandler? HoveringBegin;
         public event EventHandler? HoveringEnd;
+
+        public void Selected(IFeature feature, ILayer layer)
+        {
+            if (layer is WritableLayer wl)
+            {
+                if (_lastSelectedFeature != null)
+                {
+                    _lastSelectedFeature["selected"] = false;
+
+                    Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                }
+
+                if (feature != null)
+                {
+                    feature["selected"] = true;
+
+                    _lastSelectedFeature = feature;
+                }
+
+                layer.DataHasChanged();
+
+                Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+            }
+        }
+
+        public void Unselected()
+        {
+            if (_lastPointeroverFeature != null)
+            {
+                _lastPointeroverFeature["pointerover"] = false;
+
+                _lastPointeroverLayer?.DataHasChanged();
+
+                HoveringEnd?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
+            }
+
+            if (_lastSelectedFeature != null)
+            {
+                _lastSelectedFeature["selected"] = false;
+
+                _lastPointeroverLayer?.DataHasChanged();
+
+                Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+            }
+        }
 
         public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
         {
@@ -22,52 +67,40 @@ namespace Mapsui.Interactivity
             {
                 var feature = mapInfo.Feature;
 
-                if (feature != _selectedFeature)
+                if (feature != _lastSelectedFeature)
                 {
-                    if (_selectedFeature != null)
+                    if (_lastSelectedFeature != null)
                     {
-                        _selectedFeature["selected"] = false;
+                        _lastSelectedFeature["selected"] = false;
+
+                        Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
                     }
 
-                    _selectedFeature = feature;
+                    _lastSelectedFeature = feature;
 
-                    _selectedFeature["selected"] = true;
+                    _lastSelectedFeature["selected"] = true;
 
-                    Select?.Invoke(_selectedFeature, EventArgs.Empty);
+                    Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
                 }
-                else if (_selectedFeature != null && feature == _selectedFeature)
+                else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
                 {
-                    if (_selectedFeature.Fields.Contains("selected"))
+                    if (_lastSelectedFeature.Fields.Contains("selected"))
                     {
-                        var isSelected = !(bool)_selectedFeature["selected"]!;
-                        _selectedFeature["selected"] = isSelected;
+                        var isSelected = !(bool)_lastSelectedFeature["selected"]!;
+                        _lastSelectedFeature["selected"] = isSelected;
 
                         if (isSelected == true)
                         {
-                            Select?.Invoke(_selectedFeature, EventArgs.Empty);
+                            Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
                         }
                         else
                         {
-                            Unselect?.Invoke(_selectedFeature, EventArgs.Empty);
+                            Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
                         }
                     }
                 }
 
                 mapInfo.Layer?.DataHasChanged();
-            }
-        }
-
-        public void Unselected()
-        {
-            if (_selectedFeature != null)
-            {
-                _selectedFeature["selected"] = false;
-
-                _lastFeature!["pointerover"] = false;
-
-                _lastLayer?.DataHasChanged();
-
-                Unselect?.Invoke(_selectedFeature, EventArgs.Empty);
             }
         }
 
@@ -90,30 +123,40 @@ namespace Mapsui.Interactivity
 
         public void PointeroverStart(MapInfo? mapInfo)
         {
-            _lastFeature = mapInfo?.Feature;
-            _lastLayer = mapInfo?.Layer;
-
-            if (_lastFeature != null)
+            if (mapInfo != null
+                && mapInfo.Feature != null
+                && mapInfo.Layer != null)
             {
-                _lastFeature["pointerover"] = true;
-
-                HoveringBegin?.Invoke(_lastFeature, EventArgs.Empty);
-
-                mapInfo?.Layer?.DataHasChanged();
+                PointeroverStart(mapInfo.Feature, mapInfo.Layer);
             }
         }
 
-        public void PointeroverStop(MapInfo? mapInfo)
+        public void PointeroverStart(IFeature feature, ILayer layer)
         {
-            if (_lastFeature != null)
+            if (_lastPointeroverFeature != null)
             {
-                _lastFeature["pointerover"] = false;
+                _lastPointeroverFeature["pointerover"] = false;
+            }
 
-                _lastLayer?.DataHasChanged();
+            feature["pointerover"] = true;
 
-                HoveringEnd?.Invoke(_lastFeature, EventArgs.Empty);
+            layer.DataHasChanged();
 
-                mapInfo?.Layer?.DataHasChanged();
+            _lastPointeroverFeature = feature;
+            _lastPointeroverLayer = layer;
+
+            HoveringBegin?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
+        }
+
+        public void PointeroverStop()
+        {
+            if (_lastPointeroverFeature != null)
+            {
+                _lastPointeroverFeature["pointerover"] = false;
+
+                _lastPointeroverLayer?.DataHasChanged();
+
+                HoveringEnd?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
             }
         }
     }

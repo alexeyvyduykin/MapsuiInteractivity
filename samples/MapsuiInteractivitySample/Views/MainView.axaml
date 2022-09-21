@@ -6,6 +6,7 @@
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:MapsuiInteractivitySample.ViewModels"
              xmlns:local="using:MapsuiInteractivitySample"
+			 x:Name="mainView"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MapsuiInteractivitySample.Views.MainView">
 
@@ -62,30 +63,32 @@
 				</ListBox>
 			</StackPanel>
 			<StackPanel Grid.Row="1">
-				<ListBox Items="{Binding Features}"
+				<ListBox x:Name="lb" Items="{Binding Features}"
 						 SelectedItem="{Binding SelectedFeature}">
 					<ListBox.Styles>
 						<Style Selector="ListBoxItem">
 							<Setter Property="Padding" Value="0"/>
 						</Style>
 					</ListBox.Styles>
+
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="vm:FeatureViewModel">
 							<Border x:Name="brdr" Padding="16,8" Background="Transparent">
 								<i:Interaction.Behaviors>
 									<ia:EventTriggerBehavior EventName="PointerEnter" SourceObject="{Binding #brdr}">
-										<ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.PointerEnterFeature}"
-																CommandParameter="{Binding}" />
+										<ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerEnterFeature}"
+																CommandParameter="{Binding #txtblck.Text}" />
 									</ia:EventTriggerBehavior>
 									<ia:EventTriggerBehavior EventName="PointerLeave" SourceObject="{Binding #brdr}">
-										<ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.PointerLeaveFeature}"/>
+										<ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerLeaveFeature}"/>
 									</ia:EventTriggerBehavior>
 								</i:Interaction.Behaviors>
 
-								<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+								<TextBlock x:Name="txtblck" Text="{Binding Name}" VerticalAlignment="Center"/>
 							</Border>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
+
 				</ListBox>
 			</StackPanel>
 		</Grid>
