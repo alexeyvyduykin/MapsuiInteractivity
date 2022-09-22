@@ -1,7 +1,7 @@
 ﻿using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.Interactivity;
-using Mapsui.Interactivity.UI;
+using Mapsui.Interactivity.UI.Avalonia;
 using Mapsui.Layers;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -38,8 +38,6 @@ namespace MapsuiInteractivitySample.ViewModels
             radioButtonList.Register(new RadioButtonItem("Route"), DrawingRouteCommand, Reset);
 
             RadioButtons = new List<RadioButtonItem>(radioButtonList.Items);
-
-            ActualController = new DefaultController();
 
             this.WhenAnyValue(s => s.SelectedLayer)
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -114,8 +112,8 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector?.Unselected();
             _selector = null;
 
-            Behavior = null;
-            ActualController = new DefaultController();
+            Interactive = null;
+            State = States.Default;
         }
 
         private void SelectCommand()
@@ -158,8 +156,8 @@ namespace MapsuiInteractivitySample.ViewModels
                 Tip = string.Empty;
             };
 
-            Behavior = new InteractiveBehavior(_selector);
-            ActualController = new SelectingController();
+            Interactive = _selector;
+            State = States.Selecting;
         }
 
         private void TranslateCommand()
@@ -170,21 +168,21 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 if (s is IDecorator decorator)
                 {
-                    Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditingController();
+                    Interactive = decorator;
+                    State = States.Editing;
                     Tip = $"Translate mode";
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
-                Behavior = new InteractiveBehavior(_selector);
-                ActualController = new SelectingController();
+                Interactive = _selector;
+                State = States.Selecting;
                 Tip = String.Empty;
             };
 
-            Behavior = new InteractiveBehavior(_selector);
-            ActualController = new SelectingController();
+            Interactive = _selector;
+            State = States.Selecting;
         }
 
         private void ScaleCommand()
@@ -195,21 +193,21 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 if (s is IDecorator decorator)
                 {
-                    Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditingController();
+                    Interactive = decorator;
+                    State = States.Editing;
                     Tip = $"Scale mode";
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
-                Behavior = new InteractiveBehavior(_selector);
-                ActualController = new SelectingController();
+                Interactive = _selector;
+                State = States.Selecting;
                 Tip = string.Empty;
             };
 
-            Behavior = new InteractiveBehavior(_selector);
-            ActualController = new SelectingController();
+            Interactive = _selector;
+            State = States.Selecting;
         }
 
         private void RotateCommand()
@@ -220,21 +218,21 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 if (s is IDecorator decorator)
                 {
-                    Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditingController();
+                    Interactive = decorator;
+                    State = States.Editing;
                     Tip = $"Rotate mode";
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
-                Behavior = new InteractiveBehavior(_selector);
-                ActualController = new SelectingController();
+                Interactive = _selector;
+                State = States.Selecting;
                 Tip = string.Empty;
             };
 
-            Behavior = new InteractiveBehavior(_selector);
-            ActualController = new SelectingController();
+            Interactive = _selector;
+            State = States.Selecting;
         }
 
         private void EditCommand()
@@ -245,21 +243,21 @@ namespace MapsuiInteractivitySample.ViewModels
             {
                 if (s is IDecorator decorator)
                 {
-                    Behavior = new InteractiveBehavior(decorator);
-                    ActualController = new EditingController();
+                    Interactive = decorator;
+                    State = States.Editing;
                     Tip = $"Edit mode";
                 }
             };
 
             _selector.Unselect += (s, e) =>
             {
-                Behavior = new InteractiveBehavior(_selector);
-                ActualController = new SelectingController();
+                Interactive = _selector;
+                State = States.Selecting;
                 Tip = string.Empty;
             };
 
-            Behavior = new InteractiveBehavior(_selector);
-            ActualController = new SelectingController();
+            Interactive = _selector;
+            State = States.Selecting;
         }
 
         private void DrawingPointCommand()
@@ -273,9 +271,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
             Tip = "Нажмите, чтобы нарисовать точку";
 
-            Behavior = new InteractiveBehavior(designer);
-
-            ActualController = new DrawingController();
+            Interactive = designer;
+            State = States.Drawing;
         }
 
         private void DrawingRectangleCommand()
@@ -300,9 +297,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
             Tip = "Нажмите и перетащите, чтобы нарисовать прямоугольник";
 
-            Behavior = new InteractiveBehavior(designer);
-
-            ActualController = new DrawingController();
+            Interactive = designer;
+            State = States.Drawing;
         }
 
         private void DrawingCircleCommand()
@@ -327,9 +323,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
             Tip = "Нажмите и перетащите, чтобы нарисовать круг";
 
-            Behavior = new InteractiveBehavior(designer);
-
-            ActualController = new DrawingController();
+            Interactive = designer;
+            State = States.Drawing;
         }
 
         private void DrawingRouteCommand()
@@ -356,9 +351,8 @@ namespace MapsuiInteractivitySample.ViewModels
 
             Tip = "Кликните, чтобы начать измерение";
 
-            Behavior = new InteractiveBehavior(designer);
-
-            ActualController = new DrawingController();
+            Interactive = designer;
+            State = States.Drawing;
         }
 
         private void DrawingPolygonCommand()
@@ -391,13 +385,18 @@ namespace MapsuiInteractivitySample.ViewModels
 
             Tip = "Нажмите и перетащите, чтобы нарисовать полигон";
 
-            Behavior = new InteractiveBehavior(designer);
-
-            ActualController = new DrawingController();
+            Interactive = designer;
+            State = States.Drawing;
         }
 
         [Reactive]
         public Map Map { get; set; }
+
+        [Reactive]
+        public IInteractive? Interactive { get; set; }
+
+        [Reactive]
+        public string State { get; set; } = States.Default;
 
         [Reactive]
         public IList<LayerViewModel> Layers { get; set; }
@@ -417,12 +416,6 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public List<RadioButtonItem> RadioButtons { get; set; }
-
-        [Reactive]
-        public IController ActualController { get; set; }
-
-        [Reactive]
-        public IInteractiveBehavior? Behavior { get; set; }
 
         [Reactive]
         public string Tip { get; set; } = string.Empty;

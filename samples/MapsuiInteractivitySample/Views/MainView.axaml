@@ -6,6 +6,7 @@
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:MapsuiInteractivitySample.ViewModels"
              xmlns:local="using:MapsuiInteractivitySample"
+             xmlns:inter="using:Mapsui.Interactivity.UI.Avalonia"
 			 x:Name="mainView"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MapsuiInteractivitySample.Views.MainView">
@@ -25,11 +26,14 @@
 	<Grid RowDefinitions="*,Auto">
 
 		<local:UserMapControl x:Name="MapControl"
-							  MapSource="{Binding Map}"
-							  Controller="{Binding ActualController}"
-							  Behavior="{Binding Behavior}"
 							  VerticalAlignment="Stretch"
-							  HorizontalAlignment="Stretch" />
+							  HorizontalAlignment="Stretch">
+			<inter:Interaction.Behavior>
+				<inter:InteractivityBehavior Map="{Binding Map}"
+											 Interactive="{Binding Interactive}"
+											 State="{Binding State}"/>
+			</inter:Interaction.Behavior>
+		</local:UserMapControl>
 
 		<Grid Width="200"
 			  RowDefinitions="Auto,Auto"
