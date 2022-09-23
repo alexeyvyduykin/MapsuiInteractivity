@@ -1,13 +1,5 @@
 ﻿namespace Mapsui.Interactivity.UI.Avalonia
 {
-    public static class States
-    {
-        public const string Default = "Default";
-        public const string Selecting = "Selecting";
-        public const string Drawing = "Drawing";
-        public const string Editing = "Editing";
-    }
-
     public static class InteractiveControllerFactory
     {
         private static readonly IDictionary<string, Func<IController>> _cache = new Dictionary<string, Func<IController>>();

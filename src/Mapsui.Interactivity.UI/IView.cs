@@ -6,7 +6,7 @@
 
         void SetCursor(CursorType cursorType);
 
-        IInteractiveBehavior Behavior { get; set; }
+        IInteractiveBehavior Behavior { get; }
 
         MPoint WorldToScreen(MPoint worldPosition);
     }

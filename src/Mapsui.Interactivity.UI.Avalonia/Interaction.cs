@@ -70,9 +70,6 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            control.AttachedToVisualTree -= Control_AttachedToVisualTreeRuntime;
-            control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeRuntime;
-
             control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
             control.AttachedToVisualTree += Control_AttachedToVisualTreeInitial;
 
@@ -89,12 +86,6 @@ namespace Mapsui.Interactivity.UI.Avalonia
 
             control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
             control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeInitial;
-
-            control.AttachedToVisualTree -= Control_AttachedToVisualTreeRuntime;
-            control.AttachedToVisualTree += Control_AttachedToVisualTreeRuntime;
-
-            control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeRuntime;
-            control.DetachedFromVisualTree += Control_DetachedFromVisualTreeRuntime;
         }
 
         private static void Control_AttachedToVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
@@ -102,7 +93,6 @@ namespace Mapsui.Interactivity.UI.Avalonia
             if (sender is IAvaloniaObject d)
             {
                 GetBehavior(d)?.Attach(d);
-                GetBehavior(d)?.AttachedToVisualTree();
             }
         }
 
@@ -110,24 +100,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             if (sender is IAvaloniaObject d)
             {
-                GetBehavior(d)?.DetachedFromVisualTree();
                 GetBehavior(d)?.Detach();
-            }
-        }
-
-        private static void Control_AttachedToVisualTreeRuntime(object? sender, VisualTreeAttachmentEventArgs e)
-        {
-            if (sender is IAvaloniaObject d)
-            {
-                GetBehavior(d)?.AttachedToVisualTree();
-            }
-        }
-
-        private static void Control_DetachedFromVisualTreeRuntime(object? sender, VisualTreeAttachmentEventArgs e)
-        {
-            if (sender is IAvaloniaObject d)
-            {
-                GetBehavior(d)?.DetachedFromVisualTree();
             }
         }
     }

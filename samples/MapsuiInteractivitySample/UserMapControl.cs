@@ -3,10 +3,11 @@ using Mapsui.Extensions;
 using Mapsui.Interactivity.UI;
 using Mapsui.Interactivity.UI.Avalonia;
 using Mapsui.Projections;
+using Mapsui.UI.Avalonia;
 
 namespace MapsuiInteractivitySample
 {
-    public class UserMapControl : InteractiveMapControl
+    public class UserMapControl : MapControl
     {
         private bool _isGrabbing = false;
 
@@ -49,6 +50,11 @@ namespace MapsuiInteractivitySample
             }
 
             base.OnPointerReleased(e);
+        }
+
+        public void SetCursor(CursorType cursorType)
+        {
+            Cursor = new Cursor(cursorType.ToStandartCursor());
         }
     }
 }

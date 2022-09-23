@@ -1,90 +1,34 @@
 ﻿using Avalonia;
 using Avalonia.Data;
 using Mapsui.UI.Avalonia;
-using System.Diagnostics;
-using System.Globalization;
-using mapsui = Mapsui.Interactivity;
 
 namespace Mapsui.Interactivity.UI.Avalonia
 {
-    public class InteractivityBehavior : AvaloniaObject
+    public partial class InteractivityBehavior : AvaloniaObject
     {
-        #region MyRegion
-
-        public IAvaloniaObject? AssociatedObject { get; private set; }
-
-        public void Attach(IAvaloniaObject? associatedObject)
-        {
-            if (Equals(associatedObject, AssociatedObject))
-            {
-                return;
-            }
-
-            if (AssociatedObject is { })
-            {
-                throw new InvalidOperationException(string.Format(
-                    CultureInfo.CurrentCulture,
-                    "An instance of a behavior cannot be attached to more than one object at a time."));
-            }
-
-            Debug.Assert(associatedObject is { }, "Cannot attach the behavior to a null object.");
-            AssociatedObject = associatedObject ?? throw new ArgumentNullException(nameof(associatedObject));
-
-            OnAttached();
-        }
-
-        public void Detach()
-        {
-            OnDetaching();
-            AssociatedObject = null;
-        }
-
-        protected virtual void OnAttached()
-        {
-        }
-
-        protected virtual void OnDetaching()
-        {
-        }
-
-        internal void AttachedToVisualTree()
-        {
-            OnAttachedToVisualTree();
-        }
-
-        internal void DetachedFromVisualTree()
-        {
-            OnDetachedFromVisualTree();
-        }
-
-        protected virtual void OnAttachedToVisualTree()
-        {
-        }
-
-        protected virtual void OnDetachedFromVisualTree()
-        {
-        }
-
-        #endregion
+        private IController? _controller;
+        private InteractiveBehavior? _behavior;
 
         static InteractivityBehavior()
         {
-            InteractiveProperty.Changed.Subscribe(s => HandleInteractiveChanged(s.Sender, s.NewValue.GetValueOrDefault<mapsui.IInteractive>()));
+            InteractiveProperty.Changed.Subscribe(s => HandleInteractiveChanged(s.Sender, s.NewValue.GetValueOrDefault<IInteractive>()));
             StateProperty.Changed.Subscribe(s => HandleStateChanged(s.Sender, s.NewValue.GetValueOrDefault<string>()));
             MapProperty.Changed.Subscribe(s => HandleMapChanged(s.Sender, s.NewValue.GetValueOrDefault<Map>()));
         }
 
-        public static readonly StyledProperty<mapsui.IInteractive?> InteractiveProperty =
-            AvaloniaProperty.Register<InteractivityBehavior, mapsui.IInteractive?>(nameof(Interactive), null, false, BindingMode.OneWay);
+        // HACK: [Binding] Error in binding to 'Mapsui.Interactivity.UI.Avalonia.InteractivityBehavior'.'Interactive': 'Null value in expression '{empty}' at ''.' (InteractivityBehavior #16468652)
 
-        public mapsui.IInteractive? Interactive
+        public static readonly StyledProperty<IInteractive?> InteractiveProperty =
+            AvaloniaProperty.Register<InteractivityBehavior, IInteractive?>(nameof(Interactive), null, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : null);
+
+        public IInteractive? Interactive
         {
             get { return GetValue(InteractiveProperty); }
             set { SetValue(InteractiveProperty, value); }
         }
 
         public static readonly StyledProperty<string> StateProperty =
-            AvaloniaProperty.Register<InteractivityBehavior, string>(nameof(State), States.Default, false, BindingMode.OneWay);
+            AvaloniaProperty.Register<InteractivityBehavior, string>(nameof(State), States.Default, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : string.Empty);
 
         public string State
         {
@@ -93,7 +37,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
         }
 
         public static readonly StyledProperty<Map?> MapProperty =
-            AvaloniaProperty.Register<InteractivityBehavior, Map?>(nameof(Map), null, false, BindingMode.OneWay);
+            AvaloniaProperty.Register<InteractivityBehavior, Map?>(nameof(Map), null, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : null);
 
         public Map? Map
         {
@@ -101,14 +45,35 @@ namespace Mapsui.Interactivity.UI.Avalonia
             set { SetValue(MapProperty, value); }
         }
 
-        private static void HandleInteractiveChanged(IAvaloniaObject element, mapsui.IInteractive? value)
+        private void SetController(string key)
+        {
+            _controller = InteractiveControllerFactory.GetController(key);
+
+            if (AssociatedObject is MapControl mapControl && _behavior is not null)
+            {
+                // HACK: after tools check, hover manipulator not active, it call this
+                _controller.HandleMouseEnter(new MapControlAdaptor(mapControl, _behavior), new Input.Core.MouseEventArgs());
+            }
+        }
+
+        private void SetBehavior(IInteractive interactive)
+        {
+            _behavior = new InteractiveBehavior(interactive);
+        }
+
+        private void SetMap(Map? map)
+        {
+            if (AssociatedObject is MapControl mapControl)
+            {
+                mapControl.Map = map;
+            }
+        }
+
+        private static void HandleInteractiveChanged(IAvaloniaObject element, IInteractive? value)
         {
             if (element is InteractivityBehavior behavior && value is not null)
             {
-                if (behavior.AssociatedObject is InteractiveMapControl mapControl)
-                {
-                    mapControl.Behavior = new InteractiveBehavior(value);
-                }
+                behavior.SetBehavior(value);
             }
         }
 
@@ -116,10 +81,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             if (element is InteractivityBehavior behavior && string.IsNullOrEmpty(value) == false)
             {
-                if (behavior.AssociatedObject is InteractiveMapControl mapControl)
-                {
-                    mapControl.Controller = InteractiveControllerFactory.GetController(value);
-                }
+                behavior.SetController(value);
             }
         }
 
@@ -127,10 +89,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             if (element is InteractivityBehavior behavior)
             {
-                if (behavior.AssociatedObject is MapControl mapControl)
-                {
-                    mapControl.Map = value;
-                }
+                behavior.SetMap(value);
             }
         }
     }

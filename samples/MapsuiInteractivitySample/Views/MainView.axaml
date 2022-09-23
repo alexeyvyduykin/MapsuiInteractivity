@@ -6,9 +6,9 @@
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:MapsuiInteractivitySample.ViewModels"
              xmlns:local="using:MapsuiInteractivitySample"
-             xmlns:inter="using:Mapsui.Interactivity.UI.Avalonia"
+             xmlns:inter="clr-namespace:Mapsui.Interactivity.UI.Avalonia;assembly=Mapsui.Interactivity.UI.Avalonia"
 			 x:Name="mainView"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
              x:Class="MapsuiInteractivitySample.Views.MainView">
 
 	<Design.DataContext>
