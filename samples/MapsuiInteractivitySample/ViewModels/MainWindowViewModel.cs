@@ -79,13 +79,13 @@ namespace MapsuiInteractivitySample.ViewModels
 
             if (feature != null && layer != null)
             {
-                _selector?.PointeroverStart(feature, layer);
+                _selector?.HoveringBegin(feature, layer);
             }
         }
 
         public void PointeroverLeaveImpl()
         {
-            _selector?.PointeroverStop();
+            _selector?.HoveringEnd();
         }
 
         private (IFeature? feature, ILayer? layer) Find(string? featureName, string? layerName)
@@ -135,12 +135,12 @@ namespace MapsuiInteractivitySample.ViewModels
                 }
             });
 
-            _selector.HoveringBegin.Subscribe(s =>
+            _selector.HoverBegin.Subscribe(s =>
             {
                 Tip = $"HoveringBegin{Environment.NewLine}{s.HoveringFeature?.ToFeatureInfo()}";
             });
 
-            _selector.HoveringEnd.Subscribe(s =>
+            _selector.HoverEnd.Subscribe(s =>
             {
                 Tip = string.Empty;
             });

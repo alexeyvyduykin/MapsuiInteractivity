@@ -28,14 +28,14 @@ namespace Mapsui.Interactivity.UI
                     {
                         if (_lastMapInfo != null)
                         {
-                            View.Interactive.PointeroverStop();
+                            View.Interactive.HoveringEnd();
                         }
 
                         _lastFeature = mapInfo.Feature;
 
                         if (_lastFeature != null)
                         {
-                            View.Interactive.PointeroverStart(mapInfo);
+                            View.Interactive.HoveringBegin(mapInfo);
                             _lastMapInfo = mapInfo;
                         }
                     }
@@ -48,7 +48,7 @@ namespace Mapsui.Interactivity.UI
 
                         if (_lastFeature != null)
                         {
-                            View.Interactive.PointeroverStart(mapInfo);
+                            View.Interactive.HoveringBegin(mapInfo);
                             _lastMapInfo = mapInfo;
                         }
 
@@ -65,7 +65,7 @@ namespace Mapsui.Interactivity.UI
 
                         if (_lastFeature != null)
                         {
-                            View.Interactive.PointeroverStop();
+                            View.Interactive.HoveringEnd();
                         }
 
                         _isChecker = true;

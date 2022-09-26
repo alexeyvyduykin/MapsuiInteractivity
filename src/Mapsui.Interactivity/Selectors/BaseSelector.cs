@@ -15,17 +15,17 @@ namespace Mapsui.Interactivity
         {
             Select = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
             Unselect = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-            HoveringBegin = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-            HoveringEnd = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            HoverBegin = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            HoverEnd = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
         }
 
         public ReactiveCommand<Unit, ISelector> Select { get; }
 
         public ReactiveCommand<Unit, ISelector> Unselect { get; }
 
-        public ReactiveCommand<Unit, ISelector> HoveringBegin { get; }
+        public ReactiveCommand<Unit, ISelector> HoverBegin { get; }
 
-        public ReactiveCommand<Unit, ISelector> HoveringEnd { get; }
+        public ReactiveCommand<Unit, ISelector> HoverEnd { get; }
 
         public IFeature? SelectedFeature => _lastSelectedFeature;
 
@@ -60,7 +60,7 @@ namespace Mapsui.Interactivity
 
                 _lastPointeroverLayer?.DataHasChanged();
 
-                HoveringEnd?.Execute().Subscribe();
+                HoverEnd?.Execute().Subscribe();
             }
 
             if (_lastSelectedFeature != null)
@@ -121,17 +121,17 @@ namespace Mapsui.Interactivity
 
         public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
 
-        public override void PointeroverStart(MapInfo? mapInfo)
+        public override void HoveringBegin(MapInfo? mapInfo)
         {
             if (mapInfo != null
                 && mapInfo.Feature != null
                 && mapInfo.Layer != null)
             {
-                PointeroverStart(mapInfo.Feature, mapInfo.Layer);
+                HoveringBegin(mapInfo.Feature, mapInfo.Layer);
             }
         }
 
-        public void PointeroverStart(IFeature feature, ILayer layer)
+        public void HoveringBegin(IFeature feature, ILayer layer)
         {
             if (_lastPointeroverFeature != null)
             {
@@ -145,10 +145,10 @@ namespace Mapsui.Interactivity
             _lastPointeroverFeature = feature;
             _lastPointeroverLayer = layer;
 
-            HoveringBegin?.Execute().Subscribe();
+            HoverBegin?.Execute().Subscribe();
         }
 
-        public override void PointeroverStop()
+        public override void HoveringEnd()
         {
             if (_lastPointeroverFeature != null)
             {
@@ -156,7 +156,7 @@ namespace Mapsui.Interactivity
 
                 _lastPointeroverLayer?.DataHasChanged();
 
-                HoveringEnd?.Execute().Subscribe();
+                HoverEnd?.Execute().Subscribe();
             }
         }
     }

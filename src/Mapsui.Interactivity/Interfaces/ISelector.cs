@@ -10,7 +10,7 @@ namespace Mapsui.Interactivity
 
         void Unselected();
 
-        void PointeroverStart(IFeature feature, ILayer layer);
+        void HoveringBegin(IFeature feature, ILayer layer);
 
         IFeature? SelectedFeature { get; }
 
@@ -20,8 +20,8 @@ namespace Mapsui.Interactivity
 
         ReactiveCommand<Unit, ISelector> Unselect { get; }
 
-        ReactiveCommand<Unit, ISelector> HoveringBegin { get; }
+        ReactiveCommand<Unit, ISelector> HoverBegin { get; }
 
-        ReactiveCommand<Unit, ISelector> HoveringEnd { get; }
+        ReactiveCommand<Unit, ISelector> HoverEnd { get; }
     }
 }

@@ -28,8 +28,8 @@ namespace Mapsui.Interactivity
 
         public virtual void Hovering(MapInfo? mapInfo) { }
 
-        public virtual void PointeroverStart(MapInfo? mapInfo) { }
+        public virtual void HoveringBegin(MapInfo? mapInfo) { }
 
-        public virtual void PointeroverStop() { }
+        public virtual void HoveringEnd() { }
     }
 }
