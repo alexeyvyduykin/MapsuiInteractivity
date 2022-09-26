@@ -120,20 +120,17 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             _selector = new BaseSelector();
 
-            _selector.Select += (s, e) =>
+            _selector.Select.Subscribe(s =>
             {
-                if (s is IFeature feature)
+                Tip = $"Select{Environment.NewLine}{s.SelectedFeature?.ToFeatureInfo()}";
+
+                if (IsWktInfo == true)
                 {
-                    Tip = $"Select{Environment.NewLine}{feature.ToFeatureInfo()}";
-
-                    if (IsWktInfo == true)
-                    {
-                        WktInfo = feature.ToWkt();
-                    }
+                    WktInfo = s.SelectedFeature?.ToWkt();
                 }
-            };
+            });
 
-            _selector.Unselect += (s, e) =>
+            _selector.Unselect.Subscribe(s =>
             {
                 Tip = string.Empty;
 
@@ -141,20 +138,17 @@ namespace MapsuiInteractivitySample.ViewModels
                 {
                     WktInfo = string.Empty;
                 }
-            };
+            });
 
-            _selector.HoveringBegin += (s, e) =>
+            _selector.HoveringBegin.Subscribe(s =>
             {
-                if (s is IFeature feature)
-                {
-                    Tip = $"HoveringBegin{Environment.NewLine}{feature.ToFeatureInfo()}";
-                }
-            };
+                Tip = $"HoveringBegin{Environment.NewLine}{s.HoveringFeature?.ToFeatureInfo()}";
+            });
 
-            _selector.HoveringEnd += (s, e) =>
+            _selector.HoveringEnd.Subscribe(s =>
             {
                 Tip = string.Empty;
-            };
+            });
 
             Interactive = _selector;
             State = States.Selecting;
@@ -174,12 +168,12 @@ namespace MapsuiInteractivitySample.ViewModels
                 }
             };
 
-            _selector.Unselect += (s, e) =>
+            _selector.Unselect.Subscribe(s =>
             {
-                Interactive = _selector;
+                Interactive = s;
                 State = States.Selecting;
                 Tip = String.Empty;
-            };
+            });
 
             Interactive = _selector;
             State = States.Selecting;
@@ -199,12 +193,12 @@ namespace MapsuiInteractivitySample.ViewModels
                 }
             };
 
-            _selector.Unselect += (s, e) =>
+            _selector.Unselect.Subscribe(s =>
             {
-                Interactive = _selector;
+                Interactive = s;
                 State = States.Selecting;
                 Tip = string.Empty;
-            };
+            });
 
             Interactive = _selector;
             State = States.Selecting;
@@ -224,12 +218,12 @@ namespace MapsuiInteractivitySample.ViewModels
                 }
             };
 
-            _selector.Unselect += (s, e) =>
+            _selector.Unselect.Subscribe(s =>
             {
-                Interactive = _selector;
+                Interactive = s;
                 State = States.Selecting;
                 Tip = string.Empty;
-            };
+            });
 
             Interactive = _selector;
             State = States.Selecting;
@@ -249,12 +243,12 @@ namespace MapsuiInteractivitySample.ViewModels
                 }
             };
 
-            _selector.Unselect += (s, e) =>
+            _selector.Unselect.Subscribe(s =>
             {
-                Interactive = _selector;
+                Interactive = s;
                 State = States.Selecting;
                 Tip = string.Empty;
-            };
+            });
 
             Interactive = _selector;
             State = States.Selecting;
@@ -264,10 +258,10 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             var designer = new InteractiveFactory().CreatePointDesigner(Map.Layers);
 
-            designer.EndCreating += (s, e) =>
+            designer.EndCreating.Subscribe(s =>
             {
-                _userLayer.Add(designer.Feature.Copy());
-            };
+                _userLayer.Add(s.Feature.Copy());
+            });
 
             Tip = "Нажмите, чтобы нарисовать точку";
 
@@ -277,26 +271,23 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRectangleCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map.Layers);
+            var designer = new InteractiveFactory().CreateRectangleDesigner(Map.Layers);
 
             designer.HoverCreating.Subscribe(s =>
             {
-                if (s is IAreaDesigner areaDesigner)
-                {
-                    var area = areaDesigner.Area();
+                var area = ((IAreaDesigner)s).Area();
 
-                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-                }
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
             });
 
-            designer.EndCreating += (s, e) =>
+            designer.EndCreating.Subscribe(s =>
             {
-                _userLayer.Add(designer.Feature.Copy());
+                _userLayer.Add(s.Feature.Copy());
 
                 Tip = string.Empty;
 
                 RadioButtons.Where(s => string.Equals(s.Name, "Rectangle")).First().IsSelected = false;
-            };
+            });
 
             Tip = "Нажмите и перетащите, чтобы нарисовать прямоугольник";
 
@@ -306,26 +297,23 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingCircleCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map.Layers);
+            var designer = new InteractiveFactory().CreateCircleDesigner(Map.Layers);
 
             designer.HoverCreating.Subscribe(s =>
             {
-                if (s is IAreaDesigner areaDesigner)
-                {
-                    var area = areaDesigner.Area();
+                var area = ((IAreaDesigner)s).Area();
 
-                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-                }
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
             });
 
-            designer.EndCreating += (s, e) =>
+            designer.EndCreating.Subscribe(s =>
             {
-                _userLayer.Add(designer.Feature.Copy());
+                _userLayer.Add(s.Feature.Copy());
 
                 Tip = string.Empty;
 
                 RadioButtons.Where(s => string.Equals(s.Name, "Circle")).First().IsSelected = false;
-            };
+            });
 
             Tip = "Нажмите и перетащите, чтобы нарисовать круг";
 
@@ -335,28 +323,25 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRouteCommand()
         {
-            var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map.Layers);
+            var designer = new InteractiveFactory().CreateRouteDesigner(Map.Layers);
 
             designer.HoverCreating.Subscribe(s =>
             {
-                if (s is IRouteDesigner routeDesigner)
-                {
-                    var distance = routeDesigner.Distance();
+                var distance = ((IRouteDesigner)s).Distance();
 
-                    var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
+                var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
 
-                    Tip = $"Расстояние: {res}";
-                }
+                Tip = $"Расстояние: {res}";
             });
 
-            designer.EndCreating += (s, e) =>
+            designer.EndCreating.Subscribe(s =>
             {
-                _userLayer.Add(designer.Feature.Copy());
+                _userLayer.Add(s.Feature.Copy());
 
                 Tip = string.Empty;
 
                 RadioButtons.Where(s => string.Equals(s.Name, "Route")).First().IsSelected = false;
-            };
+            });
 
             Tip = "Кликните, чтобы начать измерение";
 
@@ -366,31 +351,31 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingPolygonCommand()
         {
-            var designer = (IAreaDesigner)new InteractiveFactory().CreatePolygonDesigner(Map.Layers);
+            var designer = new InteractiveFactory().CreatePolygonDesigner(Map.Layers);
 
-            designer.BeginCreating += (s, e) =>
+            designer.BeginCreating.Subscribe(s =>
             {
                 Tip = "Нажмите, чтобы продолжить рисовать фигуру";
-            };
+            });
 
-            designer.Creating += (s, e) =>
+            designer.Creating.Subscribe(s =>
             {
-                var area = designer.Area();
+                var area = ((IAreaDesigner)s).Area();
 
                 if (area != 0.0)
                 {
                     Tip = $"Щелкните по первой точке, чтобы закрыть эту фигуру. Область: {area:N2} km²";
                 }
-            };
+            });
 
-            designer.EndCreating += (s, e) =>
+            designer.EndCreating.Subscribe(s =>
             {
-                _userLayer.Add(designer.Feature.Copy());
+                _userLayer.Add(s.Feature.Copy());
 
                 Tip = string.Empty;
 
                 RadioButtons.Where(s => string.Equals(s.Name, "Polygon")).First().IsSelected = false;
-            };
+            });
 
             Tip = "Нажмите и перетащите, чтобы нарисовать полигон";
 

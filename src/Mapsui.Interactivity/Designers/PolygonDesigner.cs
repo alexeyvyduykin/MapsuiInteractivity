@@ -63,7 +63,7 @@ namespace Mapsui.Interactivity
             {
                 BeginDrawing(worldPosition);
 
-                BeginCreatingCallback();
+                BeginCreating.Execute().Subscribe();
 
                 _firstClick = false;
 
@@ -79,7 +79,7 @@ namespace Mapsui.Interactivity
 
                     _firstClick = true;
 
-                    EndCreatingCallback();
+                    EndCreating.Execute().Subscribe();
 
                     return;
                 }
@@ -87,7 +87,7 @@ namespace Mapsui.Interactivity
                 {
                     Drawing(worldPosition);
 
-                    CreatingCallback();
+                    Creating.Execute().Subscribe();
 
                     return;
                 }

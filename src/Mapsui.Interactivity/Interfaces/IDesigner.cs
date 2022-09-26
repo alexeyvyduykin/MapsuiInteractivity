@@ -10,12 +10,12 @@ namespace Mapsui.Interactivity
 
         IList<GeometryFeature> ExtraFeatures { get; }
 
-        event EventHandler? BeginCreating;
+        ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
 
-        event EventHandler? Creating;
+        ReactiveCommand<Unit, IDesigner> Creating { get; }
 
         ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
 
-        event EventHandler? EndCreating;
+        ReactiveCommand<Unit, IDesigner> EndCreating { get; }
     }
 }

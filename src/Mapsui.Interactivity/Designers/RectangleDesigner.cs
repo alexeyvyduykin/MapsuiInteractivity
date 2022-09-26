@@ -54,7 +54,7 @@ namespace Mapsui.Interactivity
 
                 _firstClick = false;
 
-                BeginCreatingCallback();
+                BeginCreating.Execute().Subscribe();
 
                 return;
             }
@@ -64,7 +64,7 @@ namespace Mapsui.Interactivity
 
                 _firstClick = true;
 
-                EndCreatingCallback();
+                EndCreating.Execute().Subscribe();
 
                 return;
             }

@@ -8,35 +8,22 @@ namespace Mapsui.Interactivity
     {
         public BaseDesigner()
         {
+            BeginCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            Creating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
             HoverCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            EndCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
         }
 
         public GeometryFeature Feature { get; protected set; } = new GeometryFeature();
 
         public IList<GeometryFeature> ExtraFeatures { get; protected set; } = new List<GeometryFeature>();
 
-        public event EventHandler? BeginCreating;
+        public ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
 
-        public event EventHandler? Creating;
+        public ReactiveCommand<Unit, IDesigner> Creating { get; }
 
         public ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
 
-
-        public event EventHandler? EndCreating;
-
-        protected void BeginCreatingCallback()
-        {
-            BeginCreating?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected void CreatingCallback()
-        {
-            Creating?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected void EndCreatingCallback()
-        {
-            EndCreating?.Invoke(this, EventArgs.Empty);
-        }
+        public ReactiveCommand<Unit, IDesigner> EndCreating { get; }
     }
 }

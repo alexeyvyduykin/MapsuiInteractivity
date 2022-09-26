@@ -1,5 +1,7 @@
 ﻿using Mapsui.Layers;
 using Mapsui.UI;
+using ReactiveUI;
+using System.Reactive;
 
 namespace Mapsui.Interactivity
 {
@@ -9,10 +11,25 @@ namespace Mapsui.Interactivity
         private IFeature? _lastPointeroverFeature;
         private ILayer? _lastPointeroverLayer;
 
-        public event EventHandler? Select;
-        public event EventHandler? Unselect;
-        public event EventHandler? HoveringBegin;
-        public event EventHandler? HoveringEnd;
+        public BaseSelector() : base()
+        {
+            Select = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            Unselect = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            HoveringBegin = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            HoveringEnd = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+        }
+
+        public ReactiveCommand<Unit, ISelector> Select { get; }
+
+        public ReactiveCommand<Unit, ISelector> Unselect { get; }
+
+        public ReactiveCommand<Unit, ISelector> HoveringBegin { get; }
+
+        public ReactiveCommand<Unit, ISelector> HoveringEnd { get; }
+
+        public IFeature? SelectedFeature => _lastSelectedFeature;
+
+        public IFeature? HoveringFeature => _lastPointeroverFeature;
 
         public void Selected(IFeature feature, ILayer layer)
         {
@@ -22,19 +39,16 @@ namespace Mapsui.Interactivity
                 {
                     _lastSelectedFeature["selected"] = false;
 
-                    Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                    Unselect?.Execute().Subscribe();
                 }
 
-                if (feature != null)
-                {
-                    feature["selected"] = true;
+                feature["selected"] = true;
 
-                    _lastSelectedFeature = feature;
-                }
+                _lastSelectedFeature = feature;
 
                 layer.DataHasChanged();
 
-                Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                Select?.Execute().Subscribe();
             }
         }
 
@@ -46,7 +60,7 @@ namespace Mapsui.Interactivity
 
                 _lastPointeroverLayer?.DataHasChanged();
 
-                HoveringEnd?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
+                HoveringEnd?.Execute().Subscribe();
             }
 
             if (_lastSelectedFeature != null)
@@ -55,7 +69,7 @@ namespace Mapsui.Interactivity
 
                 _lastPointeroverLayer?.DataHasChanged();
 
-                Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                Unselect?.Execute().Subscribe();
             }
         }
 
@@ -73,29 +87,30 @@ namespace Mapsui.Interactivity
                     {
                         _lastSelectedFeature["selected"] = false;
 
-                        Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                        Unselect?.Execute().Subscribe();
                     }
+
+                    feature["selected"] = true;
 
                     _lastSelectedFeature = feature;
 
-                    _lastSelectedFeature["selected"] = true;
-
-                    Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                    Select?.Execute().Subscribe();
                 }
                 else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
                 {
                     if (_lastSelectedFeature.Fields.Contains("selected"))
                     {
                         var isSelected = !(bool)_lastSelectedFeature["selected"]!;
+
                         _lastSelectedFeature["selected"] = isSelected;
 
                         if (isSelected == true)
                         {
-                            Select?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                            Select?.Execute().Subscribe();
                         }
                         else
                         {
-                            Unselect?.Invoke(_lastSelectedFeature, EventArgs.Empty);
+                            Unselect?.Execute().Subscribe();
                         }
                     }
                 }
@@ -130,7 +145,7 @@ namespace Mapsui.Interactivity
             _lastPointeroverFeature = feature;
             _lastPointeroverLayer = layer;
 
-            HoveringBegin?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
+            HoveringBegin?.Execute().Subscribe();
         }
 
         public override void PointeroverStop()
@@ -141,7 +156,7 @@ namespace Mapsui.Interactivity
 
                 _lastPointeroverLayer?.DataHasChanged();
 
-                HoveringEnd?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
+                HoveringEnd?.Execute().Subscribe();
             }
         }
     }

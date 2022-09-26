@@ -43,15 +43,9 @@ namespace Mapsui.Interactivity
                 Style = CreateInteractiveLayerDesignerStyle(),
             };
 
-            designer.BeginCreating += (s, e) =>
-            {
-                layers.Add(interactiveLayer);
-            };
+            designer.BeginCreating.Subscribe(_ => layers.Add(interactiveLayer));
 
-            designer.EndCreating += (s, e) =>
-            {
-                layers.Remove(interactiveLayer);
-            };
+            designer.EndCreating.Subscribe(_ => layers.Remove(interactiveLayer));
 
             return designer;
         }

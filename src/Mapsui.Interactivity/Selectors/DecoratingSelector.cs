@@ -14,27 +14,21 @@ namespace Mapsui.Interactivity
             _layers = layers;
             _builder = builder;
 
-            Select += DecoratingSelector_Select;
-            Unselect += DecoratingSelector_Unselect;
-        }
-
-        private void DecoratingSelector_Unselect(object? sender, EventArgs e)
-        {
-            RemoveInteractiveLayer(_layers);
-        }
-
-        private void DecoratingSelector_Select(object? sender, EventArgs e)
-        {
-            if (sender is GeometryFeature gf)
+            Select.Subscribe(s =>
             {
-                _decorator = _builder.Invoke(gf);
+                if (s.SelectedFeature is GeometryFeature gf)
+                {
+                    _decorator = _builder.Invoke(gf);
 
-                _decorator.Cancel += (s, e) => base.Unselected();
+                    _decorator.Cancel += (s, e) => base.Unselected();
 
-                AddInteractiveLayer(_layers, _decorator);
+                    AddInteractiveLayer(_layers, _decorator);
 
-                SelectedDecorator?.Invoke(Decorator, EventArgs.Empty);
-            }
+                    SelectedDecorator?.Invoke(Decorator, EventArgs.Empty);
+                }
+            });
+
+            Unselect.Subscribe(_ => RemoveInteractiveLayer(_layers));
         }
 
         private static void AddInteractiveLayer(LayerCollection layers, IInteractive interactive)

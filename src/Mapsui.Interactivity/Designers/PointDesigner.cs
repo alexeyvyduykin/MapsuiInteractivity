@@ -44,7 +44,7 @@ namespace Mapsui.Interactivity
         {
             EndDrawing(worldPosition);
 
-            EndCreatingCallback();
+            EndCreating.Execute().Subscribe();
 
             return;
         }
