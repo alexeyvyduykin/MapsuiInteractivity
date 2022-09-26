@@ -8,12 +8,13 @@ namespace Mapsui.Interactivity
     public class InteractiveLayer : BaseLayer
     {
         private readonly IInteractive? _interactive;
+        private readonly IDisposable _disposable;
 
         public InteractiveLayer(IInteractive interactive)
         {
             _interactive = interactive;
 
-            _interactive.InvalidateLayer += (s, e) => DataHasChanged();
+            _disposable = _interactive.Invalidate.Subscribe(_ => DataHasChanged());
 
             IsMapInfoLayer = true;
         }
@@ -61,6 +62,11 @@ namespace Mapsui.Interactivity
         public override void RefreshData(FetchInfo fetchInfo)
         {
             OnDataChanged(new DataChangedEventArgs());
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _disposable.Dispose();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Mapsui.Interactivity
 
             _featureSource.RenderedGeometry.Clear();
 
-            Invalidate();
+            Invalidate.Execute().Subscribe();
         }
 
         public GeometryFeature FeatureSource => _featureSource;

@@ -35,7 +35,7 @@ namespace Mapsui.Interactivity.UI
                     && IsClick(clickPoint, _clickPoint) == true
                     && IFeature.Equals(_clickFeature, clickFeature) == true)
                 {
-                    View.Interactive.Canceling();
+                    View.Interactive.Canceling.Execute().Subscribe();
                 }
             }
 

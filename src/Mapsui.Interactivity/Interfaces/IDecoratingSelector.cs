@@ -1,9 +1,10 @@
-﻿namespace Mapsui.Interactivity
+﻿using ReactiveUI;
+using System.Reactive;
+
+namespace Mapsui.Interactivity
 {
     public interface IDecoratingSelector : ISelector
     {
-        IDecorator? Decorator { get; }
-
-        public event EventHandler? SelectedDecorator;
+        ReactiveCommand<Unit, IDecorator> DecoratorSelecting { get; }
     }
 }

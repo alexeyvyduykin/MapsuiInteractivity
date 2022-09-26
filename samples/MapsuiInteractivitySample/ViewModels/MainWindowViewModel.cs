@@ -104,11 +104,6 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void Reset()
         {
-            if (_selector is IDecoratingSelector decoratingSelector)
-            {
-                decoratingSelector.Decorator?.Canceling();
-            }
-
             _selector?.Unselected();
             _selector = null;
 
@@ -158,15 +153,12 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new TranslateDecorator(gf));
 
-            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
+            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
-                if (s is IDecorator decorator)
-                {
-                    Interactive = decorator;
-                    State = States.Editing;
-                    Tip = $"Translate mode";
-                }
-            };
+                Interactive = s;
+                State = States.Editing;
+                Tip = $"Translate mode";
+            });
 
             _selector.Unselect.Subscribe(s =>
             {
@@ -183,15 +175,12 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new ScaleDecorator(gf));
 
-            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
+            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
-                if (s is IDecorator decorator)
-                {
-                    Interactive = decorator;
-                    State = States.Editing;
-                    Tip = $"Scale mode";
-                }
-            };
+                Interactive = s;
+                State = States.Editing;
+                Tip = $"Scale mode";
+            });
 
             _selector.Unselect.Subscribe(s =>
             {
@@ -208,15 +197,12 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new RotateDecorator(gf));
 
-            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
+            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
-                if (s is IDecorator decorator)
-                {
-                    Interactive = decorator;
-                    State = States.Editing;
-                    Tip = $"Rotate mode";
-                }
-            };
+                Interactive = s;
+                State = States.Editing;
+                Tip = $"Rotate mode";
+            });
 
             _selector.Unselect.Subscribe(s =>
             {
@@ -233,15 +219,12 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new EditDecorator(gf));
 
-            ((IDecoratingSelector)_selector).SelectedDecorator += (s, e) =>
+            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
-                if (s is IDecorator decorator)
-                {
-                    Interactive = decorator;
-                    State = States.Editing;
-                    Tip = $"Edit mode";
-                }
-            };
+                Interactive = s;
+                State = States.Editing;
+                Tip = $"Edit mode";
+            });
 
             _selector.Unselect.Subscribe(s =>
             {

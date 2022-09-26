@@ -1,54 +1,35 @@
 ﻿using Mapsui.UI;
+using ReactiveUI;
+using System.Reactive;
 
 namespace Mapsui.Interactivity
 {
     public abstract class BaseInteractive : IInteractive
     {
-        public event EventHandler? InvalidateLayer;
-        public event EventHandler? Cancel;
-
-        protected void Invalidate()
+        public BaseInteractive()
         {
-            InvalidateLayer?.Invoke(this, EventArgs.Empty);
+            Invalidate = ReactiveCommand.Create(() => { }, outputScheduler: RxApp.MainThreadScheduler);
+            Canceling = ReactiveCommand.Create(() => { }, outputScheduler: RxApp.MainThreadScheduler);
         }
 
-        public void Canceling()
-        {
-            Cancel?.Invoke(this, EventArgs.Empty);
-        }
+        public ReactiveCommand<Unit, Unit> Invalidate { get; }
+
+        public ReactiveCommand<Unit, Unit> Canceling { get; }
 
         public abstract IEnumerable<MPoint> GetActiveVertices();
 
-        public virtual void Starting(MapInfo? mapInfo)
-        {
+        public virtual void Starting(MapInfo? mapInfo) { }
 
-        }
+        public virtual void Starting(MapInfo? mapInfo, double screenDistance) { }
 
-        public virtual void Moving(MapInfo? mapInfo)
-        {
+        public virtual void Moving(MapInfo? mapInfo) { }
 
-        }
+        public virtual void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null) { }
 
-        public abstract void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
+        public virtual void Hovering(MapInfo? mapInfo) { }
 
-        public virtual void Hovering(MapInfo? mapInfo)
-        {
+        public virtual void PointeroverStart(MapInfo? mapInfo) { }
 
-        }
-
-        public virtual void Starting(MapInfo? mapInfo, double screenDistance)
-        {
-
-        }
-
-        public virtual void PointeroverStart(MapInfo? mapInfo)
-        {
-
-        }
-
-        public virtual void PointeroverStop()
-        {
-
-        }
+        public virtual void PointeroverStop() { }
     }
 }

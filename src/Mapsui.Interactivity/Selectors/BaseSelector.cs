@@ -52,7 +52,7 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public void Unselected()
+        public virtual void Unselected()
         {
             if (_lastPointeroverFeature != null)
             {

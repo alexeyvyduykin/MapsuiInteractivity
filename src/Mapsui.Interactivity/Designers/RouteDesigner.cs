@@ -98,7 +98,7 @@ namespace Mapsui.Interactivity
 
                 HoverCreating.Execute().Subscribe();
 
-                Invalidate();
+                Invalidate.Execute().Subscribe();
             }
         }
 
