@@ -22,7 +22,7 @@ namespace Mapsui.Interactivity.UI
                     mapInfo.Layer != null &&
                     mapInfo.Feature != null)
                 {
-                    View.Behavior.OnCompleted(mapInfo);
+                    View.Interactive.Ending(mapInfo);
                 }
             }
 

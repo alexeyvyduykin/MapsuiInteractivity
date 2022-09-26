@@ -19,12 +19,36 @@ namespace Mapsui.Interactivity
 
         public abstract IEnumerable<MPoint> GetActiveVertices();
 
-        public abstract void Starting(MapInfo? mapInfo);
+        public virtual void Starting(MapInfo? mapInfo)
+        {
 
-        public abstract void Moving(MapInfo? mapInfo);
+        }
+
+        public virtual void Moving(MapInfo? mapInfo)
+        {
+
+        }
 
         public abstract void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null);
 
-        public abstract void Hovering(MapInfo? mapInfo);
+        public virtual void Hovering(MapInfo? mapInfo)
+        {
+
+        }
+
+        public virtual void Starting(MapInfo? mapInfo, double screenDistance)
+        {
+
+        }
+
+        public virtual void PointeroverStart(MapInfo? mapInfo)
+        {
+
+        }
+
+        public virtual void PointeroverStop()
+        {
+
+        }
     }
 }

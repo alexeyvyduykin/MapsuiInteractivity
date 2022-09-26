@@ -38,7 +38,7 @@ namespace Mapsui.Interactivity.UI
                     return res;
                 }
 
-                View.Behavior.OnCompleted(e.MapInfo, isClick);
+                View.Interactive.Ending(e.MapInfo, isClick);
             }
 
             e.Handled = true;
@@ -48,7 +48,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Delta(e);
 
-            View.Behavior.OnDelta(e.MapInfo);
+            View.Interactive.Moving(e.MapInfo);
 
             if (_counter++ > 0)
             {
@@ -67,7 +67,7 @@ namespace Mapsui.Interactivity.UI
             _skip = false;
             _counter = 0;
 
-            View.Behavior.OnStarted(e.MapInfo, 0);
+            View.Interactive.Starting(e.MapInfo);
 
             e.Handled = true;
         }
@@ -94,7 +94,7 @@ namespace Mapsui.Interactivity.UI
         {
             base.Delta(e);
 
-            View.Behavior.OnHover(e.MapInfo);
+            View.Interactive.Hovering(e.MapInfo);
 
             //e.Handled = true;
         }

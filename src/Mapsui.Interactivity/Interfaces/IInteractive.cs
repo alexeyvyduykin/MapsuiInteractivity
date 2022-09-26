@@ -19,5 +19,11 @@ namespace Mapsui.Interactivity
         void Hovering(MapInfo? mapInfo);
 
         void Canceling();
+
+        void Starting(MapInfo? mapInfo, double screenDistance);
+
+        void PointeroverStart(MapInfo? mapInfo);
+
+        void PointeroverStop();
     }
 }

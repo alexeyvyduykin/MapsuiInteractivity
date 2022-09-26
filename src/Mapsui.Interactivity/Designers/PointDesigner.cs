@@ -40,11 +40,6 @@ namespace Mapsui.Interactivity
             }
         }
 
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
-        }
-
         public void CreatingFeature(MPoint worldPosition)
         {
             EndDrawing(worldPosition);

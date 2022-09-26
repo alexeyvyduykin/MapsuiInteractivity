@@ -20,7 +20,7 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                View.Behavior.OnCompleted(e.MapInfo);
+                View.Interactive.Ending(e.MapInfo);
 
                 View.Map!.PanLock = false;
 
@@ -35,7 +35,7 @@ namespace Mapsui.Interactivity.UI
                     && IsClick(clickPoint, _clickPoint) == true
                     && IFeature.Equals(_clickFeature, clickFeature) == true)
                 {
-                    View.Behavior.OnCancel();
+                    View.Interactive.Canceling();
                 }
             }
 
@@ -65,7 +65,7 @@ namespace Mapsui.Interactivity.UI
 
             if (_isEditing == true)
             {
-                View.Behavior.OnDelta(e.MapInfo);
+                View.Interactive.Moving(e.MapInfo);
 
                 View.SetCursor(CursorType.HandGrab);
 
@@ -90,7 +90,7 @@ namespace Mapsui.Interactivity.UI
             {
                 var distance = mapInfo.Resolution * _vertexRadius;
 
-                View.Behavior.OnStarted(mapInfo, distance);
+                View.Interactive.Starting(mapInfo, distance);
 
                 _isEditing = true;
             }

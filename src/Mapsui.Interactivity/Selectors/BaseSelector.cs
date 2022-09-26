@@ -106,22 +106,7 @@ namespace Mapsui.Interactivity
 
         public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
 
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
-        }
-
-        public override void Moving(MapInfo? mapInfo)
-        {
-
-        }
-
-        public override void Starting(MapInfo? mapInfo)
-        {
-
-        }
-
-        public void PointeroverStart(MapInfo? mapInfo)
+        public override void PointeroverStart(MapInfo? mapInfo)
         {
             if (mapInfo != null
                 && mapInfo.Feature != null
@@ -148,7 +133,7 @@ namespace Mapsui.Interactivity
             HoveringBegin?.Invoke(_lastPointeroverFeature, EventArgs.Empty);
         }
 
-        public void PointeroverStop()
+        public override void PointeroverStop()
         {
             if (_lastPointeroverFeature != null)
             {

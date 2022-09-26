@@ -1,5 +1,4 @@
 ﻿using Mapsui.Layers;
-using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
@@ -17,10 +16,6 @@ namespace Mapsui.Interactivity
 
         void Unselected();
 
-        void PointeroverStart(MapInfo? mapInfo);
-
         void PointeroverStart(IFeature feature, ILayer layer);
-
-        void PointeroverStop();
     }
 }

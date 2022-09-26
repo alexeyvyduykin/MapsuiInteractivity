@@ -22,11 +22,23 @@ namespace Mapsui.Interactivity
             Invalidate();
         }
 
-        public override void Hovering(MapInfo? mapInfo)
-        {
-
-        }
-
         public GeometryFeature FeatureSource => _featureSource;
+
+        public override void Starting(MapInfo? mapInfo, double screenDistance)
+        {
+            var vertices = GetActiveVertices();
+
+            var worldPosition = mapInfo?.WorldPosition;
+
+            if (worldPosition != null)
+            {
+                var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < screenDistance);
+
+                if (vertexTouched != null)
+                {
+                    Starting(mapInfo);
+                }
+            }
+        }
     }
 }

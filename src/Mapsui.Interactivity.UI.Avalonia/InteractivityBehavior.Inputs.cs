@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Input;
 using Mapsui.UI.Avalonia;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Mapsui.Interactivity.UI.Avalonia
 {
@@ -70,11 +70,11 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 var args = e.ToMouseEventArgs(mapControl);
 
-                _controller?.HandleMouseEnter(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseEnter(new MapControlAdaptor(mapControl, _interactive), args);
             }
         }
 
@@ -85,11 +85,11 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 var args = e.ToMouseEventArgs(mapControl);
 
-                _controller?.HandleMouseLeave(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseLeave(new MapControlAdaptor(mapControl, _interactive), args);
             }
         }
 
@@ -100,11 +100,11 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 var args = e.ToMouseWheelEventArgs(mapControl);
 
-                _controller?.HandleMouseWheel(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseWheel(new MapControlAdaptor(mapControl, _interactive), args);
             }
         }
 
@@ -115,14 +115,14 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 mapControl.Focus();
                 e.Pointer.Capture(mapControl);
 
                 var args = e.ToMouseDownEventArgs(mapControl);
 
-                _controller?.HandleMouseDown(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseDown(new MapControlAdaptor(mapControl, _interactive), args);
             }
         }
 
@@ -133,11 +133,11 @@ namespace Mapsui.Interactivity.UI.Avalonia
                 return;
             }
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 var args = e.ToMouseEventArgs(mapControl);
 
-                _controller?.HandleMouseMove(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseMove(new MapControlAdaptor(mapControl, _interactive), args);
 
                 e.Handled = args.Handled;
             }
@@ -152,11 +152,11 @@ namespace Mapsui.Interactivity.UI.Avalonia
 
             e.Pointer.Capture(null);
 
-            if (sender is MapControl mapControl && _behavior is not null)
+            if (sender is MapControl mapControl && _interactive is not null)
             {
                 var args = e.ToMouseReleasedEventArgs(mapControl);
 
-                _controller?.HandleMouseUp(new MapControlAdaptor(mapControl, _behavior), args);
+                _controller?.HandleMouseUp(new MapControlAdaptor(mapControl, _interactive), args);
             }
         }
     }

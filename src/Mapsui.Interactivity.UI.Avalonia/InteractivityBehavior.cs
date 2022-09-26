@@ -7,7 +7,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
     public partial class InteractivityBehavior : AvaloniaObject
     {
         private IController? _controller;
-        private InteractiveBehavior? _behavior;
+        private IInteractive? _interactive;
 
         static InteractivityBehavior()
         {
@@ -49,16 +49,16 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             _controller = InteractiveControllerFactory.GetController(key);
 
-            if (AssociatedObject is MapControl mapControl && _behavior is not null)
+            if (AssociatedObject is MapControl mapControl && _interactive is not null)
             {
-                // HACK: after tools check, hover manipulator not active, it call this
-                _controller.HandleMouseEnter(new MapControlAdaptor(mapControl, _behavior), new Input.Core.MouseEventArgs());
+                // HACK: after tools check, hover manipulator not active, it call this          
+                _controller.HandleMouseEnter(new MapControlAdaptor(mapControl, _interactive), new Input.Core.MouseEventArgs());
             }
         }
 
-        private void SetBehavior(IInteractive interactive)
+        private void SetInteractive(IInteractive interactive)
         {
-            _behavior = new InteractiveBehavior(interactive);
+            _interactive = interactive;
         }
 
         private void SetMap(Map? map)
@@ -73,7 +73,7 @@ namespace Mapsui.Interactivity.UI.Avalonia
         {
             if (element is InteractivityBehavior behavior && value is not null)
             {
-                behavior.SetBehavior(value);
+                behavior.SetInteractive(value);
             }
         }
 
