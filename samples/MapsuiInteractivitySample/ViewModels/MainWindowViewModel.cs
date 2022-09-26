@@ -279,12 +279,15 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             var designer = (IAreaDesigner)new InteractiveFactory().CreateRectangleDesigner(Map.Layers);
 
-            designer.HoverCreating += (s, e) =>
+            designer.HoverCreating.Subscribe(s =>
             {
-                var area = designer.Area();
+                if (s is IAreaDesigner areaDesigner)
+                {
+                    var area = areaDesigner.Area();
 
-                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-            };
+                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+                }
+            });
 
             designer.EndCreating += (s, e) =>
             {
@@ -305,12 +308,15 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             var designer = (IAreaDesigner)new InteractiveFactory().CreateCircleDesigner(Map.Layers);
 
-            designer.HoverCreating += (s, e) =>
+            designer.HoverCreating.Subscribe(s =>
             {
-                var area = designer.Area();
+                if (s is IAreaDesigner areaDesigner)
+                {
+                    var area = areaDesigner.Area();
 
-                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
-            };
+                    Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+                }
+            });
 
             designer.EndCreating += (s, e) =>
             {
@@ -331,14 +337,17 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             var designer = (IRouteDesigner)new InteractiveFactory().CreateRouteDesigner(Map.Layers);
 
-            designer.HoverCreating += (s, e) =>
+            designer.HoverCreating.Subscribe(s =>
             {
-                var distance = designer.Distance();
+                if (s is IRouteDesigner routeDesigner)
+                {
+                    var distance = routeDesigner.Distance();
 
-                var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
+                    var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
 
-                Tip = $"Расстояние: {res}";
-            };
+                    Tip = $"Расстояние: {res}";
+                }
+            });
 
             designer.EndCreating += (s, e) =>
             {

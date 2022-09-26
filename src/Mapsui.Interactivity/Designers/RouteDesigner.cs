@@ -96,7 +96,7 @@ namespace Mapsui.Interactivity
             {
                 DrawingHover(worldPosition);
 
-                HoverCreatingCallback();
+                HoverCreating.Execute().Subscribe();
 
                 Invalidate();
             }

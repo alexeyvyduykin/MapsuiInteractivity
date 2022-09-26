@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Mapsui" Version="4.0.0-beta.3" />
+		<PackageReference Include="ReactiveUI" Version="16.2.6" />
 	</ItemGroup>
 
 </Project>

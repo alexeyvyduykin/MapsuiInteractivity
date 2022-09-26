@@ -1,4 +1,6 @@
 ﻿using Mapsui.Nts;
+using ReactiveUI;
+using System.Reactive;
 
 namespace Mapsui.Interactivity
 {
@@ -12,7 +14,7 @@ namespace Mapsui.Interactivity
 
         event EventHandler? Creating;
 
-        event EventHandler? HoverCreating;
+        ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
 
         event EventHandler? EndCreating;
     }
