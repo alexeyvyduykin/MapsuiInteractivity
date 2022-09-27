@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    internal class CircleDesigner : BaseDesigner, IAreaDesigner
+    public class CircleDesigner : BaseDesigner, IAreaDesigner
     {
         private bool _isDrawing = false;
         private bool _firstClick = true;
@@ -16,7 +16,7 @@ namespace Mapsui.Interactivity
         private List<Coordinate> _featureCoordinates = new();
         protected MPoint? _center;
 
-        public CircleDesigner() : base() { }
+        internal CircleDesigner() : base() { }
 
         public override IEnumerable<MPoint> GetActiveVertices() => Array.Empty<MPoint>();
 

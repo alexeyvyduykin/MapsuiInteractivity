@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    internal class RouteDesigner : BaseDesigner, IRouteDesigner
+    public class RouteDesigner : BaseDesigner, IRouteDesigner
     {
         private bool _skip;
         private int _counter;
@@ -15,6 +15,8 @@ namespace Mapsui.Interactivity
         private bool _firstClick = true;
         private GeometryFeature? _extraLineString;
         private List<Coordinate> _featureCoordinates = new();
+
+        internal RouteDesigner() : base() { }
 
         public override IEnumerable<MPoint> GetActiveVertices()
         {

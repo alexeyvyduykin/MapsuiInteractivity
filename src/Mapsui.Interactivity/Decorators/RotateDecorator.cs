@@ -16,7 +16,7 @@ namespace Mapsui.Interactivity
         // HACK: without this locker Moving() passing not his order
         private bool _isRotating = false;
 
-        public RotateDecorator(GeometryFeature featureSource) : base(featureSource)
+        internal RotateDecorator(GeometryFeature featureSource) : base(featureSource)
         {
             var extent = GetExtent(featureSource);
 

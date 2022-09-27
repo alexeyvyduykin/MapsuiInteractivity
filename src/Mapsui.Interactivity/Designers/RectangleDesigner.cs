@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    internal class RectangleDesigner : BaseDesigner, IAreaDesigner
+    public class RectangleDesigner : BaseDesigner, IAreaDesigner
     {
         private bool _isDrawing = false;
         private bool _firstClick = true;
@@ -15,7 +15,7 @@ namespace Mapsui.Interactivity
         private int _counter;
         private List<Coordinate> _featureCoordinates = new();
 
-        public RectangleDesigner() : base() { }
+        internal RectangleDesigner() : base() { }
 
         public override IEnumerable<MPoint> GetActiveVertices() => Array.Empty<MPoint>();
 

@@ -3,10 +3,12 @@ using Mapsui.UI;
 
 namespace Mapsui.Interactivity
 {
-    internal class PointDesigner : BaseDesigner
+    public class PointDesigner : BaseDesigner
     {
         private bool _skip;
         private int _counter;
+
+        internal PointDesigner() : base() { }
 
         public override IEnumerable<MPoint> GetActiveVertices()
         {

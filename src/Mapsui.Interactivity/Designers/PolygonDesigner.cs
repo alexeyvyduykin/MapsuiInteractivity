@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    internal class PolygonDesigner : BaseDesigner, IAreaDesigner
+    public class PolygonDesigner : BaseDesigner, IAreaDesigner
     {
         private bool _skip;
         private int _counter;
@@ -19,6 +19,8 @@ namespace Mapsui.Interactivity
 
         private List<Coordinate> _extraPolygonCoordinates = new();
         private List<Coordinate> _featureCoordinates = new();
+
+        internal PolygonDesigner() : base() { }
 
         public override IEnumerable<MPoint> GetActiveVertices()
         {

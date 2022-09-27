@@ -17,7 +17,7 @@ namespace Mapsui.Interactivity
         // HACK: without this locker Moving() passing not his order
         private bool _isScaling = false;
 
-        public ScaleDecorator(GeometryFeature featureSource) : base(featureSource)
+        internal ScaleDecorator(GeometryFeature featureSource) : base(featureSource)
         {
             _scaleTopRight = GetTopRight(featureSource.Geometry!);
 

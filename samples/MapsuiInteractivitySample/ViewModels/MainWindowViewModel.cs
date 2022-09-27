@@ -113,7 +113,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void SelectCommand()
         {
-            _selector = new BaseSelector();
+            _selector = new InteractiveBuilder().Build<BaseSelector>();
 
             _selector.Select.Subscribe(s =>
             {
@@ -151,9 +151,12 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void TranslateCommand()
         {
-            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new TranslateDecorator(gf));
+            _selector = new InteractiveBuilder()
+                .AttachTo(Map)
+                .Wrapped<TranslateDecorator>()
+                .Build<BaseSelector>();
 
-            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
+            ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
                 Interactive = s;
                 State = States.Editing;
@@ -173,9 +176,12 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void ScaleCommand()
         {
-            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new ScaleDecorator(gf));
+            _selector = new InteractiveBuilder()
+                .AttachTo(Map)
+                .Wrapped<ScaleDecorator>()
+                .Build<BaseSelector>();
 
-            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
+            ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
                 Interactive = s;
                 State = States.Editing;
@@ -195,9 +201,12 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void RotateCommand()
         {
-            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new RotateDecorator(gf));
+            _selector = new InteractiveBuilder()
+                 .AttachTo(Map)
+                 .Wrapped<RotateDecorator>()
+                 .Build<BaseSelector>();
 
-            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
+            ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
                 Interactive = s;
                 State = States.Editing;
@@ -217,9 +226,12 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void EditCommand()
         {
-            _selector = new InteractiveFactory().CreateDecoratingSelector(Map.Layers, gf => new EditDecorator(gf));
+            _selector = new InteractiveBuilder()
+                .AttachTo(Map)
+                .Wrapped<EditDecorator>()
+                .Build<BaseSelector>();
 
-            ((IDecoratingSelector)_selector).DecoratorSelecting.Subscribe(s =>
+            ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
                 Interactive = s;
                 State = States.Editing;
@@ -239,7 +251,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingPointCommand()
         {
-            var designer = new InteractiveFactory().CreatePointDesigner(Map.Layers);
+            var designer = new InteractiveBuilder().AttachTo(Map).Build<PointDesigner>();
 
             designer.EndCreating.Subscribe(s =>
             {
@@ -254,7 +266,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRectangleCommand()
         {
-            var designer = new InteractiveFactory().CreateRectangleDesigner(Map.Layers);
+            var designer = new InteractiveBuilder().AttachTo(Map).Build<RectangleDesigner>();
 
             designer.HoverCreating.Subscribe(s =>
             {
@@ -280,7 +292,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingCircleCommand()
         {
-            var designer = new InteractiveFactory().CreateCircleDesigner(Map.Layers);
+            var designer = new InteractiveBuilder().AttachTo(Map).Build<CircleDesigner>();
 
             designer.HoverCreating.Subscribe(s =>
             {
@@ -306,7 +318,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingRouteCommand()
         {
-            var designer = new InteractiveFactory().CreateRouteDesigner(Map.Layers);
+            var designer = new InteractiveBuilder().AttachTo(Map).Build<RouteDesigner>();
 
             designer.HoverCreating.Subscribe(s =>
             {
@@ -334,7 +346,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void DrawingPolygonCommand()
         {
-            var designer = new InteractiveFactory().CreatePolygonDesigner(Map.Layers);
+            var designer = new InteractiveBuilder().AttachTo(Map).Build<PolygonDesigner>();
 
             designer.BeginCreating.Subscribe(s =>
             {

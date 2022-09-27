@@ -3,37 +3,70 @@ using Mapsui.Nts;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
 using NetTopologySuite.Geometries;
+using System.Reactive.Linq;
 
 namespace Mapsui.Interactivity
 {
-    public class InteractiveFactory
+    public partial class InteractiveBuilder
     {
-        public IDesigner CreatePolygonDesigner(LayerCollection layers)
+        public T Build<T>() where T : IInteractive
         {
-            return CreateDesigner(layers, new PolygonDesigner());
+            var type = typeof(T);
+
+            if (_cache1.ContainsKey(type) == true)
+            {
+                if (type.IsAssignableTo(typeof(IDesigner)) == true)
+                {
+                    return (T)CreateDesigner(type);
+                }
+
+                if (type.IsAssignableTo(typeof(ISelector)) == true)
+                {
+                    return (T)CreateSelectorWithDecorator(type);
+                }
+
+                return (T)_cache1[type].Invoke();
+            }
+            else if (_cache2.ContainsKey(type) == true)
+            {
+                if (GeometryFeature != null)
+                {
+                    return (T)_cache2[type].Invoke(GeometryFeature);
+                }
+            }
+
+            throw new Exception($"Type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
         }
 
-        public IDesigner CreateRouteDesigner(LayerCollection layers)
+        private IDesigner CreateDesigner(Type type)
         {
-            return CreateDesigner(layers, new RouteDesigner());
+            var designer = (IDesigner)_cache1[type].Invoke();
+
+            if (Layers != null)
+            {
+                designer = AttachDesigner(designer, Layers);
+            }
+
+            return designer;
         }
 
-        public IDesigner CreateCircleDesigner(LayerCollection layers)
+        private ISelector CreateSelectorWithDecorator(Type type)
         {
-            return CreateDesigner(layers, new CircleDesigner());
+            ISelector? selector = null;
+
+            if (Layers != null && WrappedDecoratorType != null && _cache2.ContainsKey(WrappedDecoratorType) == true)
+            {
+                selector = new DecoratorSelector(_cache2[WrappedDecoratorType]);
+
+                ((IDecoratorSelector)selector).DecoratorSelecting.Subscribe(s => AddInteractiveLayer(Layers, s));
+
+                selector.Unselect.Subscribe(_ => RemoveInteractiveLayer(Layers));
+            }
+
+            return selector ?? (ISelector)_cache1[type].Invoke();
         }
 
-        public IDesigner CreatePointDesigner(LayerCollection layers)
-        {
-            return CreateDesigner(layers, new PointDesigner());
-        }
-
-        public IDesigner CreateRectangleDesigner(LayerCollection layers)
-        {
-            return CreateDesigner(layers, new RectangleDesigner());
-        }
-
-        private IDesigner CreateDesigner(LayerCollection layers, IDesigner designer)
+        private static IDesigner AttachDesigner(IDesigner designer, LayerCollection layers)
         {
             RemoveInteractiveLayer(layers);
 
@@ -50,14 +83,18 @@ namespace Mapsui.Interactivity
             return designer;
         }
 
-        public IDecoratingSelector CreateDecoratingSelector(LayerCollection layers, Func<GeometryFeature, IDecorator> builder)
+        private static void AddInteractiveLayer(LayerCollection layers, IDecorator decorator)
         {
-            IDecoratingSelector selector = new DecoratingSelector(layers, builder);
+            var interactiveLayer = new InteractiveLayer(decorator)
+            {
+                Name = nameof(InteractiveLayer),
+                Style = CreateInteractiveLayerDecoratorStyle(),
+            };
 
-            return selector;
+            layers.Add(interactiveLayer);
         }
 
-        private void RemoveInteractiveLayer(LayerCollection layers)
+        private static void RemoveInteractiveLayer(LayerCollection layers)
         {
             var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -139,7 +176,7 @@ namespace Mapsui.Interactivity
             });
         }
 
-        public static IStyle CreateInteractiveLayerDecoratorStyle()
+        private static IStyle CreateInteractiveLayerDecoratorStyle()
         {
             return new ThemeStyle(f =>
             {

@@ -11,7 +11,7 @@ namespace Mapsui.Interactivity
         private IFeature? _lastPointeroverFeature;
         private ILayer? _lastPointeroverLayer;
 
-        public BaseSelector() : base()
+        internal BaseSelector() : base()
         {
             Select = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
             Unselect = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);

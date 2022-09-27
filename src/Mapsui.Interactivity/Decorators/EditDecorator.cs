@@ -17,7 +17,7 @@ namespace Mapsui.Interactivity
         // HACK: without this locker Moving() passing not his order
         private bool _isEditing = false;
 
-        public EditDecorator(GeometryFeature featureSource) : base(featureSource)
+        internal EditDecorator(GeometryFeature featureSource) : base(featureSource)
         {
             _points = featureSource.Geometry!.MainVertices().Select(s => s.ToMPoint()).ToList();
 

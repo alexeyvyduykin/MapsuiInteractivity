@@ -15,7 +15,7 @@ namespace Mapsui.Interactivity
         // HACK: without this locker Moving() passing not his order
         private bool _isTranslating = false;
 
-        public TranslateDecorator(GeometryFeature featureSource) : base(featureSource)
+        internal TranslateDecorator(GeometryFeature featureSource) : base(featureSource)
         {
             _center = featureSource.Geometry!.Centroid.ToMPoint();
 
