@@ -1,4 +1,5 @@
-﻿using Mapsui.Interactivity.Interfaces;
+﻿using Mapsui.Interactivity.Extensions;
+using Mapsui.Interactivity.Interfaces;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using System.Reactive.Linq;
@@ -26,7 +27,9 @@ namespace Mapsui.Interactivity
 
             if (Layers != null)
             {
-                decorator = AttachDecorator(decorator, Layers);
+                Layers.AddInteractiveLayer(decorator, InteractiveBuilder.CreateInteractiveLayerDecoratorStyle());
+
+                decorator.Canceling.Subscribe(_ => Layers.RemoveInteractiveLayer());
             }
 
             return decorator;
@@ -56,23 +59,6 @@ namespace Mapsui.Interactivity
             GeometryFeature = feature;
 
             return this;
-        }
-
-        private static IDecorator AttachDecorator(IDecorator decorator, LayerCollection layers)
-        {
-            InteractiveBuilder.RemoveInteractiveLayer(layers);
-
-            var interactiveLayer = new InteractiveLayer(decorator)
-            {
-                Name = nameof(InteractiveLayer),
-                Style = InteractiveBuilder.CreateInteractiveLayerDecoratorStyle(),
-            };
-
-            layers.Add(interactiveLayer);
-
-            decorator.Canceling.Subscribe(_ => layers.Remove(interactiveLayer));
-
-            return decorator;
         }
     }
 }

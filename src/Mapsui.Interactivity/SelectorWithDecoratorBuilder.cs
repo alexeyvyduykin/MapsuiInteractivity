@@ -1,4 +1,5 @@
-﻿using Mapsui.Interactivity.Interfaces;
+﻿using Mapsui.Interactivity.Extensions;
+using Mapsui.Interactivity.Interfaces;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using System.Reactive.Linq;
@@ -23,9 +24,9 @@ namespace Mapsui.Interactivity
             if (_layers != null)
             {
                 ((IDecoratorSelector)selector).DecoratorSelecting.Subscribe(s =>
-                  InteractiveBuilder.AddInteractiveLayer(_layers, s, InteractiveBuilder.CreateInteractiveLayerDecoratorStyle()));
+                  _layers.AddInteractiveLayer(s, InteractiveBuilder.CreateInteractiveLayerDecoratorStyle()));
 
-                selector.Unselect.Subscribe(_ => InteractiveBuilder.RemoveInteractiveLayer(_layers));
+                selector.Unselect.Subscribe(_ => _layers.RemoveInteractiveLayer());
             }
 
             return selector;

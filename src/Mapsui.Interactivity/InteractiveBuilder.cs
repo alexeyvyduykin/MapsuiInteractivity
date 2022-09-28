@@ -1,10 +1,8 @@
 ﻿using Mapsui.Interactivity.Interfaces;
-using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
 using NetTopologySuite.Geometries;
-using System.Reactive.Linq;
 
 namespace Mapsui.Interactivity
 {
@@ -63,27 +61,6 @@ namespace Mapsui.Interactivity
             }
 
             throw new Exception($"Selector type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
-        }
-
-        internal static void AddInteractiveLayer(LayerCollection layers, IInteractive interactive, IStyle style)
-        {
-            var interactiveLayer = new InteractiveLayer(interactive)
-            {
-                Name = nameof(InteractiveLayer),
-                Style = style,
-            };
-
-            layers.Add(interactiveLayer);
-        }
-
-        internal static void RemoveInteractiveLayer(LayerCollection layers)
-        {
-            var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
-
-            if (interactiveLayer != null)
-            {
-                layers.Remove(interactiveLayer);
-            }
         }
 
         internal static IStyle CreateInteractiveLayerDecoratorStyle()
