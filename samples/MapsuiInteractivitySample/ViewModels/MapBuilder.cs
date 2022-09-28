@@ -111,42 +111,10 @@ namespace MapsuiInteractivitySample.ViewModels
                     return null;
                 }
 
-                if (gf.Fields != null)
-                {
-                    foreach (var item in gf.Fields)
-                    {
-                        if (item.Equals("Interactive.Select") == true)
-                        {
-                            var isSelect = (bool)gf["Interactive.Select"]!;
+                var isSelect = gf.GetValue<bool>(InteractiveFields.Select);
+                var isHover = gf.GetValue<bool>(InteractiveFields.Hover);
 
-                            if (isSelect == true)
-                            {
-                                if (gf.Geometry is Point)
-                                {
-                                    return new SymbolStyle
-                                    {
-                                        SymbolType = SymbolType.Triangle,
-                                        Fill = new Brush(Color.Green),
-                                        SymbolScale = 1.0,
-                                    };
-                                    //return CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
-                                }
-
-                                return new VectorStyle()
-                                {
-                                    Fill = new Brush(new Color(backgroundColor)),
-                                    Outline = new Pen(Color.Green, 4),
-                                    Line = new Pen(Color.Green, 4),
-                                };
-                            }
-                        }
-                    }
-                }
-
-                var isSelect2 = gf.GetValue<bool>("selected");
-                var pointerover = gf.GetValue<bool>("pointerover");
-
-                if (isSelect2 == true)
+                if (isSelect == true)
                 {
                     if (gf.Geometry is Point)
                     {
@@ -156,7 +124,6 @@ namespace MapsuiInteractivitySample.ViewModels
                             Fill = new Brush(Color.Green),
                             SymbolScale = 1.0,
                         };
-                        //return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
                     }
 
                     return new VectorStyle()
@@ -167,7 +134,7 @@ namespace MapsuiInteractivitySample.ViewModels
                     };
                 }
 
-                if (pointerover == true)
+                if (isHover == true)
                 {
                     if (gf.Geometry is Point)
                     {
@@ -177,7 +144,6 @@ namespace MapsuiInteractivitySample.ViewModels
                             Fill = new Brush(Color.Green),
                             SymbolScale = 1.0,
                         };
-                        //return _greenStylePin ??= CreateSvgStyle(@"Assets.PinGreen.svg", 0.5);
                     }
 
                     return new VectorStyle()
@@ -196,7 +162,6 @@ namespace MapsuiInteractivitySample.ViewModels
                         Fill = new Brush(Color.Red),
                         SymbolScale = 1.0,
                     };
-                    //return _redStylePin ??= CreateSvgStyle(@"Assets.PinRed.svg", 0.5);
                 }
 
                 var defaultStyle = new VectorStyle
@@ -214,9 +179,7 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             var g = new WKTReader().Read(wkt);
 
-            var feature = g.ToFeature();
-
-            feature["Name"] = name;
+            var feature = g.ToFeature(name);
 
             if (style != null)
             {

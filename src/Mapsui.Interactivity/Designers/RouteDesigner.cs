@@ -133,7 +133,7 @@ namespace Mapsui.Interactivity
             var p0 = worldPosition.ToCoordinate();
             var p1 = worldPosition.ToCoordinate();
 
-            _extraLineString = new[] { p0, p1 }.ToLineString().ToFeature("ExtraRouteHoverLine");
+            _extraLineString = new[] { p0, p1 }.ToLineString().ToFeature(InteractiveNames.ExtraRouteHoverLine);
 
             _featureCoordinates = new() { p0 };
             Feature = _featureCoordinates.ToLineString().ToFeature();

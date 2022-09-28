@@ -111,38 +111,32 @@ namespace Mapsui.Interactivity
 
                 var _color = new Color(76, 154, 231);
 
-                if (gf.Fields != null)
+                if (gf["Name"] != null)
                 {
-                    foreach (var item in gf.Fields)
+                    if (string.Equals(gf["Name"], InteractiveNames.ExtraPolygonHoverLine) == true)
                     {
-                        if (item.Equals("Name") == true)
+                        return new VectorStyle
                         {
-                            if (gf["Name"]!.Equals("ExtraPolygonHoverLine"))
-                            {
-                                return new VectorStyle
-                                {
-                                    Fill = null,
-                                    Line = new Pen(_color, 4) { PenStyle = PenStyle.Dot },
-                                };
-                            }
-                            else if (gf["Name"]!.Equals("ExtraPolygonArea"))
-                            {
-                                return new VectorStyle
-                                {
-                                    Fill = new Brush(Color.Opacity(_color, 0.25f)),
-                                    Line = null,
-                                    Outline = null,
-                                };
-                            }
-                            else if (gf["Name"]!.Equals("ExtraRouteHoverLine"))
-                            {
-                                return new VectorStyle
-                                {
-                                    Fill = null,
-                                    Line = new Pen(_color, 3) { PenStyle = PenStyle.Dash },
-                                };
-                            }
-                        }
+                            Fill = null,
+                            Line = new Pen(_color, 4) { PenStyle = PenStyle.Dot },
+                        };
+                    }
+                    else if (string.Equals(gf["Name"], InteractiveNames.ExtraPolygonArea) == true)
+                    {
+                        return new VectorStyle
+                        {
+                            Fill = new Brush(Color.Opacity(_color, 0.25f)),
+                            Line = null,
+                            Outline = null,
+                        };
+                    }
+                    else if (string.Equals(gf["Name"], InteractiveNames.ExtraRouteHoverLine) == true)
+                    {
+                        return new VectorStyle
+                        {
+                            Fill = null,
+                            Line = new Pen(_color, 3) { PenStyle = PenStyle.Dash },
+                        };
                     }
                 }
 

@@ -33,16 +33,16 @@ namespace Mapsui.Interactivity
 
         public void Selected(IFeature feature, ILayer layer)
         {
-            if (layer is WritableLayer wl)
+            if (layer is WritableLayer)
             {
                 if (_lastSelectedFeature != null)
                 {
-                    _lastSelectedFeature["selected"] = false;
+                    _lastSelectedFeature[InteractiveFields.Select] = false;
 
                     Unselect?.Execute().Subscribe();
                 }
 
-                feature["selected"] = true;
+                feature[InteractiveFields.Select] = true;
 
                 _lastSelectedFeature = feature;
 
@@ -56,7 +56,7 @@ namespace Mapsui.Interactivity
         {
             if (_lastPointeroverFeature != null)
             {
-                _lastPointeroverFeature["pointerover"] = false;
+                _lastPointeroverFeature[InteractiveFields.Hover] = false;
 
                 _lastPointeroverLayer?.DataHasChanged();
 
@@ -65,7 +65,7 @@ namespace Mapsui.Interactivity
 
             if (_lastSelectedFeature != null)
             {
-                _lastSelectedFeature["selected"] = false;
+                _lastSelectedFeature[InteractiveFields.Select] = false;
 
                 _lastPointeroverLayer?.DataHasChanged();
 
@@ -85,12 +85,12 @@ namespace Mapsui.Interactivity
                 {
                     if (_lastSelectedFeature != null)
                     {
-                        _lastSelectedFeature["selected"] = false;
+                        _lastSelectedFeature[InteractiveFields.Select] = false;
 
                         Unselect?.Execute().Subscribe();
                     }
 
-                    feature["selected"] = true;
+                    feature[InteractiveFields.Select] = true;
 
                     _lastSelectedFeature = feature;
 
@@ -98,11 +98,11 @@ namespace Mapsui.Interactivity
                 }
                 else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
                 {
-                    if (_lastSelectedFeature.Fields.Contains("selected"))
+                    if (_lastSelectedFeature.Fields.Contains(InteractiveFields.Select))
                     {
-                        var isSelected = !(bool)_lastSelectedFeature["selected"]!;
+                        var isSelected = !(bool)_lastSelectedFeature[InteractiveFields.Select]!;
 
-                        _lastSelectedFeature["selected"] = isSelected;
+                        _lastSelectedFeature[InteractiveFields.Select] = isSelected;
 
                         if (isSelected == true)
                         {
@@ -135,10 +135,10 @@ namespace Mapsui.Interactivity
         {
             if (_lastPointeroverFeature != null)
             {
-                _lastPointeroverFeature["pointerover"] = false;
+                _lastPointeroverFeature[InteractiveFields.Hover] = false;
             }
 
-            feature["pointerover"] = true;
+            feature[InteractiveFields.Hover] = true;
 
             layer.DataHasChanged();
 
@@ -152,7 +152,7 @@ namespace Mapsui.Interactivity
         {
             if (_lastPointeroverFeature != null)
             {
-                _lastPointeroverFeature["pointerover"] = false;
+                _lastPointeroverFeature[InteractiveFields.Hover] = false;
 
                 _lastPointeroverLayer?.DataHasChanged();
 
