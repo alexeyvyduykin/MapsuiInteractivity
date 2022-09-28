@@ -36,4 +36,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Mapsui.Interactivity.UI.Avalonia\Mapsui.Interactivity.UI.Avalonia.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	</ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-﻿using Mapsui.Layers;
+﻿using Mapsui.Interactivity.Interfaces;
+using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
@@ -7,94 +8,75 @@ using System.Reactive.Linq;
 
 namespace Mapsui.Interactivity
 {
-    public partial class InteractiveBuilder
+    public class InteractiveBuilder
     {
-        public T Build<T>() where T : IInteractive
+        private static readonly IDictionary<Type, Func<IInteractive>> _cache1 = new Dictionary<Type, Func<IInteractive>>();
+        private static readonly IDictionary<Type, Func<GeometryFeature, IDecorator>> _cache2 = new Dictionary<Type, Func<GeometryFeature, IDecorator>>();
+
+        static InteractiveBuilder()
+        {
+            _cache1.Add(typeof(PointDesigner), () => new PointDesigner());
+            _cache1.Add(typeof(RectangleDesigner), () => new RectangleDesigner());
+            _cache1.Add(typeof(CircleDesigner), () => new CircleDesigner());
+            _cache1.Add(typeof(PolygonDesigner), () => new PolygonDesigner());
+            _cache1.Add(typeof(RouteDesigner), () => new RouteDesigner());
+
+            _cache1.Add(typeof(Selector), () => new Selector());
+
+            _cache2.Add(typeof(TranslateDecorator), gf => new TranslateDecorator(gf));
+            _cache2.Add(typeof(ScaleDecorator), gf => new ScaleDecorator(gf));
+            _cache2.Add(typeof(RotateDecorator), gf => new RotateDecorator(gf));
+            _cache2.Add(typeof(EditDecorator), gf => new EditDecorator(gf));
+        }
+
+        public IDecoratorBuilder SelectDecorator<T>() where T : IDecorator
+        {
+            var type = typeof(T);
+
+            if (_cache2.ContainsKey(type) == true)
+            {
+                return new DecoratorBuilder(_cache2[type]);
+            }
+
+            throw new Exception($"Decorator type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
+        }
+
+        public IDesignerBuilder SelectDesigner<T>() where T : IDesigner
         {
             var type = typeof(T);
 
             if (_cache1.ContainsKey(type) == true)
             {
-                if (type.IsAssignableTo(typeof(IDesigner)) == true)
-                {
-                    return (T)CreateDesigner(type);
-                }
-
-                if (type.IsAssignableTo(typeof(ISelector)) == true)
-                {
-                    return (T)CreateSelectorWithDecorator(type);
-                }
-
-                return (T)_cache1[type].Invoke();
-            }
-            else if (_cache2.ContainsKey(type) == true)
-            {
-                if (GeometryFeature != null)
-                {
-                    return (T)_cache2[type].Invoke(GeometryFeature);
-                }
+                return new DesignerBuilder(_cache1[type]);
             }
 
-            throw new Exception($"Type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
+            throw new Exception($"Designer type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
         }
 
-        private IDesigner CreateDesigner(Type type)
+        public ISelectorBuilder SelectSelector<T>() where T : ISelector
         {
-            var designer = (IDesigner)_cache1[type].Invoke();
+            var type = typeof(T);
 
-            if (Layers != null)
+            if (_cache1.ContainsKey(type) == true)
             {
-                designer = AttachDesigner(designer, Layers);
+                return new SelectorBuilder(_cache1[type]);
             }
 
-            return designer;
+            throw new Exception($"Selector type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
         }
 
-        private ISelector CreateSelectorWithDecorator(Type type)
+        internal static void AddInteractiveLayer(LayerCollection layers, IInteractive interactive, IStyle style)
         {
-            ISelector? selector = null;
-
-            if (Layers != null && WrappedDecoratorType != null && _cache2.ContainsKey(WrappedDecoratorType) == true)
-            {
-                selector = new DecoratorSelector(_cache2[WrappedDecoratorType]);
-
-                ((IDecoratorSelector)selector).DecoratorSelecting.Subscribe(s => AddInteractiveLayer(Layers, s));
-
-                selector.Unselect.Subscribe(_ => RemoveInteractiveLayer(Layers));
-            }
-
-            return selector ?? (ISelector)_cache1[type].Invoke();
-        }
-
-        private static IDesigner AttachDesigner(IDesigner designer, LayerCollection layers)
-        {
-            RemoveInteractiveLayer(layers);
-
-            var interactiveLayer = new InteractiveLayer(designer)
+            var interactiveLayer = new InteractiveLayer(interactive)
             {
                 Name = nameof(InteractiveLayer),
-                Style = CreateInteractiveLayerDesignerStyle(),
-            };
-
-            designer.BeginCreating.Subscribe(_ => layers.Add(interactiveLayer));
-
-            designer.EndCreating.Subscribe(_ => layers.Remove(interactiveLayer));
-
-            return designer;
-        }
-
-        private static void AddInteractiveLayer(LayerCollection layers, IDecorator decorator)
-        {
-            var interactiveLayer = new InteractiveLayer(decorator)
-            {
-                Name = nameof(InteractiveLayer),
-                Style = CreateInteractiveLayerDecoratorStyle(),
+                Style = style,
             };
 
             layers.Add(interactiveLayer);
         }
 
-        private static void RemoveInteractiveLayer(LayerCollection layers)
+        internal static void RemoveInteractiveLayer(LayerCollection layers)
         {
             var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
@@ -104,7 +86,32 @@ namespace Mapsui.Interactivity
             }
         }
 
-        private static IStyle CreateInteractiveLayerDesignerStyle()
+        internal static IStyle CreateInteractiveLayerDecoratorStyle()
+        {
+            return new ThemeStyle(f =>
+            {
+                if (f is not GeometryFeature gf)
+                {
+                    return null;
+                }
+
+                if (gf.Geometry is Point)
+                {
+                    return new SymbolStyle()
+                    {
+                        Fill = new Brush(Color.White),
+                        Outline = new Pen(Color.Black, 2 / 0.3),
+                        Line = null,
+                        SymbolType = SymbolType.Ellipse,
+                        SymbolScale = 0.3,
+                    };
+                }
+
+                return null;
+            });
+        }
+
+        internal static IStyle CreateInteractiveLayerDesignerStyle()
         {
             return new ThemeStyle(f =>
             {
@@ -169,31 +176,6 @@ namespace Mapsui.Interactivity
                         Fill = new Brush(Color.Transparent),
                         Line = new Pen(_color, 3),
                         Outline = new Pen(_color, 3)
-                    };
-                }
-
-                return null;
-            });
-        }
-
-        private static IStyle CreateInteractiveLayerDecoratorStyle()
-        {
-            return new ThemeStyle(f =>
-            {
-                if (f is not GeometryFeature gf)
-                {
-                    return null;
-                }
-
-                if (gf.Geometry is Point)
-                {
-                    return new SymbolStyle()
-                    {
-                        Fill = new Brush(Color.White),
-                        Outline = new Pen(Color.Black, 2 / 0.3),
-                        Line = null,
-                        SymbolType = SymbolType.Ellipse,
-                        SymbolScale = 0.3,
                     };
                 }
 
