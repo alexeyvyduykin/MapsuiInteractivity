@@ -10,6 +10,7 @@ namespace MapsuiInteractivitySample
     public class UserMapControl : MapControl
     {
         private bool _isGrabbing = false;
+        private Cursor? _prevCursor = Cursor.Default;
 
         public UserMapControl() : base()
         {
@@ -31,7 +32,9 @@ namespace MapsuiInteractivitySample
                     {
                         _isGrabbing = true;
 
-                        SetCursor(CursorType.HandGrab);
+                        _prevCursor = Cursor;
+
+                        Cursor = new Cursor(CursorType.HandGrab.ToStandartCursor());
                     }
                 }
             }
@@ -45,16 +48,11 @@ namespace MapsuiInteractivitySample
 
                 if (e.Handled == false)
                 {
-                    SetCursor(CursorType.Default);
+                    Cursor = _prevCursor;
                 }
             }
 
             base.OnPointerReleased(e);
-        }
-
-        public void SetCursor(CursorType cursorType)
-        {
-            Cursor = new Cursor(cursorType.ToStandartCursor());
         }
     }
 }
