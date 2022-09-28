@@ -114,7 +114,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void SelectCommand()
         {
-            _selector = new InteractiveBuilder().Build<BaseSelector>();
+            _selector = new InteractiveBuilder().Build<Selector>();
 
             _selector.Select.Subscribe(s =>
             {
@@ -155,7 +155,7 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector = new InteractiveBuilder()
                 .AttachTo(Map)
                 .Wrapped<TranslateDecorator>()
-                .Build<BaseSelector>();
+                .Build<Selector>();
 
             ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
@@ -180,7 +180,7 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector = new InteractiveBuilder()
                 .AttachTo(Map)
                 .Wrapped<ScaleDecorator>()
-                .Build<BaseSelector>();
+                .Build<Selector>();
 
             ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
@@ -205,7 +205,7 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector = new InteractiveBuilder()
                  .AttachTo(Map)
                  .Wrapped<RotateDecorator>()
-                 .Build<BaseSelector>();
+                 .Build<Selector>();
 
             ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {
@@ -230,7 +230,7 @@ namespace MapsuiInteractivitySample.ViewModels
             _selector = new InteractiveBuilder()
                 .AttachTo(Map)
                 .Wrapped<EditDecorator>()
-                .Build<BaseSelector>();
+                .Build<Selector>();
 
             ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
             {

@@ -5,13 +5,13 @@ using System.Reactive;
 
 namespace Mapsui.Interactivity
 {
-    public class BaseSelector : BaseInteractive, ISelector
+    public class Selector : BaseInteractive, ISelector
     {
         private IFeature? _lastSelectedFeature;
         private IFeature? _lastPointeroverFeature;
         private ILayer? _lastPointeroverLayer;
 
-        internal BaseSelector() : base()
+        internal Selector() : base()
         {
             Select = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
             Unselect = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);

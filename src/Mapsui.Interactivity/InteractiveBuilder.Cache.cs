@@ -15,7 +15,7 @@ namespace Mapsui.Interactivity
             _cache1.Add(typeof(PolygonDesigner), () => new PolygonDesigner());
             _cache1.Add(typeof(RouteDesigner), () => new RouteDesigner());
 
-            _cache1.Add(typeof(BaseSelector), () => new BaseSelector());
+            _cache1.Add(typeof(Selector), () => new Selector());
 
             _cache2.Add(typeof(TranslateDecorator), gf => new TranslateDecorator(gf));
             _cache2.Add(typeof(ScaleDecorator), gf => new ScaleDecorator(gf));

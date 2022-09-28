@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace Mapsui.Interactivity
 {
-    internal class DecoratorSelector : BaseSelector, IDecoratorSelector
+    internal class DecoratorSelector : Selector, IDecoratorSelector
     {
         private IDecorator? _decorator;
 
