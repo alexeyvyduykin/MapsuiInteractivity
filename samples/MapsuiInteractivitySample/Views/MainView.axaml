@@ -35,6 +35,15 @@
 			</inter:Interaction.Behavior>
 		</local:UserMapControl>
 
+		<Border VerticalAlignment="Bottom"
+				HorizontalAlignment="Left"
+				IsVisible="{Binding !!LayerNames.Count}"
+				Background="Black"
+				Margin="8">
+			<ItemsControl Margin="8"
+						  Items="{Binding LayerNames}"/>
+		</Border>
+
 		<Grid Width="200"
 			  RowDefinitions="Auto,Auto"
 			  HorizontalAlignment="Right"

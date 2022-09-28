@@ -23,6 +23,8 @@ namespace MapsuiInteractivitySample.ViewModels
         {
             Map = MapBuilder.Create();
 
+            Map.Layers.Changed += Layers_Changed;
+
             _userLayer = (WritableLayer)Map.Layers[0];
 
             var radioButtonList = new RadioButtonList();
@@ -62,6 +64,14 @@ namespace MapsuiInteractivitySample.ViewModels
             Layers = Map.Layers.Select(s => new LayerViewModel(s)).ToList();
 
             SelectedLayer = Layers.FirstOrDefault();
+        }
+
+        private void Layers_Changed(object sender, LayerCollectionChangedEventArgs args)
+        {
+            if (sender is LayerCollection layers)
+            {
+                LayerNames = layers.Select(s => s.Name).ToList();
+            }
         }
 
         private void SelectFeatureImpl(string name)
@@ -407,6 +417,9 @@ namespace MapsuiInteractivitySample.ViewModels
 
         [Reactive]
         public IList<LayerViewModel> Layers { get; set; }
+
+        [Reactive]
+        public IList<string> LayerNames { get; set; } = new List<string>();
 
         [Reactive]
         public LayerViewModel? SelectedLayer { get; set; }

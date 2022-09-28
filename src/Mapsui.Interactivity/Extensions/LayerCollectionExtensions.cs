@@ -26,6 +26,9 @@ namespace Mapsui.Interactivity.Extensions
 
             if (interactiveLayer != null)
             {
+                // HACK: before remove from layers clear interactive geometries (mapsui not auto clear data)
+                ((InteractiveLayer)interactiveLayer).Cancel();
+
                 layers.Remove(interactiveLayer);
             }
         }

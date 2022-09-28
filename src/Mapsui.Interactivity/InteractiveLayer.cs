@@ -9,6 +9,7 @@ namespace Mapsui.Interactivity
     {
         private readonly IInteractive? _interactive;
         private readonly IDisposable _disposable;
+        private bool _cancel;
 
         public InteractiveLayer(IInteractive interactive)
         {
@@ -19,8 +20,20 @@ namespace Mapsui.Interactivity
             IsMapInfoLayer = true;
         }
 
+        public void Cancel()
+        {
+            _cancel = true;
+
+            DataHasChanged();
+        }
+
         public override IEnumerable<IFeature> GetFeatures(MRect box, double resolution)
         {
+            if (_cancel == true)
+            {
+                yield break;
+            }
+
             if (_interactive is IDecorator decorator)
             {
                 var feature = decorator.FeatureSource;
