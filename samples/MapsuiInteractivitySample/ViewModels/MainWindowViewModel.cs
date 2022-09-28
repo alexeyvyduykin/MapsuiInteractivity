@@ -1,6 +1,7 @@
 ﻿using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.Interactivity;
+using Mapsui.Interactivity.Extensions;
 using Mapsui.Interactivity.UI.Avalonia;
 using Mapsui.Layers;
 using ReactiveUI;
@@ -270,9 +271,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
             designer.HoverCreating.Subscribe(s =>
             {
-                var area = ((IAreaDesigner)s).Area();
-
-                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {s.Area():N2} km²";
             });
 
             designer.EndCreating.Subscribe(s =>
@@ -296,9 +295,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
             designer.HoverCreating.Subscribe(s =>
             {
-                var area = ((IAreaDesigner)s).Area();
-
-                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {area:N2} km²";
+                Tip = $"Отпустите клавишу мыши для завершения рисования. Область: {s.Area():N2} km²";
             });
 
             designer.EndCreating.Subscribe(s =>
@@ -322,7 +319,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
             designer.HoverCreating.Subscribe(s =>
             {
-                var distance = ((IRouteDesigner)s).Distance();
+                var distance = s.Distance();
 
                 var res = (distance >= 1) ? $"{distance:N2} km" : $"{distance * 1000.0:N2} m";
 
@@ -355,7 +352,7 @@ namespace MapsuiInteractivitySample.ViewModels
 
             designer.Creating.Subscribe(s =>
             {
-                var area = ((IAreaDesigner)s).Area();
+                var area = s.Area();
 
                 if (area != 0.0)
                 {

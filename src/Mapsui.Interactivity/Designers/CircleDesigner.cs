@@ -1,13 +1,11 @@
-﻿using Mapsui.Interactivity.Utilities;
-using Mapsui.Nts;
+﻿using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using Mapsui.Projections;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    public class CircleDesigner : BaseDesigner, IAreaDesigner
+    public class CircleDesigner : BaseDesigner, IDesigner
     {
         private bool _isDrawing = false;
         private bool _firstClick = true;
@@ -138,17 +136,6 @@ namespace Mapsui.Interactivity
             {
                 _isDrawing = false;
             }
-        }
-
-        public double Area()
-        {
-            if (Feature.Geometry != null)
-            {
-                var vertices = _featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y));
-                return EarthMath.ComputeSphericalArea(vertices);
-            }
-
-            return 0;
         }
     }
 }

@@ -1,13 +1,11 @@
-﻿using Mapsui.Interactivity.Utilities;
-using Mapsui.Nts;
+﻿using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using Mapsui.Projections;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    public class PolygonDesigner : BaseDesigner, IAreaDesigner
+    public class PolygonDesigner : BaseDesigner, IDesigner
     {
         private bool _skip;
         private int _counter;
@@ -188,7 +186,5 @@ namespace Mapsui.Interactivity
                 Feature.Geometry = _featureCoordinates.ToPolygon();
             }
         }
-
-        public double Area() => EarthMath.ComputeSphericalArea(_featureCoordinates.Select(s => SphericalMercator.ToLonLat(s.X, s.Y)));
     }
 }

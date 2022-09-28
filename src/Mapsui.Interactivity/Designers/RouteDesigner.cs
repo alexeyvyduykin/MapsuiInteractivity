@@ -1,13 +1,11 @@
-﻿using Mapsui.Interactivity.Utilities;
-using Mapsui.Nts;
+﻿using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using Mapsui.Projections;
 using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
 namespace Mapsui.Interactivity
 {
-    public class RouteDesigner : BaseDesigner, IRouteDesigner
+    public class RouteDesigner : BaseDesigner, IDesigner
     {
         private bool _skip;
         private int _counter;
@@ -177,20 +175,6 @@ namespace Mapsui.Interactivity
             {
                 _isDrawing = false;
             }
-        }
-
-        public double Distance()
-        {
-            if (Feature.Geometry != null)
-            {
-                var verts0 = Feature.Geometry.Coordinates;
-                var verts1 = ExtraFeatures.Single().Geometry!.Coordinates;
-                var verts = verts0.Union(verts1);
-                var vertices = verts.Select(s => SphericalMercator.ToLonLat(s.X, s.Y));
-                return EarthMath.ComputeSphericalDistance(vertices);
-            }
-
-            return 0;
         }
     }
 }
