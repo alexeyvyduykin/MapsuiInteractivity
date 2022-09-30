@@ -1,4 +1,4 @@
-﻿namespace Mapsui.Interactivity.UI.Avalonia
+﻿namespace Mapsui.Interactivity.UI
 {
     public static class States
     {

@@ -2,7 +2,7 @@
 using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.Extensions;
-using Mapsui.Interactivity.UI.Avalonia;
+using Mapsui.Interactivity.UI;
 using Mapsui.Layers;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;

@@ -8,6 +8,7 @@ namespace Mapsui.Interactivity
     public class Selector : BaseInteractive, ISelector
     {
         private IFeature? _lastSelectedFeature;
+        private ILayer? _lastSelectedLayer;
         private IFeature? _lastPointeroverFeature;
         private ILayer? _lastPointeroverLayer;
 
@@ -29,6 +30,8 @@ namespace Mapsui.Interactivity
 
         public IFeature? SelectedFeature => _lastSelectedFeature;
 
+        public ILayer? SelectedLayer => _lastSelectedLayer;
+
         public IFeature? HoveringFeature => _lastPointeroverFeature;
 
         public void Selected(IFeature feature, ILayer layer)
@@ -45,6 +48,7 @@ namespace Mapsui.Interactivity
                 feature[InteractiveFields.Select] = true;
 
                 _lastSelectedFeature = feature;
+                _lastSelectedLayer = layer;
 
                 layer.DataHasChanged();
 
@@ -67,7 +71,7 @@ namespace Mapsui.Interactivity
             {
                 _lastSelectedFeature[InteractiveFields.Select] = false;
 
-                _lastPointeroverLayer?.DataHasChanged();
+                _lastSelectedLayer?.DataHasChanged();
 
                 Unselect?.Execute().Subscribe();
             }
@@ -93,6 +97,7 @@ namespace Mapsui.Interactivity
                     feature[InteractiveFields.Select] = true;
 
                     _lastSelectedFeature = feature;
+                    _lastSelectedLayer = mapInfo.Layer;
 
                     Select?.Execute().Subscribe();
                 }

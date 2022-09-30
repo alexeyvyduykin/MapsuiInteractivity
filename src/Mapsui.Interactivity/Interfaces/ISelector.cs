@@ -14,6 +14,8 @@ namespace Mapsui.Interactivity
 
         IFeature? SelectedFeature { get; }
 
+        ILayer? SelectedLayer { get; }
+
         IFeature? HoveringFeature { get; }
 
         ReactiveCommand<Unit, ISelector> Select { get; }
