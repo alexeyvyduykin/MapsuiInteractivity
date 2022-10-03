@@ -31,5 +31,10 @@ namespace Mapsui.Interactivity
         public virtual void HoveringBegin(MapInfo? mapInfo) { }
 
         public virtual void HoveringEnd() { }
+
+        public virtual void Cancel()
+        {
+            Canceling.Execute().Subscribe();
+        }
     }
 }

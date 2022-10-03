@@ -8,6 +8,7 @@ namespace Mapsui.Interactivity
 {
     public class InteractiveBuilder
     {
+        // TODO: to IDictionary<Type, Func<IArgs, IInteractive>> _cache
         private static readonly IDictionary<Type, Func<IInteractive>> _cache1 = new Dictionary<Type, Func<IInteractive>>();
         private static readonly IDictionary<Type, Func<GeometryFeature, IDecorator>> _cache2 = new Dictionary<Type, Func<GeometryFeature, IDecorator>>();
 

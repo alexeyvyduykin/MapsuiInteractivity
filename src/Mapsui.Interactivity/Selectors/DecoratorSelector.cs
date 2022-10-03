@@ -33,8 +33,7 @@ namespace Mapsui.Interactivity
 
         public override void Unselected()
         {
-            _decorator?.Canceling.Execute().Subscribe();
-
+            _decorator?.Cancel();
             _decorator = null;
 
             base.Unselected();

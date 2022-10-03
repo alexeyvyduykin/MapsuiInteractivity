@@ -117,6 +117,9 @@
 					<Style Selector="ItemsControl > ContentPresenter:nth-child(5)">
 						<Setter Property="Margin" Value="0,0,0,10"></Setter>
 					</Style>
+					<Style Selector="ItemsControl > ContentPresenter:nth-child(10)">
+						<Setter Property="Margin" Value="0,0,0,10"></Setter>
+					</Style>
 				</ItemsControl.Styles>
 
 				<ItemsControl.ItemTemplate>

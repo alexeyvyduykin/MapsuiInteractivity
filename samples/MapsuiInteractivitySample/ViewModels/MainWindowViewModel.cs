@@ -39,6 +39,8 @@ namespace MapsuiInteractivitySample.ViewModels
             radioButtonList.Register(new RadioButtonItem("Circle"), DrawingCircleCommand, Reset);
             radioButtonList.Register(new RadioButtonItem("Polygon"), DrawingPolygonCommand, Reset);
             radioButtonList.Register(new RadioButtonItem("Route"), DrawingRouteCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Select|Filter"), SelectWithFilterCommand, Reset);
+            radioButtonList.Register(new RadioButtonItem("Translate|Filter"), TranslateWithFilterCommand, Reset);
 
             RadioButtons = new List<RadioButtonItem>(radioButtonList.Items);
 
@@ -115,10 +117,11 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void Reset()
         {
-            _selector?.Unselected();
+            Interactive?.Cancel();
+            Interactive = null;
+
             _selector = null;
 
-            Interactive = null;
             State = States.Default;
 
             Tip = string.Empty;
@@ -126,7 +129,52 @@ namespace MapsuiInteractivitySample.ViewModels
 
         private void SelectCommand()
         {
-            _selector = new InteractiveBuilder().SelectSelector<Selector>().Build();
+            _selector = new InteractiveBuilder()
+                .SelectSelector<Selector>()
+                .AttachTo(Map)
+                .Build();
+
+            _selector.Select.Subscribe(s =>
+            {
+                Tip = $"Select{Environment.NewLine}{s.SelectedFeature?.ToFeatureInfo()}";
+
+                if (IsWktInfo == true)
+                {
+                    WktInfo = s.SelectedFeature?.ToWkt();
+                }
+            });
+
+            _selector.Unselect.Subscribe(s =>
+            {
+                Tip = string.Empty;
+
+                if (IsWktInfo == true)
+                {
+                    WktInfo = string.Empty;
+                }
+            });
+
+            _selector.HoverBegin.Subscribe(s =>
+            {
+                Tip = $"HoveringBegin{Environment.NewLine}{s.HoveringFeature?.ToFeatureInfo()}";
+            });
+
+            _selector.HoverEnd.Subscribe(s =>
+            {
+                Tip = string.Empty;
+            });
+
+            Interactive = _selector;
+            State = States.Selecting;
+        }
+
+        private void SelectWithFilterCommand()
+        {
+            _selector = new InteractiveBuilder()
+                .SelectSelector<Selector>()
+                .AttachTo(Map)
+                .AvailableFor(_userLayer)
+                .Build();
 
             _selector.Select.Subscribe(s =>
             {
@@ -168,6 +216,33 @@ namespace MapsuiInteractivitySample.ViewModels
                 .SelectDecorator<TranslateDecorator>()
                 .AttachTo(Map)
                 .WithSelector<Selector>()
+                .Build();
+
+            ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
+            {
+                Interactive = s;
+                State = States.Editing;
+                Tip = $"Translate mode";
+            });
+
+            _selector.Unselect.Subscribe(s =>
+            {
+                Interactive = s;
+                State = States.Selecting;
+                Tip = String.Empty;
+            });
+
+            Interactive = _selector;
+            State = States.Selecting;
+        }
+
+        private void TranslateWithFilterCommand()
+        {
+            _selector = new InteractiveBuilder()
+                .SelectDecorator<TranslateDecorator>()
+                .AttachTo(Map)
+                .WithSelector<Selector>()
+                .AvailableFor(_userLayer)
                 .Build();
 
             ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>

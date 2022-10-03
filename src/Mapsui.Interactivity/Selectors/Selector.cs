@@ -164,5 +164,12 @@ namespace Mapsui.Interactivity
                 HoverEnd?.Execute().Subscribe();
             }
         }
+
+        public override void Cancel()
+        {
+            Unselected();
+
+            base.Cancel();
+        }
     }
 }

@@ -17,7 +17,14 @@ namespace Mapsui.Interactivity.Interfaces
         T AttachTo(IMap map);
     }
 
-    public interface ISelectorBuilder : IBuilder<ISelector> { }
+    public interface IFilterable<T> where T : IBuilder
+    {
+        T AvailableFor(ILayer[] layers);
+
+        T AvailableFor(ILayer layer);
+    }
+
+    public interface ISelectorBuilder : IBuilder<ISelector>, IAttachable<ISelectorBuilder>, IFilterable<ISelectorBuilder> { }
 
     public interface IDesignerBuilder : IBuilder<IDesigner>, IAttachable<IDesignerBuilder> { }
 
@@ -28,5 +35,5 @@ namespace Mapsui.Interactivity.Interfaces
         IDecoratorBuilder WithFeature(GeometryFeature feature);
     }
 
-    public interface ISelectorWithDecoratorBuilder : ISelectorBuilder { }
+    public interface ISelectorWithDecoratorBuilder : IBuilder<ISelector>, IFilterable<ISelectorWithDecoratorBuilder> { }
 }

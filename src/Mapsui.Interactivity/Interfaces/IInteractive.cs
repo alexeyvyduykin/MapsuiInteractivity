@@ -25,5 +25,7 @@ namespace Mapsui.Interactivity
         void HoveringBegin(MapInfo? mapInfo);
 
         void HoveringEnd();
+
+        void Cancel();
     }
 }
