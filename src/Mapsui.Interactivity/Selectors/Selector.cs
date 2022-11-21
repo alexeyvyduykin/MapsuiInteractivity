@@ -1,175 +1,138 @@
 ﻿using Mapsui.Layers;
 using Mapsui.UI;
 using ReactiveUI;
-using System.Reactive;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public class Selector : BaseInteractive, ISelector
 {
-    public class Selector : BaseInteractive, ISelector
-    {
-        private IFeature? _lastSelectedFeature;
-        private ILayer? _lastSelectedLayer;
-        private IFeature? _lastPointeroverFeature;
-        private ILayer? _lastPointeroverLayer;
+    private IFeature? _lastSelectedFeature;
+    private ILayer? _lastSelectedLayer;
+    private IFeature? _lastPointeroverFeature;
+    private ILayer? _lastPointeroverLayer;
+    private bool _selectState = false;
 
-        internal Selector() : base()
+    internal Selector() : base()
+    {
+        Select = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
+        Unselect = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
+        HoverBegin = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
+        HoverEnd = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
+    }
+
+    public ReactiveCommand<ISelector, ISelector> Select { get; }
+
+    public ReactiveCommand<ISelector, ISelector> Unselect { get; }
+
+    public ReactiveCommand<ISelector, ISelector> HoverBegin { get; }
+
+    public ReactiveCommand<ISelector, ISelector> HoverEnd { get; }
+
+    public IFeature? SelectedFeature => _lastSelectedFeature;
+
+    public ILayer? SelectedLayer => _lastSelectedLayer;
+
+    public IFeature? HoveringFeature => _lastPointeroverFeature;
+
+    public ILayer? PointeroverLayer => _lastPointeroverLayer;
+
+    public void Selected(IFeature feature, ILayer layer)
+    {
+        if (_lastSelectedFeature != null)
         {
-            Select = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-            Unselect = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-            HoverBegin = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-            HoverEnd = ReactiveCommand.Create<Unit, ISelector>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
+            Unselect?.Execute(this).Subscribe();
         }
 
-        public ReactiveCommand<Unit, ISelector> Select { get; }
+        _lastSelectedFeature = feature;
+        _lastSelectedLayer = layer;
 
-        public ReactiveCommand<Unit, ISelector> Unselect { get; }
+        _selectState = true;
 
-        public ReactiveCommand<Unit, ISelector> HoverBegin { get; }
+        Select?.Execute(this).Subscribe();
+    }
 
-        public ReactiveCommand<Unit, ISelector> HoverEnd { get; }
-
-        public IFeature? SelectedFeature => _lastSelectedFeature;
-
-        public ILayer? SelectedLayer => _lastSelectedLayer;
-
-        public IFeature? HoveringFeature => _lastPointeroverFeature;
-
-        public void Selected(IFeature feature, ILayer layer)
+    public virtual void Unselected()
+    {
+        if (_lastPointeroverFeature != null)
         {
-            if (layer is WritableLayer)
+            HoverEnd?.Execute(this).Subscribe();
+        }
+
+        if (_lastSelectedFeature != null)
+        {
+            Unselect?.Execute(this).Subscribe();
+        }
+
+        _selectState = false;
+    }
+
+    public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+    {
+        if (mapInfo?.Layer is ILayer layer
+            && mapInfo?.Feature is IFeature feature)
+        {
+            if (feature != _lastSelectedFeature)
             {
                 if (_lastSelectedFeature != null)
                 {
-                    _lastSelectedFeature[InteractiveFields.Select] = false;
-
-                    Unselect?.Execute().Subscribe();
+                    Unselect?.Execute(this).Subscribe();
                 }
-
-                feature[InteractiveFields.Select] = true;
 
                 _lastSelectedFeature = feature;
                 _lastSelectedLayer = layer;
 
-                layer.DataHasChanged();
+                _selectState = true;
 
-                Select?.Execute().Subscribe();
+                Select?.Execute(this).Subscribe();
             }
-        }
-
-        public virtual void Unselected()
-        {
-            if (_lastPointeroverFeature != null)
+            else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
             {
-                _lastPointeroverFeature[InteractiveFields.Hover] = false;
+                var isSelected = _selectState;
 
-                _lastPointeroverLayer?.DataHasChanged();
-
-                HoverEnd?.Execute().Subscribe();
-            }
-
-            if (_lastSelectedFeature != null)
-            {
-                _lastSelectedFeature[InteractiveFields.Select] = false;
-
-                _lastSelectedLayer?.DataHasChanged();
-
-                Unselect?.Execute().Subscribe();
-            }
-        }
-
-        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
-        {
-            if (mapInfo != null
-                && mapInfo.Layer != null
-                && mapInfo.Feature != null)
-            {
-                var feature = mapInfo.Feature;
-
-                if (feature != _lastSelectedFeature)
+                if (isSelected == true)
                 {
-                    if (_lastSelectedFeature != null)
-                    {
-                        _lastSelectedFeature[InteractiveFields.Select] = false;
-
-                        Unselect?.Execute().Subscribe();
-                    }
-
-                    feature[InteractiveFields.Select] = true;
-
-                    _lastSelectedFeature = feature;
-                    _lastSelectedLayer = mapInfo.Layer;
-
-                    Select?.Execute().Subscribe();
+                    Unselect?.Execute(this).Subscribe();
                 }
-                else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
+                else
                 {
-                    if (_lastSelectedFeature.Fields.Contains(InteractiveFields.Select))
-                    {
-                        var isSelected = !(bool)_lastSelectedFeature[InteractiveFields.Select]!;
-
-                        _lastSelectedFeature[InteractiveFields.Select] = isSelected;
-
-                        if (isSelected == true)
-                        {
-                            Select?.Execute().Subscribe();
-                        }
-                        else
-                        {
-                            Unselect?.Execute().Subscribe();
-                        }
-                    }
+                    Select?.Execute(this).Subscribe();
                 }
 
-                mapInfo.Layer?.DataHasChanged();
+                _selectState = !_selectState;
             }
         }
+    }
 
-        public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
+    public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
 
-        public override void HoveringBegin(MapInfo? mapInfo)
+    public override void HoveringBegin(MapInfo? mapInfo)
+    {
+        if (mapInfo?.Feature is IFeature feature
+            && mapInfo?.Layer is ILayer layer)
         {
-            if (mapInfo != null
-                && mapInfo.Feature != null
-                && mapInfo.Layer != null)
-            {
-                HoveringBegin(mapInfo.Feature, mapInfo.Layer);
-            }
+            HoveringBegin(feature, layer);
         }
+    }
 
-        public void HoveringBegin(IFeature feature, ILayer layer)
-        {
-            if (_lastPointeroverFeature != null)
-            {
-                _lastPointeroverFeature[InteractiveFields.Hover] = false;
-            }
+    public void HoveringBegin(IFeature feature, ILayer layer)
+    {
+        HoveringEnd();
 
-            feature[InteractiveFields.Hover] = true;
+        _lastPointeroverFeature = feature;
+        _lastPointeroverLayer = layer;
 
-            layer.DataHasChanged();
+        HoverBegin?.Execute(this).Subscribe();
+    }
 
-            _lastPointeroverFeature = feature;
-            _lastPointeroverLayer = layer;
+    public override void HoveringEnd()
+    {
+        HoverEnd?.Execute(this).Subscribe();
+    }
 
-            HoverBegin?.Execute().Subscribe();
-        }
+    public override void Cancel()
+    {
+        Unselected();
 
-        public override void HoveringEnd()
-        {
-            if (_lastPointeroverFeature != null)
-            {
-                _lastPointeroverFeature[InteractiveFields.Hover] = false;
-
-                _lastPointeroverLayer?.DataHasChanged();
-
-                HoverEnd?.Execute().Subscribe();
-            }
-        }
-
-        public override void Cancel()
-        {
-            Unselected();
-
-            base.Cancel();
-        }
+        base.Cancel();
     }
 }
