@@ -1,111 +1,110 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+internal class DrawingManipulator : MouseManipulator
 {
-    internal class DrawingManipulator : MouseManipulator
+    public DrawingManipulator(IView view) : base(view) { }
+
+    private bool _skip;
+    private int _counter;
+    private const int _minPixelsMovedForDrag = 4;
+
+    public override void Completed(MouseEventArgs e)
     {
-        public DrawingManipulator(IView view) : base(view) { }
+        base.Completed(e);
 
-        private bool _skip;
-        private int _counter;
-        private const int _minPixelsMovedForDrag = 4;
-
-        public override void Completed(MouseEventArgs e)
+        if (_skip == true)
         {
-            base.Completed(e);
+            View.SetCursor(CursorType.Cross);
+        }
 
-            if (_skip == true)
+        if (_skip == false)
+        {
+            var screenPosition = e.MapInfo?.ScreenPosition;
+
+            bool isClick(MPoint worldPosition)
             {
-                View.SetCursor(CursorType.Cross);
-            }
+                var p0 = View.WorldToScreen(worldPosition);
 
-            if (_skip == false)
-            {
-                var screenPosition = e.MapInfo?.ScreenPosition;
+                var res = IsClick(p0, screenPosition);
 
-                bool isClick(MPoint worldPosition)
+                if (res == true)
                 {
-                    var p0 = View.WorldToScreen(worldPosition);
-
-                    var res = IsClick(p0, screenPosition);
-
-                    if (res == true)
-                    {
-                        View.SetCursor(CursorType.Default);
-                    }
-
-                    return res;
+                    View.SetCursor(CursorType.Default);
                 }
 
-                View.Interactive.Ending(e.MapInfo, isClick);
+                return res;
             }
 
-            e.Handled = true;
+            View.Interactive.Ending(e.MapInfo, isClick);
         }
 
-        public override void Delta(MouseEventArgs e)
-        {
-            base.Delta(e);
-
-            View.Interactive.Moving(e.MapInfo);
-
-            if (_counter++ > 0)
-            {
-                _skip = true;
-
-                return;
-            }
-
-            e.Handled = true;
-        }
-
-        public override void Started(MouseEventArgs e)
-        {
-            base.Started(e);
-
-            _skip = false;
-            _counter = 0;
-
-            View.Interactive.Starting(e.MapInfo);
-
-            e.Handled = true;
-        }
-
-        private static bool IsClick(MPoint? screenPosition, MPoint? mouseDownScreenPosition)
-        {
-            if (mouseDownScreenPosition == null || screenPosition == null)
-            {
-                return false;
-            }
-
-            return mouseDownScreenPosition.Distance(screenPosition) < _minPixelsMovedForDrag;
-        }
+        e.Handled = true;
     }
 
-    internal class HoverDrawingManipulator : MouseManipulator
+    public override void Delta(MouseEventArgs e)
     {
-        public HoverDrawingManipulator(IView view) : base(view)
-        {
+        base.Delta(e);
 
+        View.Interactive.Moving(e.MapInfo);
+
+        if (_counter++ > 0)
+        {
+            _skip = true;
+
+            return;
         }
 
-        public override void Delta(MouseEventArgs e)
+        e.Handled = true;
+    }
+
+    public override void Started(MouseEventArgs e)
+    {
+        base.Started(e);
+
+        _skip = false;
+        _counter = 0;
+
+        View.Interactive.Starting(e.MapInfo);
+
+        e.Handled = true;
+    }
+
+    private static bool IsClick(MPoint? screenPosition, MPoint? mouseDownScreenPosition)
+    {
+        if (mouseDownScreenPosition == null || screenPosition == null)
         {
-            base.Delta(e);
-
-            View.Interactive.Hovering(e.MapInfo);
-
-            //e.Handled = true;
+            return false;
         }
 
-        public override void Started(MouseEventArgs e)
-        {
-            base.Started(e);
+        return mouseDownScreenPosition.Distance(screenPosition) < _minPixelsMovedForDrag;
+    }
+}
 
-            View.SetCursor(CursorType.Cross);
+internal class HoverDrawingManipulator : MouseManipulator
+{
+    public HoverDrawingManipulator(IView view) : base(view)
+    {
 
-            e.Handled = true;
-        }
+    }
+
+    public override void Delta(MouseEventArgs e)
+    {
+        base.Delta(e);
+
+        View.Interactive.Hovering(e.MapInfo);
+
+        //e.Handled = true;
+    }
+
+    public override void Started(MouseEventArgs e)
+    {
+        base.Started(e);
+
+        View.SetCursor(CursorType.Cross);
+
+        e.Handled = true;
     }
 }

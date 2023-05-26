@@ -1,9 +1,8 @@
 ﻿using ReactiveUI;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public interface IDecoratorSelector : ISelector
 {
-    public interface IDecoratorSelector : ISelector
-    {
-        ReactiveCommand<IDecorator, IDecorator> DecoratorSelecting { get; }
-    }
+    ReactiveCommand<IDecorator, IDecorator> DecoratorSelecting { get; }
 }

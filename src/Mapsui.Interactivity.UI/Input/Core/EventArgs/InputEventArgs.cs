@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI.Input.Core
+public abstract class InputEventArgs : EventArgs
 {
-    public abstract class InputEventArgs : EventArgs
-    {
-        public bool Handled { get; set; }
-    }
+    public bool Handled { get; set; }
 }

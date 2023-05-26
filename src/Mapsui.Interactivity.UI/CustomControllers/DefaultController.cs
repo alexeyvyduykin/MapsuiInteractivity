@@ -1,13 +1,12 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+public class DefaultController : BaseController, IController
 {
-    public class DefaultController : BaseController, IController
+    public DefaultController()
     {
-        public DefaultController()
-        {
-            this.BindMouseDown(MouseButton.Left, MapCommands.Default);
-            this.BindMouseEnter(MapCommands.HoverDefault);
-        }
+        this.BindMouseDown(MouseButton.Left, MapCommands.Default);
+        this.BindMouseEnter(MapCommands.HoverDefault);
     }
 }

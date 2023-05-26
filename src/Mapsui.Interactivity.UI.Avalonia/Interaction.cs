@@ -1,107 +1,106 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 
-namespace Mapsui.Interactivity.UI.Avalonia
+namespace Mapsui.Interactivity.UI.Avalonia;
+
+public class Interaction
 {
-    public class Interaction
+    static Interaction()
     {
-        static Interaction()
+        BehaviorProperty.Changed.Subscribe(BehaviorChanged);
+    }
+
+    public static readonly AttachedProperty<InteractivityBehavior?> BehaviorProperty =
+        AvaloniaProperty.RegisterAttached<Interaction, IAvaloniaObject, InteractivityBehavior?>("Behavior");
+
+    public static InteractivityBehavior? GetBehavior(IAvaloniaObject obj)
+    {
+        if (obj is null)
         {
-            BehaviorProperty.Changed.Subscribe(BehaviorChanged);
+            throw new ArgumentNullException(nameof(obj));
         }
 
-        public static readonly AttachedProperty<InteractivityBehavior?> BehaviorProperty =
-            AvaloniaProperty.RegisterAttached<Interaction, IAvaloniaObject, InteractivityBehavior?>("Behavior");
-
-        public static InteractivityBehavior? GetBehavior(IAvaloniaObject obj)
+        var behavior = (InteractivityBehavior?)obj.GetValue(BehaviorProperty);
+        if (behavior is null)
         {
-            if (obj is null)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            var behavior = (InteractivityBehavior?)obj.GetValue(BehaviorProperty);
-            if (behavior is null)
-            {
-                behavior = new InteractivityBehavior();
-                obj.SetValue(BehaviorProperty, behavior);
-                SetVisualTreeEventHandlersInitial(obj);
-            }
-
-            return behavior;
+            behavior = new InteractivityBehavior();
+            obj.SetValue(BehaviorProperty, behavior);
+            SetVisualTreeEventHandlersInitial(obj);
         }
 
-        public static void SetBehavior(IAvaloniaObject obj, InteractivityBehavior? value)
-        {
-            if (obj is null)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
+        return behavior;
+    }
 
-            obj.SetValue(BehaviorProperty, value);
+    public static void SetBehavior(IAvaloniaObject obj, InteractivityBehavior? value)
+    {
+        if (obj is null)
+        {
+            throw new ArgumentNullException(nameof(obj));
         }
 
-        private static void BehaviorChanged(AvaloniaPropertyChangedEventArgs<InteractivityBehavior?> e)
+        obj.SetValue(BehaviorProperty, value);
+    }
+
+    private static void BehaviorChanged(AvaloniaPropertyChangedEventArgs<InteractivityBehavior?> e)
+    {
+        var oldBehavior = e.OldValue.GetValueOrDefault();
+        var newBehavior = e.NewValue.GetValueOrDefault();
+
+        if (oldBehavior == newBehavior)
         {
-            var oldBehavior = e.OldValue.GetValueOrDefault();
-            var newBehavior = e.NewValue.GetValueOrDefault();
-
-            if (oldBehavior == newBehavior)
-            {
-                return;
-            }
-
-            if (oldBehavior is { AssociatedObject: { } })
-            {
-                oldBehavior.Detach();
-            }
-
-            if (newBehavior is { })
-            {
-                newBehavior.Attach(e.Sender);
-                SetVisualTreeEventHandlersRuntime(e.Sender);
-            }
+            return;
         }
 
-        private static void SetVisualTreeEventHandlersInitial(IAvaloniaObject obj)
+        if (oldBehavior is { AssociatedObject: { } })
         {
-            if (obj is not Control control)
-            {
-                return;
-            }
-
-            control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
-            control.AttachedToVisualTree += Control_AttachedToVisualTreeInitial;
-
-            control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeInitial;
-            control.DetachedFromVisualTree += Control_DetachedFromVisualTreeInitial;
+            oldBehavior.Detach();
         }
 
-        private static void SetVisualTreeEventHandlersRuntime(IAvaloniaObject obj)
+        if (newBehavior is { })
         {
-            if (obj is not Control control)
-            {
-                return;
-            }
+            newBehavior.Attach(e.Sender);
+            SetVisualTreeEventHandlersRuntime(e.Sender);
+        }
+    }
 
-            control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
-            control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeInitial;
+    private static void SetVisualTreeEventHandlersInitial(IAvaloniaObject obj)
+    {
+        if (obj is not Control control)
+        {
+            return;
         }
 
-        private static void Control_AttachedToVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
+        control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
+        control.AttachedToVisualTree += Control_AttachedToVisualTreeInitial;
+
+        control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeInitial;
+        control.DetachedFromVisualTree += Control_DetachedFromVisualTreeInitial;
+    }
+
+    private static void SetVisualTreeEventHandlersRuntime(IAvaloniaObject obj)
+    {
+        if (obj is not Control control)
         {
-            if (sender is IAvaloniaObject d)
-            {
-                GetBehavior(d)?.Attach(d);
-            }
+            return;
         }
 
-        private static void Control_DetachedFromVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
+        control.AttachedToVisualTree -= Control_AttachedToVisualTreeInitial;
+        control.DetachedFromVisualTree -= Control_DetachedFromVisualTreeInitial;
+    }
+
+    private static void Control_AttachedToVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (sender is IAvaloniaObject d)
         {
-            if (sender is IAvaloniaObject d)
-            {
-                GetBehavior(d)?.Detach();
-            }
+            GetBehavior(d)?.Attach(d);
+        }
+    }
+
+    private static void Control_DetachedFromVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (sender is IAvaloniaObject d)
+        {
+            GetBehavior(d)?.Detach();
         }
     }
 }

@@ -1,70 +1,68 @@
 ﻿using Mapsui.Interactivity.Utilities;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public class TranslateDecorator : BaseDecorator
 {
-    public class TranslateDecorator : BaseDecorator
+    private MPoint _center;
+    private MPoint _startCenter;
+    private MPoint _startOffsetToVertex;
+    private Geometry? _startGeometry;
+    // HACK: without this locker Moving() passing not his order
+    private bool _isTranslating = false;
+
+    internal TranslateDecorator(GeometryFeature featureSource) : base(featureSource)
     {
-        private MPoint _center;
-        private MPoint _startCenter;
-        private MPoint _startOffsetToVertex;
-        private Geometry? _startGeometry;
-        // HACK: without this locker Moving() passing not his order
-        private bool _isTranslating = false;
+        _center = featureSource.Geometry!.Centroid.ToMPoint();
 
-        internal TranslateDecorator(GeometryFeature featureSource) : base(featureSource)
+        _startCenter = _center;
+
+        _startOffsetToVertex = new MPoint();
+    }
+
+    public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+    {
+        _isTranslating = false;
+    }
+
+    public override IEnumerable<MPoint> GetActiveVertices() => new[] { _center };
+
+    public override void Moving(MapInfo? mapInfo)
+    {
+        if (_isTranslating == true && _startGeometry != null && mapInfo?.WorldPosition != null)
         {
-            _center = featureSource.Geometry!.Centroid.ToMPoint();
+            var worldPosition = mapInfo.WorldPosition;
 
+            var p1 = worldPosition - _startOffsetToVertex;
+
+            var delta = p1 - _startCenter;
+
+            var geometry = _startGeometry.Copy();
+
+            Geomorpher.Translate(geometry, delta.X, delta.Y);
+
+            _center = geometry.Centroid.ToMPoint();
+
+            UpdateGeometry(geometry);
+        }
+    }
+
+    public override void Starting(MapInfo? mapInfo)
+    {
+        var worldPosition = mapInfo?.WorldPosition;
+
+        if (worldPosition != null)
+        {
             _startCenter = _center;
 
-            _startOffsetToVertex = new MPoint();
-        }
+            _startOffsetToVertex = worldPosition - _startCenter;
 
-        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
-        {
-            _isTranslating = false;
-        }
+            _startGeometry = FeatureSource.Geometry!.Copy();
 
-        public override IEnumerable<MPoint> GetActiveVertices() => new[] { _center };
-
-        public override void Moving(MapInfo? mapInfo)
-        {
-            if (_isTranslating == true && _startGeometry != null && mapInfo?.WorldPosition != null)
-            {
-                var worldPosition = mapInfo.WorldPosition;
-
-                var p1 = worldPosition - _startOffsetToVertex;
-
-                var delta = p1 - _startCenter;
-
-                var geometry = _startGeometry.Copy();
-
-                Geomorpher.Translate(geometry, delta.X, delta.Y);
-
-                _center = geometry.Centroid.ToMPoint();
-
-                UpdateGeometry(geometry);
-            }
-        }
-
-        public override void Starting(MapInfo? mapInfo)
-        {
-            var worldPosition = mapInfo?.WorldPosition;
-
-            if (worldPosition != null)
-            {
-                _startCenter = _center;
-
-                _startOffsetToVertex = worldPosition - _startCenter;
-
-                _startGeometry = FeatureSource.Geometry!.Copy();
-
-                _isTranslating = true;
-            }
+            _isTranslating = true;
         }
     }
 }

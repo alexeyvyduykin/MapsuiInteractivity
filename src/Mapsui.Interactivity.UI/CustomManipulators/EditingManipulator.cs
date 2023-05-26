@@ -1,149 +1,148 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+internal class EditingManipulator : MouseManipulator
 {
-    internal class EditingManipulator : MouseManipulator
+    private bool _skip;
+    private int _counter;
+    private bool _isEditing = false;
+    private readonly int _vertexRadius = 4;
+    private IFeature? _clickFeature;
+    private MPoint? _clickPoint;
+
+    public EditingManipulator(IView view) : base(view) { }
+
+    public override void Completed(MouseEventArgs e)
     {
-        private bool _skip;
-        private int _counter;
-        private bool _isEditing = false;
-        private readonly int _vertexRadius = 4;
-        private IFeature? _clickFeature;
-        private MPoint? _clickPoint;
+        base.Completed(e);
 
-        public EditingManipulator(IView view) : base(view) { }
-
-        public override void Completed(MouseEventArgs e)
+        if (_isEditing == true)
         {
-            base.Completed(e);
+            View.Interactive.Ending(e.MapInfo);
 
-            if (_isEditing == true)
+            View.Map!.Navigator.PanLock = false;
+
+            _isEditing = false;
+        }
+        else
+        {
+            var clickPoint = e.MapInfo?.WorldPosition;
+            var clickFeature = e.MapInfo?.Feature;
+
+            if (_skip == false
+                && IsClick(clickPoint, _clickPoint) == true
+                && IFeature.Equals(_clickFeature, clickFeature) == true)
             {
-                View.Interactive.Ending(e.MapInfo);
-
-                View.Map!.PanLock = false;
-
-                _isEditing = false;
+                View.Interactive.Cancel();
             }
-            else
-            {
-                var clickPoint = e.MapInfo?.WorldPosition;
-                var clickFeature = e.MapInfo?.Feature;
+        }
 
-                if (_skip == false
-                    && IsClick(clickPoint, _clickPoint) == true
-                    && IFeature.Equals(_clickFeature, clickFeature) == true)
-                {
-                    View.Interactive.Cancel();
-                }
-            }
+        View.SetCursor(CursorType.Default);
 
-            View.SetCursor(CursorType.Default);
+        e.Handled = true;
+    }
+
+    private static bool IsClick(MPoint? currentPosition, MPoint? previousPosition)
+    {
+        if (currentPosition == null || previousPosition == null)
+            return false;
+
+        return
+            Math.Abs(currentPosition.X - previousPosition.X) < 1 &&
+            Math.Abs(currentPosition.Y - previousPosition.Y) < 1;
+    }
+
+    public override void Delta(MouseEventArgs e)
+    {
+        base.Delta(e);
+
+        if (_counter++ > 0)
+        {
+            _skip = true;
+        }
+
+        if (_isEditing == true)
+        {
+            View.Interactive.Moving(e.MapInfo);
+
+            View.SetCursor(CursorType.HandGrab);
 
             e.Handled = true;
         }
 
-        private static bool IsClick(MPoint? currentPosition, MPoint? previousPosition)
-        {
-            if (currentPosition == null || previousPosition == null)
-                return false;
+        //e.Handled = true;
+    }
 
-            return
-                Math.Abs(currentPosition.X - previousPosition.X) < 1 &&
-                Math.Abs(currentPosition.Y - previousPosition.Y) < 1;
+    public override void Started(MouseEventArgs e)
+    {
+        base.Started(e);
+
+        var mapInfo = e.MapInfo;
+
+        _isEditing = false;
+
+        _skip = false;
+        _counter = 0;
+
+        if (mapInfo != null && mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
+        {
+            var distance = mapInfo.Resolution * _vertexRadius;
+
+            View.Interactive.Starting(mapInfo, distance);
+
+            _isEditing = true;
         }
 
-        public override void Delta(MouseEventArgs e)
+        if (mapInfo != null && mapInfo.Feature != null)
         {
-            base.Delta(e);
+            _clickPoint = mapInfo.WorldPosition;
+            _clickFeature = mapInfo.Feature;
+        }
 
-            if (_counter++ > 0)
+        if (_isEditing == true)
+        {
+            View.Map!.Navigator.PanLock = true;
+        }
+
+        e.Handled = true;
+    }
+
+}
+
+internal class HoverEditingManipulator : MouseManipulator
+{
+    private bool _isChecker = false;
+
+    public HoverEditingManipulator(IView view) : base(view) { }
+
+    public override void Delta(MouseEventArgs e)
+    {
+        base.Delta(e);
+
+        if (e.Handled == false)
+        {
+            var mapInfo = e.MapInfo;
+
+            if (mapInfo != null && mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
             {
-                _skip = true;
-            }
+                if (_isChecker == true)
+                {
+                    View.SetCursor(CursorType.Hand);
 
-            if (_isEditing == true)
-            {
-                View.Interactive.Moving(e.MapInfo);
-
-                View.SetCursor(CursorType.HandGrab);
+                    _isChecker = false;
+                }
 
                 e.Handled = true;
             }
-
-            //e.Handled = true;
-        }
-
-        public override void Started(MouseEventArgs e)
-        {
-            base.Started(e);
-
-            var mapInfo = e.MapInfo;
-
-            _isEditing = false;
-
-            _skip = false;
-            _counter = 0;
-
-            if (mapInfo != null && mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
+            else
             {
-                var distance = mapInfo.Resolution * _vertexRadius;
-
-                View.Interactive.Starting(mapInfo, distance);
-
-                _isEditing = true;
-            }
-
-            if (mapInfo != null && mapInfo.Feature != null)
-            {
-                _clickPoint = mapInfo.WorldPosition;
-                _clickFeature = mapInfo.Feature;
-            }
-
-            if (_isEditing == true)
-            {
-                View.Map!.PanLock = true;
-            }
-
-            e.Handled = true;
-        }
-
-    }
-
-    internal class HoverEditingManipulator : MouseManipulator
-    {
-        private bool _isChecker = false;
-
-        public HoverEditingManipulator(IView view) : base(view) { }
-
-        public override void Delta(MouseEventArgs e)
-        {
-            base.Delta(e);
-
-            if (e.Handled == false)
-            {
-                var mapInfo = e.MapInfo;
-
-                if (mapInfo != null && mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
+                if (_isChecker == false)
                 {
-                    if (_isChecker == true)
-                    {
-                        View.SetCursor(CursorType.Hand);
+                    View.SetCursor(CursorType.Default);
 
-                        _isChecker = false;
-                    }
-
-                    e.Handled = true;
-                }
-                else
-                {
-                    if (_isChecker == false)
-                    {
-                        View.SetCursor(CursorType.Default);
-
-                        _isChecker = true;
-                    }
+                    _isChecker = true;
                 }
             }
         }

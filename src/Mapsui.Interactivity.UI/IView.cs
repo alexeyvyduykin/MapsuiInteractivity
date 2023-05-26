@@ -1,13 +1,12 @@
-﻿namespace Mapsui.Interactivity.UI
+﻿namespace Mapsui.Interactivity.UI;
+
+public interface IView
 {
-    public interface IView
-    {
-        Map? Map { get; }
+    Map? Map { get; }
 
-        void SetCursor(CursorType cursorType);
+    void SetCursor(CursorType cursorType);
 
-        IInteractive Interactive { get; }
+    IInteractive Interactive { get; }
 
-        MPoint WorldToScreen(MPoint worldPosition);
-    }
+    MPoint WorldToScreen(MPoint worldPosition);
 }

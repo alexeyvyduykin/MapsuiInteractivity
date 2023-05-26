@@ -8,7 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Mapsui" Version="4.0.0-beta.5" />
+		<PackageReference Include="Mapsui" Version="4.0.0-rc.1" />
+		<PackageReference Include="Mapsui.Nts" Version="4.0.0-rc.1" />
 		<PackageReference Include="ReactiveUI" Version="18.0.10" />
 	</ItemGroup>
 

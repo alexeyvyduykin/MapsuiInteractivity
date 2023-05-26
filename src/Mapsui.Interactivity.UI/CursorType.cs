@@ -1,10 +1,9 @@
-﻿namespace Mapsui.Interactivity.UI
+﻿namespace Mapsui.Interactivity.UI;
+
+public enum CursorType
 {
-    public enum CursorType
-    {
-        Default = 0,
-        Hand,
-        HandGrab,
-        Cross,
-    }
+    Default = 0,
+    Hand,
+    HandGrab,
+    Cross,
 }

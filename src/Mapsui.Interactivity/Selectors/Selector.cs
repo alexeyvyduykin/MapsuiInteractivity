@@ -1,5 +1,4 @@
 ﻿using Mapsui.Layers;
-using Mapsui.UI;
 using ReactiveUI;
 
 namespace Mapsui.Interactivity;

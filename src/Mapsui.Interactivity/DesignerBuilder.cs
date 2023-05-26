@@ -3,45 +3,44 @@ using Mapsui.Interactivity.Interfaces;
 using Mapsui.Layers;
 using System.Reactive.Linq;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+internal class DesignerBuilder : IDesignerBuilder
 {
-    internal class DesignerBuilder : IDesignerBuilder
+    private readonly Func<IInteractive> _builder;
+
+    public DesignerBuilder(Func<IInteractive> builder)
     {
-        private readonly Func<IInteractive> _builder;
+        _builder = builder;
+    }
 
-        public DesignerBuilder(Func<IInteractive> builder)
+    internal LayerCollection? Layers { get; set; }
+
+    public IDesigner Build()
+    {
+        var designer = (IDesigner)_builder.Invoke();
+
+        if (Layers != null)
         {
-            _builder = builder;
+            designer.BeginCreating.Subscribe(s => Layers.AddInteractiveLayer(s, InteractiveBuilder.CreateInteractiveLayerDesignerStyle()));
+
+            designer.EndCreating.Subscribe(_ => Layers.RemoveInteractiveLayer());
         }
 
-        internal LayerCollection? Layers { get; set; }
+        return designer;
+    }
 
-        public IDesigner Build()
-        {
-            var designer = (IDesigner)_builder.Invoke();
+    public IDesignerBuilder AttachTo(LayerCollection layers)
+    {
+        Layers = layers;
 
-            if (Layers != null)
-            {
-                designer.BeginCreating.Subscribe(s => Layers.AddInteractiveLayer(s, InteractiveBuilder.CreateInteractiveLayerDesignerStyle()));
+        return this;
+    }
 
-                designer.EndCreating.Subscribe(_ => Layers.RemoveInteractiveLayer());
-            }
+    public IDesignerBuilder AttachTo(Map map)
+    {
+        Layers = map.Layers;
 
-            return designer;
-        }
-
-        public IDesignerBuilder AttachTo(LayerCollection layers)
-        {
-            Layers = layers;
-
-            return this;
-        }
-
-        public IDesignerBuilder AttachTo(IMap map)
-        {
-            Layers = map.Layers;
-
-            return this;
-        }
+        return this;
     }
 }

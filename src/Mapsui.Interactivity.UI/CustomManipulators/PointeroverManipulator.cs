@@ -1,75 +1,73 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
-using Mapsui.UI;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+internal class PointeroverManipulator : MouseManipulator
 {
-    internal class PointeroverManipulator : MouseManipulator
+    private bool _isChecker = false;
+    private IFeature? _lastFeature;
+    private MapInfo? _lastMapInfo;
+
+    public PointeroverManipulator(IView view) : base(view) { }
+
+    public override void Delta(MouseEventArgs e)
     {
-        private bool _isChecker = false;
-        private IFeature? _lastFeature;
-        private MapInfo? _lastMapInfo;
+        base.Delta(e);
 
-        public PointeroverManipulator(IView view) : base(view) { }
-
-        public override void Delta(MouseEventArgs e)
+        if (e.Handled == false)
         {
-            base.Delta(e);
+            var mapInfo = e.MapInfo;
 
-            if (e.Handled == false)
+            if (mapInfo != null
+                && mapInfo.Layer != null
+                && mapInfo.Feature != null)
             {
-                var mapInfo = e.MapInfo;
-
-                if (mapInfo != null
-                    && mapInfo.Layer != null
-                    && mapInfo.Feature != null)
+                if (_lastFeature != null && _lastFeature != mapInfo.Feature)
                 {
-                    if (_lastFeature != null && _lastFeature != mapInfo.Feature)
+                    if (_lastMapInfo != null)
                     {
-                        if (_lastMapInfo != null)
-                        {
-                            View.Interactive.HoveringEnd();
-                        }
-
-                        _lastFeature = mapInfo.Feature;
-
-                        if (_lastFeature != null)
-                        {
-                            View.Interactive.HoveringBegin(mapInfo);
-                            _lastMapInfo = mapInfo;
-                        }
+                        View.Interactive.HoveringEnd();
                     }
 
-                    if (_isChecker == true)
+                    _lastFeature = mapInfo.Feature;
+
+                    if (_lastFeature != null)
                     {
-                        _lastFeature = mapInfo.Feature;
-
-                        View.SetCursor(CursorType.Hand);
-
-                        if (_lastFeature != null)
-                        {
-                            View.Interactive.HoveringBegin(mapInfo);
-                            _lastMapInfo = mapInfo;
-                        }
-
-                        _isChecker = false;
+                        View.Interactive.HoveringBegin(mapInfo);
+                        _lastMapInfo = mapInfo;
                     }
-
-                    e.Handled = false;// true;
                 }
-                else
+
+                if (_isChecker == true)
                 {
-                    if (_isChecker == false)
+                    _lastFeature = mapInfo.Feature;
+
+                    View.SetCursor(CursorType.Hand);
+
+                    if (_lastFeature != null)
                     {
-                        View.SetCursor(CursorType.Default);
-
-                        if (_lastFeature != null)
-                        {
-                            View.Interactive.HoveringEnd();
-                        }
-
-                        _isChecker = true;
+                        View.Interactive.HoveringBegin(mapInfo);
+                        _lastMapInfo = mapInfo;
                     }
+
+                    _isChecker = false;
+                }
+
+                e.Handled = false;// true;
+            }
+            else
+            {
+                if (_isChecker == false)
+                {
+                    View.SetCursor(CursorType.Default);
+
+                    if (_lastFeature != null)
+                    {
+                        View.Interactive.HoveringEnd();
+                    }
+
+                    _isChecker = true;
                 }
             }
         }

@@ -1,56 +1,55 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+internal class ClickManipulator : MouseManipulator
 {
-    internal class ClickManipulator : MouseManipulator
+    private bool _skip;
+    private int _counter;
+
+    public ClickManipulator(IView view) : base(view) { }
+
+    public override void Completed(MouseEventArgs e)
     {
-        private bool _skip;
-        private int _counter;
+        base.Completed(e);
 
-        public ClickManipulator(IView view) : base(view) { }
-
-        public override void Completed(MouseEventArgs e)
+        if (_skip == false && e.Handled == false)
         {
-            base.Completed(e);
+            var mapInfo = e.MapInfo;
 
-            if (_skip == false && e.Handled == false)
+            if (mapInfo != null &&
+                mapInfo.Layer != null &&
+                mapInfo.Feature != null)
             {
-                var mapInfo = e.MapInfo;
-
-                if (mapInfo != null &&
-                    mapInfo.Layer != null &&
-                    mapInfo.Feature != null)
-                {
-                    View.Interactive.Ending(mapInfo);
-                }
+                View.Interactive.Ending(mapInfo);
             }
-
-            e.Handled = true;
         }
 
-        public override void Delta(MouseEventArgs e)
+        e.Handled = true;
+    }
+
+    public override void Delta(MouseEventArgs e)
+    {
+        base.Delta(e);
+
+        if (_counter++ > 0)
         {
-            base.Delta(e);
+            _skip = true;
 
-            if (_counter++ > 0)
-            {
-                _skip = true;
-
-                return;
-            }
-
-            e.Handled = true;
+            return;
         }
 
-        public override void Started(MouseEventArgs e)
-        {
-            base.Started(e);
+        e.Handled = true;
+    }
 
-            _skip = false;
-            _counter = 0;
+    public override void Started(MouseEventArgs e)
+    {
+        base.Started(e);
 
-            e.Handled = true;
-        }
+        _skip = false;
+        _counter = 0;
+
+        e.Handled = true;
     }
 }

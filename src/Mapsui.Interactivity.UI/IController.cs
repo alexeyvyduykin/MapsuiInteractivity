@@ -1,38 +1,37 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+public interface IController
 {
-    public interface IController
-    {
-        bool HandleMouseDown(IView view, MouseDownEventArgs args);
+    bool HandleMouseDown(IView view, MouseDownEventArgs args);
 
-        bool HandleMouseMove(IView view, MouseEventArgs args);
+    bool HandleMouseMove(IView view, MouseEventArgs args);
 
-        bool HandleMouseUp(IView view, MouseEventArgs args);
+    bool HandleMouseUp(IView view, MouseEventArgs args);
 
-        bool HandleMouseEnter(IView view, MouseEventArgs args);
+    bool HandleMouseEnter(IView view, MouseEventArgs args);
 
-        bool HandleMouseLeave(IView view, MouseEventArgs args);
+    bool HandleMouseLeave(IView view, MouseEventArgs args);
 
-        bool HandleMouseWheel(IView view, MouseWheelEventArgs args);
+    bool HandleMouseWheel(IView view, MouseWheelEventArgs args);
 
-        bool HandleGesture(IView view, InputGesture gesture, InputEventArgs args);
+    bool HandleGesture(IView view, InputGesture gesture, InputEventArgs args);
 
-        void AddMouseManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseDownEventArgs args);
+    void AddMouseManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseDownEventArgs args);
 
-        void AddHoverManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseEventArgs args);
+    void AddHoverManipulator(IView view, BaseManipulator<MouseEventArgs> manipulator, MouseEventArgs args);
 
-        void Bind(MouseDownGesture gesture, IViewCommand<MouseDownEventArgs> command);
+    void Bind(MouseDownGesture gesture, IViewCommand<MouseDownEventArgs> command);
 
-        void Bind(MouseEnterGesture gesture, IViewCommand<MouseEventArgs> command);
+    void Bind(MouseEnterGesture gesture, IViewCommand<MouseEventArgs> command);
 
-        void Bind(MouseWheelGesture gesture, IViewCommand<MouseWheelEventArgs> command);
+    void Bind(MouseWheelGesture gesture, IViewCommand<MouseWheelEventArgs> command);
 
-        void Unbind(InputGesture gesture);
+    void Unbind(InputGesture gesture);
 
-        void Unbind(IViewCommand command);
+    void Unbind(IViewCommand command);
 
-        void UnbindAll();
-    }
+    void UnbindAll();
 }

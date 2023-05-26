@@ -1,124 +1,122 @@
 ﻿using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
-using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public class RectangleDesigner : BaseDesigner, IDesigner
 {
-    public class RectangleDesigner : BaseDesigner, IDesigner
+    private bool _isDrawing = false;
+    private bool _firstClick = true;
+    private bool _skip;
+    private int _counter;
+    private List<Coordinate> _featureCoordinates = new();
+
+    internal RectangleDesigner() : base() { }
+
+    public override IEnumerable<MPoint> GetActiveVertices() => Array.Empty<MPoint>();
+
+    public override void Starting(MapInfo? mapInfo)
     {
-        private bool _isDrawing = false;
-        private bool _firstClick = true;
-        private bool _skip;
-        private int _counter;
-        private List<Coordinate> _featureCoordinates = new();
+        _skip = false;
+        _counter = 0;
+    }
 
-        internal RectangleDesigner() : base() { }
-
-        public override IEnumerable<MPoint> GetActiveVertices() => Array.Empty<MPoint>();
-
-        public override void Starting(MapInfo? mapInfo)
+    public override void Moving(MapInfo? mapInfo)
+    {
+        if (_counter++ > 0)
         {
-            _skip = false;
-            _counter = 0;
+            _skip = true;
         }
+    }
 
-        public override void Moving(MapInfo? mapInfo)
+    public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+    {
+        if (_skip == false)
         {
-            if (_counter++ > 0)
-            {
-                _skip = true;
-            }
+            CreatingFeature(mapInfo?.WorldPosition!);
         }
+    }
 
-        public override void Ending(MapInfo? mapInfo, Predicate<MPoint>? isEnd = null)
+    public override void Hovering(MapInfo? mapInfo)
+    {
+        HoverCreatingFeature(mapInfo?.WorldPosition!);
+    }
+
+    private void CreatingFeature(MPoint worldPosition)
+    {
+        if (_firstClick == true)
         {
-            if (_skip == false)
-            {
-                CreatingFeature(mapInfo?.WorldPosition!);
-            }
+            BeginDrawing(worldPosition);
+
+            _firstClick = false;
+
+            BeginCreating.Execute().Subscribe();
+
+            return;
         }
-
-        public override void Hovering(MapInfo? mapInfo)
+        else
         {
-            HoverCreatingFeature(mapInfo?.WorldPosition!);
+            EndDrawing();
+
+            _firstClick = true;
+
+            EndCreating.Execute().Subscribe();
+
+            return;
         }
+    }
 
-        private void CreatingFeature(MPoint worldPosition)
+    private void HoverCreatingFeature(MPoint worldPosition)
+    {
+        if (_firstClick == false)
         {
-            if (_firstClick == true)
-            {
-                BeginDrawing(worldPosition);
+            DrawingHover(worldPosition);
 
-                _firstClick = false;
+            HoverCreating.Execute().Subscribe();
 
-                BeginCreating.Execute().Subscribe();
-
-                return;
-            }
-            else
-            {
-                EndDrawing();
-
-                _firstClick = true;
-
-                EndCreating.Execute().Subscribe();
-
-                return;
-            }
+            Invalidate.Execute().Subscribe();
         }
+    }
 
-        private void HoverCreatingFeature(MPoint worldPosition)
+    private void BeginDrawing(MPoint worldPosition)
+    {
+        if (_isDrawing == false)
         {
-            if (_firstClick == false)
-            {
-                DrawingHover(worldPosition);
+            _isDrawing = true;
 
-                HoverCreating.Execute().Subscribe();
+            var p0 = worldPosition.ToCoordinate();
+            var p1 = worldPosition.ToCoordinate();
+            var p2 = worldPosition.ToCoordinate();
+            var p3 = worldPosition.ToCoordinate();
 
-                Invalidate.Execute().Subscribe();
-            }
+            _featureCoordinates = new() { p0, p1, p2, p3 };
+            Feature = _featureCoordinates.ToPolygon().ToFeature();
+            ExtraFeatures = new List<GeometryFeature>();
         }
+    }
 
-        private void BeginDrawing(MPoint worldPosition)
+    private void DrawingHover(MPoint worldPosition)
+    {
+        if (_isDrawing == true)
         {
-            if (_isDrawing == false)
-            {
-                _isDrawing = true;
+            var p2 = worldPosition.ToCoordinate();
+            var p0 = _featureCoordinates[0];
+            var p1 = (p2.X, p0.Y).ToCoordinate();
+            var p3 = (p0.X, p2.Y).ToCoordinate();
 
-                var p0 = worldPosition.ToCoordinate();
-                var p1 = worldPosition.ToCoordinate();
-                var p2 = worldPosition.ToCoordinate();
-                var p3 = worldPosition.ToCoordinate();
+            _featureCoordinates = new() { p0, p1, p2, p3 };
+            Feature.Geometry = _featureCoordinates.ToPolygon();
 
-                _featureCoordinates = new() { p0, p1, p2, p3 };
-                Feature = _featureCoordinates.ToPolygon().ToFeature();
-                ExtraFeatures = new List<GeometryFeature>();
-            }
+            Feature.RenderedGeometry?.Clear();
         }
+    }
 
-        private void DrawingHover(MPoint worldPosition)
+    private void EndDrawing()
+    {
+        if (_isDrawing == true)
         {
-            if (_isDrawing == true)
-            {
-                var p2 = worldPosition.ToCoordinate();
-                var p0 = _featureCoordinates[0];
-                var p1 = (p2.X, p0.Y).ToCoordinate();
-                var p3 = (p0.X, p2.Y).ToCoordinate();
-
-                _featureCoordinates = new() { p0, p1, p2, p3 };
-                Feature.Geometry = _featureCoordinates.ToPolygon();
-
-                Feature.RenderedGeometry?.Clear();
-            }
-        }
-
-        private void EndDrawing()
-        {
-            if (_isDrawing == true)
-            {
-                _isDrawing = false;
-            }
+            _isDrawing = false;
         }
     }
 }

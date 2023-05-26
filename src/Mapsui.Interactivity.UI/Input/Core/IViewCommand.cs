@@ -1,7 +1,6 @@
-﻿namespace Mapsui.Interactivity.UI.Input.Core
+﻿namespace Mapsui.Interactivity.UI.Input.Core;
+
+public interface IViewCommand
 {
-    public interface IViewCommand
-    {
-        void Execute(IView view, IController controller, InputEventArgs args);
-    }
+    void Execute(IView view, IController controller, InputEventArgs args);
 }

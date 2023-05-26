@@ -1,13 +1,12 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+public class DrawingController : BaseController, IController
 {
-    public class DrawingController : BaseController, IController
+    public DrawingController()
     {
-        public DrawingController()
-        {
-            this.BindMouseDown(MouseButton.Left, MapCommands.Drawing);
-            this.BindMouseEnter(MapCommands.HoverDrawing);
-        }
+        this.BindMouseDown(MouseButton.Left, MapCommands.Drawing);
+        this.BindMouseEnter(MapCommands.HoverDrawing);
     }
 }

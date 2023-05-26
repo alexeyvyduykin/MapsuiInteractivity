@@ -1,43 +1,41 @@
 ﻿using Mapsui.Nts;
-using Mapsui.UI;
 using NetTopologySuite.Geometries;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public abstract class BaseDecorator : BaseInteractive, IDecorator
 {
-    public abstract class BaseDecorator : BaseInteractive, IDecorator
+    private readonly GeometryFeature _featureSource;
+
+    public BaseDecorator(GeometryFeature featureSource)
     {
-        private readonly GeometryFeature _featureSource;
+        _featureSource = featureSource;
+    }
 
-        public BaseDecorator(GeometryFeature featureSource)
+    protected void UpdateGeometry(Geometry geometry)
+    {
+        _featureSource.Geometry = geometry;
+
+        _featureSource.RenderedGeometry.Clear();
+
+        Invalidate.Execute().Subscribe();
+    }
+
+    public GeometryFeature FeatureSource => _featureSource;
+
+    public override void Starting(MapInfo? mapInfo, double screenDistance)
+    {
+        var vertices = GetActiveVertices();
+
+        var worldPosition = mapInfo?.WorldPosition;
+
+        if (worldPosition != null)
         {
-            _featureSource = featureSource;
-        }
+            var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < screenDistance);
 
-        protected void UpdateGeometry(Geometry geometry)
-        {
-            _featureSource.Geometry = geometry;
-
-            _featureSource.RenderedGeometry.Clear();
-
-            Invalidate.Execute().Subscribe();
-        }
-
-        public GeometryFeature FeatureSource => _featureSource;
-
-        public override void Starting(MapInfo? mapInfo, double screenDistance)
-        {
-            var vertices = GetActiveVertices();
-
-            var worldPosition = mapInfo?.WorldPosition;
-
-            if (worldPosition != null)
+            if (vertexTouched != null)
             {
-                var vertexTouched = vertices.OrderBy(v => v.Distance(worldPosition)).FirstOrDefault(v => v.Distance(worldPosition) < screenDistance);
-
-                if (vertexTouched != null)
-                {
-                    Starting(mapInfo);
-                }
+                Starting(mapInfo);
             }
         }
     }

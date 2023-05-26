@@ -1,16 +1,15 @@
-﻿namespace Mapsui.Interactivity.UI.Input
+﻿namespace Mapsui.Interactivity.UI.Input;
+
+public class MouseEnterGesture : InputGesture
 {
-    public class MouseEnterGesture : InputGesture
+    public MouseEnterGesture()
     {
-        public MouseEnterGesture()
-        {
 
-        }
+    }
 
-        public override bool Equals(InputGesture? other)
-        {
-            var mg = other as MouseEnterGesture;
-            return mg != null;
-        }
+    public override bool Equals(InputGesture? other)
+    {
+        var mg = other as MouseEnterGesture;
+        return mg != null;
     }
 }

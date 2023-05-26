@@ -1,9 +1,8 @@
-﻿namespace Mapsui.Interactivity
-{
-    public static class InteractiveFields
-    {
-        public const string Select = "Select";
+﻿namespace Mapsui.Interactivity;
 
-        public const string Hover = "Hover";
-    }
+public static class InteractiveFields
+{
+    public const string Select = "Select";
+
+    public const string Hover = "Hover";
 }

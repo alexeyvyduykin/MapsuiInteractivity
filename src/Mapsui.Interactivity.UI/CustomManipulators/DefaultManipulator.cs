@@ -1,30 +1,29 @@
 ﻿using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
-namespace Mapsui.Interactivity.UI
+namespace Mapsui.Interactivity.UI;
+
+internal class DefaultManipulator : MouseManipulator
 {
-    internal class DefaultManipulator : MouseManipulator
+    public DefaultManipulator(IView view) : base(view)
     {
-        public DefaultManipulator(IView view) : base(view)
-        {
-            View.SetCursor(CursorType.Default);
-        }
+        View.SetCursor(CursorType.Default);
+    }
+}
+
+internal class HoverDefaultManipulator : MouseManipulator
+{
+    public HoverDefaultManipulator(IView view) : base(view)
+    {
+
     }
 
-    internal class HoverDefaultManipulator : MouseManipulator
+    public override void Started(MouseEventArgs e)
     {
-        public HoverDefaultManipulator(IView view) : base(view)
-        {
+        base.Started(e);
 
-        }
+        View.SetCursor(CursorType.Default);
 
-        public override void Started(MouseEventArgs e)
-        {
-            base.Started(e);
-
-            View.SetCursor(CursorType.Default);
-
-            e.Handled = true;
-        }
+        e.Handled = true;
     }
 }

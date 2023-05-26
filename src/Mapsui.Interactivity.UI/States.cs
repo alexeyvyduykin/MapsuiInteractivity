@@ -1,10 +1,9 @@
-﻿namespace Mapsui.Interactivity.UI
+﻿namespace Mapsui.Interactivity.UI;
+
+public static class States
 {
-    public static class States
-    {
-        public const string Default = "Default";
-        public const string Selecting = "Selecting";
-        public const string Drawing = "Drawing";
-        public const string Editing = "Editing";
-    }
+    public const string Default = "Default";
+    public const string Selecting = "Selecting";
+    public const string Drawing = "Drawing";
+    public const string Editing = "Editing";
 }

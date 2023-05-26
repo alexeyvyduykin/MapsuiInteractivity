@@ -1,36 +1,35 @@
 ﻿using Mapsui.Layers;
 using Mapsui.Styles;
 
-namespace Mapsui.Interactivity.Extensions
+namespace Mapsui.Interactivity.Extensions;
+
+public static class LayerCollectionExtensions
 {
-    public static class LayerCollectionExtensions
+    public static InteractiveLayer AddInteractiveLayer(this LayerCollection layers, IInteractive interactive, IStyle style)
     {
-        public static InteractiveLayer AddInteractiveLayer(this LayerCollection layers, IInteractive interactive, IStyle style)
+        layers.RemoveInteractiveLayer();
+
+        var interactiveLayer = new InteractiveLayer(interactive)
         {
-            layers.RemoveInteractiveLayer();
+            Name = nameof(InteractiveLayer),
+            Style = style,
+        };
 
-            var interactiveLayer = new InteractiveLayer(interactive)
-            {
-                Name = nameof(InteractiveLayer),
-                Style = style,
-            };
+        layers.Add(interactiveLayer);
 
-            layers.Add(interactiveLayer);
+        return interactiveLayer;
+    }
 
-            return interactiveLayer;
-        }
+    public static void RemoveInteractiveLayer(this LayerCollection layers)
+    {
+        var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
-        public static void RemoveInteractiveLayer(this LayerCollection layers)
+        if (interactiveLayer != null)
         {
-            var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+            // HACK: before remove from layers clear interactive geometries (mapsui not auto clear data)
+            ((InteractiveLayer)interactiveLayer).Cancel();
 
-            if (interactiveLayer != null)
-            {
-                // HACK: before remove from layers clear interactive geometries (mapsui not auto clear data)
-                ((InteractiveLayer)interactiveLayer).Cancel();
-
-                layers.Remove(interactiveLayer);
-            }
+            layers.Remove(interactiveLayer);
         }
     }
 }

@@ -2,20 +2,19 @@
 using ReactiveUI;
 using System.Reactive;
 
-namespace Mapsui.Interactivity
+namespace Mapsui.Interactivity;
+
+public interface IDesigner : IInteractive
 {
-    public interface IDesigner : IInteractive
-    {
-        GeometryFeature Feature { get; }
+    GeometryFeature Feature { get; }
 
-        IList<GeometryFeature> ExtraFeatures { get; }
+    IList<GeometryFeature> ExtraFeatures { get; }
 
-        ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
+    ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
 
-        ReactiveCommand<Unit, IDesigner> Creating { get; }
+    ReactiveCommand<Unit, IDesigner> Creating { get; }
 
-        ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
+    ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
 
-        ReactiveCommand<Unit, IDesigner> EndCreating { get; }
-    }
+    ReactiveCommand<Unit, IDesigner> EndCreating { get; }
 }
