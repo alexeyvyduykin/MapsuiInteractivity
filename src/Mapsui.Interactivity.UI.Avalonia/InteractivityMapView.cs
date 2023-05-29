@@ -1,20 +1,21 @@
 ﻿using Avalonia;
 using Avalonia.Input;
 using Mapsui.Extensions;
+using Mapsui.Interactivity.UI.Input.Core;
 using Mapsui.UI.Avalonia;
+using Mapsui.UI.Avalonia.Extensions;
 
 namespace Mapsui.Interactivity.UI.Avalonia;
 
 public class InteractivityMapView : MapControl, IView
 {
     private IController? _controller;
-    private IInteractive? _interactive;
 
     public static readonly StyledProperty<Map?> MapSourceProperty =
         AvaloniaProperty.Register<InteractivityMapView, Map?>(nameof(MapSource));
 
-    public static readonly StyledProperty<IInteractive?> InteractiveProperty =
-        AvaloniaProperty.Register<InteractivityMapView, IInteractive?>(nameof(Interactive));
+    public static readonly StyledProperty<IInteractive> InteractiveProperty =
+        AvaloniaProperty.Register<InteractivityMapView, IInteractive>(nameof(Interactive));
 
     public static readonly StyledProperty<string> StateProperty =
         AvaloniaProperty.Register<InteractivityMapView, string>(nameof(State), States.Default);
@@ -25,7 +26,7 @@ public class InteractivityMapView : MapControl, IView
         set { SetValue(MapSourceProperty, value); }
     }
 
-    public IInteractive? Interactive
+    public IInteractive Interactive
     {
         get { return GetValue(InteractiveProperty); }
         set { SetValue(InteractiveProperty, value); }
@@ -48,31 +49,17 @@ public class InteractivityMapView : MapControl, IView
                 Map = map;
             }
         }
-        else if (change.Property == InteractiveProperty)
-        {
-            if (change.NewValue.GetValueOrDefault() is IInteractive interactive)
-            {
-                _interactive = interactive;
-            }
-        }
         else if (change.Property == StateProperty)
         {
             if (change.NewValue.GetValueOrDefault() is string state && string.IsNullOrEmpty(state) == false)
             {
                 _controller = InteractiveControllerFactory.GetController(state);
 
-                //if (_interactive is not null)
-                {
-                    // HACK: after tools check, hover manipulator not active, it call this          
-                    _controller.HandleMouseEnter(this/*new MapControlAdaptor(this, _interactive)*/, new Input.Core.MouseEventArgs());
-                }
+                // HACK: after tools check, hover manipulator not active, it call this          
+                _controller.HandleMouseEnter(this, new MouseEventArgs());
             }
         }
     }
-
-    //public Map? Map => _mapControl.Map;
-
-    // public IInteractive Interactive => _interactive;
 
     public void SetCursor(CursorType cursorType)
     {
@@ -93,7 +80,11 @@ public class InteractivityMapView : MapControl, IView
             return;
         }
 
-        _controller?.HandleMouseEnter(this, e.ToMouseEventArgs(this));
+        var position = e.GetPosition(this).ToMapsui();
+
+        var mapInfo = GetMapInfo(position);
+
+        _controller?.HandleMouseEnter(this, new MouseEventArgs { MapInfo = mapInfo });
     }
 
     protected override void OnPointerLeave(PointerEventArgs e)
@@ -105,7 +96,11 @@ public class InteractivityMapView : MapControl, IView
             return;
         }
 
-        _controller?.HandleMouseLeave(this, e.ToMouseEventArgs(this));
+        var position = e.GetPosition(this).ToMapsui();
+
+        var mapInfo = GetMapInfo(position);
+
+        _controller?.HandleMouseLeave(this, new MouseEventArgs { MapInfo = mapInfo });
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -117,7 +112,12 @@ public class InteractivityMapView : MapControl, IView
             return;
         }
 
-        _controller?.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
+        var args = new MouseWheelEventArgs
+        {
+            Delta = (int)(e.Delta.Y + e.Delta.X) * 120
+        };
+
+        _controller?.HandleMouseWheel(this, args);
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -133,7 +133,20 @@ public class InteractivityMapView : MapControl, IView
 
         e.Pointer.Capture(this);
 
-        _controller?.HandleMouseDown(this, e.ToMouseDownEventArgs(this));
+        var position = e.GetPosition(this).ToMapsui();
+
+        var mapInfo = GetMapInfo(position);
+
+        var args = new MouseDownEventArgs
+        {
+#pragma warning disable CS0618 // Тип или член устарел
+            ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+#pragma warning restore CS0618 // Тип или член устарел
+            ClickCount = e.ClickCount,
+            MapInfo = mapInfo
+        };
+
+        _controller?.HandleMouseDown(this, args);
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
@@ -145,19 +158,19 @@ public class InteractivityMapView : MapControl, IView
             return;
         }
 
-        try
-        {
-            var args = e.ToMouseEventArgs(this);
+        var position = e.GetPosition(this).ToMapsui();
 
-            _controller?.HandleMouseMove(this, args);
+        var mapInfo = GetMapInfo(position);
 
-            // TODO: ?
-            e.Handled = args.Handled;
-        }
-        catch (Exception)
+        var args = new MouseEventArgs
         {
-            return;
-        }
+            MapInfo = mapInfo,
+        };
+
+        _controller?.HandleMouseMove(this, args);
+
+        // TODO: ?
+        e.Handled = args.Handled;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
@@ -171,6 +184,10 @@ public class InteractivityMapView : MapControl, IView
 
         e.Pointer.Capture(null);
 
-        _controller?.HandleMouseUp(this, e.ToMouseReleasedEventArgs(this));
+        var position = e.GetPosition(this).ToMapsui();
+
+        var mapInfo = GetMapInfo(position);
+
+        _controller?.HandleMouseUp(this, new MouseEventArgs { MapInfo = mapInfo });
     }
 }
