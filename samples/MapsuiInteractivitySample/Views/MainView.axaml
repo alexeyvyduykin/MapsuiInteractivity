@@ -25,15 +25,27 @@
 
 	<Grid RowDefinitions="*,Auto">
 
-		<local:UserMapControl x:Name="MapControl"
+		<TabControl>
+			<TabItem Header="View">
+				<local:UserInteractivityMapView x:Name="MapView"
+					  MapSource="{Binding Map}"
+					  Interactive="{Binding Interactive}"
+					  State="{Binding State}"
+					  VerticalAlignment="Stretch"
+					  HorizontalAlignment="Stretch"/>
+			</TabItem>
+			<TabItem Header="Behavior">
+				<local:UserMapControl x:Name="MapControl"
 							  VerticalAlignment="Stretch"
 							  HorizontalAlignment="Stretch">
-			<inter:Interaction.Behavior>
-				<inter:InteractivityBehavior Map="{Binding Map}"
-											 Interactive="{Binding Interactive}"
-											 State="{Binding State}"/>
-			</inter:Interaction.Behavior>
-		</local:UserMapControl>
+					<inter:Interaction.Behavior>
+						<inter:InteractivityBehavior Map="{Binding Map}"
+													 Interactive="{Binding Interactive}"
+													 State="{Binding State}"/>
+					</inter:Interaction.Behavior>
+				</local:UserMapControl>
+			</TabItem>
+		</TabControl>
 
 		<Border VerticalAlignment="Bottom"
 				HorizontalAlignment="Left"
@@ -106,7 +118,8 @@
 			</StackPanel>
 		</Grid>
 
-		<StackPanel HorizontalAlignment="Left"
+		<StackPanel Margin="0,64,0,0" 
+					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Background="Black">
 			<ItemsControl Items="{Binding RadioButtons}">
