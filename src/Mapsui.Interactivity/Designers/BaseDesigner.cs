@@ -1,28 +1,45 @@
 ﻿using Mapsui.Nts;
-using ReactiveUI;
-using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Mapsui.Interactivity;
 
 public abstract class BaseDesigner : BaseInteractive, IDesigner
 {
-    public BaseDesigner()
-    {
-        BeginCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-        Creating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-        HoverCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-        EndCreating = ReactiveCommand.Create<Unit, IDesigner>(_ => this, outputScheduler: RxApp.MainThreadScheduler);
-    }
+    private readonly Subject<IDesigner> _beginCreatingSubj = new();
+    private readonly Subject<IDesigner> _creatingSubj = new();
+    private readonly Subject<IDesigner> _hoverCreatingSubj = new();
+    private readonly Subject<IDesigner> _endCreatingSubj = new();
 
     public GeometryFeature Feature { get; protected set; } = new GeometryFeature();
 
     public IList<GeometryFeature> ExtraFeatures { get; protected set; } = new List<GeometryFeature>();
 
-    public ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
+    public IObservable<IDesigner> BeginCreating => _beginCreatingSubj.AsObservable();
 
-    public ReactiveCommand<Unit, IDesigner> Creating { get; }
+    public IObservable<IDesigner> Creating => _creatingSubj.AsObservable();
 
-    public ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
+    public IObservable<IDesigner> HoverCreating => _hoverCreatingSubj.AsObservable();
 
-    public ReactiveCommand<Unit, IDesigner> EndCreating { get; }
+    public IObservable<IDesigner> EndCreating => _endCreatingSubj.AsObservable();
+
+    protected void OnBeginCreating()
+    {
+        _beginCreatingSubj.OnNext(this);
+    }
+
+    protected void OnCreating()
+    {
+        _creatingSubj.OnNext(this);
+    }
+
+    protected void OnHoverCreating()
+    {
+        _hoverCreatingSubj.OnNext(this);
+    }
+
+    protected void OnEndCreating()
+    {
+        _endCreatingSubj.OnNext(this);
+    }
 }

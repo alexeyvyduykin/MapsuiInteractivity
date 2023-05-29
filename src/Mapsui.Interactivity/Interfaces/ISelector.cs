@@ -1,5 +1,4 @@
 ﻿using Mapsui.Layers;
-using ReactiveUI;
 
 namespace Mapsui.Interactivity;
 
@@ -19,11 +18,11 @@ public interface ISelector : IInteractive
 
     ILayer? PointeroverLayer { get; }
 
-    ReactiveCommand<ISelector, ISelector> Select { get; }
+    IObservable<ISelector> Select { get; }
 
-    ReactiveCommand<ISelector, ISelector> Unselect { get; }
+    IObservable<ISelector> Unselect { get; }
 
-    ReactiveCommand<ISelector, ISelector> HoverBegin { get; }
+    IObservable<ISelector> HoverBegin { get; }
 
-    ReactiveCommand<ISelector, ISelector> HoverEnd { get; }
+    IObservable<ISelector> HoverEnd { get; }
 }

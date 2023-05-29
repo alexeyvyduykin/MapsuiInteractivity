@@ -1,13 +1,12 @@
-﻿using ReactiveUI;
-using System.Reactive;
+﻿using System.Reactive;
 
 namespace Mapsui.Interactivity;
 
 public interface IInteractive
 {
-    ReactiveCommand<Unit, Unit> Invalidate { get; }
+    IObservable<Unit> Invalidate { get; }
 
-    ReactiveCommand<Unit, Unit> Canceling { get; }
+    IObservable<Unit> Canceling { get; }
 
     IEnumerable<MPoint> GetActiveVertices();
 

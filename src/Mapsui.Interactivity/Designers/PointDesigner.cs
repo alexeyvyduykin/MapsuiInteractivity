@@ -45,7 +45,7 @@ public class PointDesigner : BaseDesigner
     {
         EndDrawing(worldPosition);
 
-        EndCreating.Execute().Subscribe();
+        OnEndCreating();
 
         return;
     }

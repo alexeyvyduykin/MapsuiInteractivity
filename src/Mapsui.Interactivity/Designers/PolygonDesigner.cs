@@ -62,7 +62,7 @@ public class PolygonDesigner : BaseDesigner, IDesigner
         {
             BeginDrawing(worldPosition);
 
-            BeginCreating.Execute().Subscribe();
+            OnBeginCreating();
 
             _firstClick = false;
 
@@ -78,7 +78,7 @@ public class PolygonDesigner : BaseDesigner, IDesigner
 
                 _firstClick = true;
 
-                EndCreating.Execute().Subscribe();
+                OnEndCreating();
 
                 return;
             }
@@ -86,7 +86,7 @@ public class PolygonDesigner : BaseDesigner, IDesigner
             {
                 Drawing(worldPosition);
 
-                Creating.Execute().Subscribe();
+                OnCreating();
 
                 return;
             }
@@ -99,9 +99,9 @@ public class PolygonDesigner : BaseDesigner, IDesigner
         {
             DrawingHover(worldPosition);
 
-            HoverCreating.Execute().Subscribe();
+            OnHoverCreating();
 
-            Invalidate.Execute().Subscribe();
+            OnInvalidate();
         }
     }
 

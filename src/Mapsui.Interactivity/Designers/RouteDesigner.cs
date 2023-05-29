@@ -60,7 +60,7 @@ public class RouteDesigner : BaseDesigner, IDesigner
 
             _firstClick = false;
 
-            BeginCreating.Execute().Subscribe();
+            OnBeginCreating();
 
             return;
         }
@@ -74,7 +74,7 @@ public class RouteDesigner : BaseDesigner, IDesigner
 
                 _firstClick = true;
 
-                EndCreating.Execute().Subscribe();
+                OnEndCreating();
 
                 return;
             }
@@ -82,7 +82,7 @@ public class RouteDesigner : BaseDesigner, IDesigner
             {
                 Drawing(worldPosition);
 
-                Creating.Execute().Subscribe();
+                OnCreating();
 
                 return;
             }
@@ -95,9 +95,9 @@ public class RouteDesigner : BaseDesigner, IDesigner
         {
             DrawingHover(worldPosition);
 
-            HoverCreating.Execute().Subscribe();
+            OnHoverCreating();
 
-            Invalidate.Execute().Subscribe();
+            OnInvalidate();
         }
     }
 

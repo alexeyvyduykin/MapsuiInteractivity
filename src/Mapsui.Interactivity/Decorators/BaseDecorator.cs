@@ -12,16 +12,16 @@ public abstract class BaseDecorator : BaseInteractive, IDecorator
         _featureSource = featureSource;
     }
 
+    public GeometryFeature FeatureSource => _featureSource;
+
     protected void UpdateGeometry(Geometry geometry)
     {
         _featureSource.Geometry = geometry;
 
         _featureSource.RenderedGeometry.Clear();
 
-        Invalidate.Execute().Subscribe();
+        OnInvalidate();
     }
-
-    public GeometryFeature FeatureSource => _featureSource;
 
     public override void Starting(MapInfo? mapInfo, double screenDistance)
     {

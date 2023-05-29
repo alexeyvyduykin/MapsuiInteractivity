@@ -1,5 +1,6 @@
 ﻿using Mapsui.Layers;
-using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Mapsui.Interactivity;
 
@@ -10,22 +11,18 @@ public class Selector : BaseInteractive, ISelector
     private IFeature? _lastPointeroverFeature;
     private ILayer? _lastPointeroverLayer;
     private bool _selectState = false;
+    private readonly Subject<ISelector> _selectSubj = new();
+    private readonly Subject<ISelector> _unselectSubj = new();
+    private readonly Subject<ISelector> _hoverBeginSubj = new();
+    private readonly Subject<ISelector> _hoverEndSubj = new();
 
-    internal Selector() : base()
-    {
-        Select = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
-        Unselect = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
-        HoverBegin = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
-        HoverEnd = ReactiveCommand.Create<ISelector, ISelector>(s => s, outputScheduler: RxApp.MainThreadScheduler);
-    }
+    public IObservable<ISelector> Select => _selectSubj.AsObservable();
 
-    public ReactiveCommand<ISelector, ISelector> Select { get; }
+    public IObservable<ISelector> Unselect => _unselectSubj.AsObservable();
 
-    public ReactiveCommand<ISelector, ISelector> Unselect { get; }
+    public IObservable<ISelector> HoverBegin => _hoverBeginSubj.AsObservable();
 
-    public ReactiveCommand<ISelector, ISelector> HoverBegin { get; }
-
-    public ReactiveCommand<ISelector, ISelector> HoverEnd { get; }
+    public IObservable<ISelector> HoverEnd => _hoverEndSubj.AsObservable();
 
     public IFeature? SelectedFeature => _lastSelectedFeature;
 
@@ -39,7 +36,7 @@ public class Selector : BaseInteractive, ISelector
     {
         if (_lastSelectedFeature != null)
         {
-            Unselect?.Execute(this).Subscribe();
+            _unselectSubj.OnNext(this);
         }
 
         _lastSelectedFeature = feature;
@@ -47,19 +44,19 @@ public class Selector : BaseInteractive, ISelector
 
         _selectState = true;
 
-        Select?.Execute(this).Subscribe();
+        _selectSubj.OnNext(this);
     }
 
     public virtual void Unselected()
     {
         if (_lastPointeroverFeature != null)
         {
-            HoverEnd?.Execute(this).Subscribe();
+            _hoverEndSubj.OnNext(this);
         }
 
         if (_lastSelectedFeature != null)
         {
-            Unselect?.Execute(this).Subscribe();
+            _unselectSubj.OnNext(this);
         }
 
         _selectState = false;
@@ -74,7 +71,7 @@ public class Selector : BaseInteractive, ISelector
             {
                 if (_lastSelectedFeature != null)
                 {
-                    Unselect?.Execute(this).Subscribe();
+                    _unselectSubj.OnNext(this);
                 }
 
                 _lastSelectedFeature = feature;
@@ -82,7 +79,7 @@ public class Selector : BaseInteractive, ISelector
 
                 _selectState = true;
 
-                Select?.Execute(this).Subscribe();
+                _selectSubj.OnNext(this);
             }
             else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
             {
@@ -90,11 +87,11 @@ public class Selector : BaseInteractive, ISelector
 
                 if (isSelected == true)
                 {
-                    Unselect?.Execute(this).Subscribe();
+                    _unselectSubj.OnNext(this);
                 }
                 else
                 {
-                    Select?.Execute(this).Subscribe();
+                    _selectSubj.OnNext(this);
                 }
 
                 _selectState = !_selectState;
@@ -120,12 +117,12 @@ public class Selector : BaseInteractive, ISelector
         _lastPointeroverFeature = feature;
         _lastPointeroverLayer = layer;
 
-        HoverBegin?.Execute(this).Subscribe();
+        _hoverBeginSubj.OnNext(this);
     }
 
     public override void HoveringEnd()
     {
-        HoverEnd?.Execute(this).Subscribe();
+        _hoverEndSubj.OnNext(this);
     }
 
     public override void Cancel()

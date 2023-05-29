@@ -35,12 +35,12 @@ internal class SelectorWithDecoratorBuilder : ISelectorWithDecoratorBuilder
 
     public ISelector Build()
     {
-        ISelector selector = new DecoratorSelector(_builder);
+        var selector = new DecoratorSelector(_builder);
 
         if (_layers != null)
         {
-            ((IDecoratorSelector)selector).DecoratorSelecting.Subscribe(s =>
-              _layers.AddInteractiveLayer(s, InteractiveBuilder.CreateInteractiveLayerDecoratorStyle()));
+            selector.DecoratorSelecting
+                .Subscribe(s => _layers.AddInteractiveLayer(s, InteractiveBuilder.CreateInteractiveLayerDecoratorStyle()));
 
             selector.Unselect.Subscribe(_ => _layers.RemoveInteractiveLayer());
         }

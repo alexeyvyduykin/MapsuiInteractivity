@@ -8,11 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Mapsui" Version="4.0.0-rc.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Mapsui.Interactivity\Mapsui.Interactivity.csproj" />
+		<ProjectReference Include="..\Mapsui.Interactivity\Mapsui.Interactivity.csproj" />
 	</ItemGroup>
 
 </Project>

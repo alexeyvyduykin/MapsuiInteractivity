@@ -1,6 +1,4 @@
 ﻿using Mapsui.Nts;
-using ReactiveUI;
-using System.Reactive;
 
 namespace Mapsui.Interactivity;
 
@@ -10,11 +8,11 @@ public interface IDesigner : IInteractive
 
     IList<GeometryFeature> ExtraFeatures { get; }
 
-    ReactiveCommand<Unit, IDesigner> BeginCreating { get; }
+    IObservable<IDesigner> BeginCreating { get; }
 
-    ReactiveCommand<Unit, IDesigner> Creating { get; }
+    IObservable<IDesigner> Creating { get; }
 
-    ReactiveCommand<Unit, IDesigner> HoverCreating { get; }
+    IObservable<IDesigner> HoverCreating { get; }
 
-    ReactiveCommand<Unit, IDesigner> EndCreating { get; }
+    IObservable<IDesigner> EndCreating { get; }
 }

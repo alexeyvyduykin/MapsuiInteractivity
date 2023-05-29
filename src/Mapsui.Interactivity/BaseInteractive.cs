@@ -1,21 +1,24 @@
-﻿using ReactiveUI;
-using System.Reactive;
+﻿using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Mapsui.Interactivity;
 
 public abstract class BaseInteractive : IInteractive
 {
-    public BaseInteractive()
-    {
-        Invalidate = ReactiveCommand.Create(() => { }, outputScheduler: RxApp.MainThreadScheduler);
-        Canceling = ReactiveCommand.Create(() => { }, outputScheduler: RxApp.MainThreadScheduler);
-    }
+    private readonly Subject<Unit> _invalidateSubj = new();
+    private readonly Subject<Unit> _cancelingSubj = new();
 
-    public ReactiveCommand<Unit, Unit> Invalidate { get; }
+    public IObservable<Unit> Invalidate => _invalidateSubj.AsObservable();
 
-    public ReactiveCommand<Unit, Unit> Canceling { get; }
+    public IObservable<Unit> Canceling => _cancelingSubj.AsObservable();
 
     public abstract IEnumerable<MPoint> GetActiveVertices();
+
+    protected virtual void OnInvalidate()
+    {
+        _invalidateSubj.OnNext(Unit.Default);
+    }
 
     public virtual void Starting(MapInfo? mapInfo) { }
 
@@ -33,6 +36,6 @@ public abstract class BaseInteractive : IInteractive
 
     public virtual void Cancel()
     {
-        Canceling.Execute().Subscribe();
+        _cancelingSubj.OnNext(Unit.Default);
     }
 }

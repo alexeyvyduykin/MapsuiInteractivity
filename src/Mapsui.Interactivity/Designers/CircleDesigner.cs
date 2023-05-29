@@ -52,7 +52,7 @@ public class CircleDesigner : BaseDesigner, IDesigner
 
             _firstClick = false;
 
-            BeginCreating.Execute().Subscribe();
+            OnBeginCreating();
 
             return;
         }
@@ -62,7 +62,7 @@ public class CircleDesigner : BaseDesigner, IDesigner
 
             _firstClick = true;
 
-            EndCreating.Execute().Subscribe();
+            OnEndCreating();
 
             return;
         }
@@ -74,9 +74,9 @@ public class CircleDesigner : BaseDesigner, IDesigner
         {
             DrawingHover(worldPosition);
 
-            HoverCreating.Execute().Subscribe();
+            OnHoverCreating();
 
-            Invalidate.Execute().Subscribe();
+            OnInvalidate();
         }
     }
 

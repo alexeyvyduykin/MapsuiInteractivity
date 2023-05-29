@@ -1,35 +1,30 @@
 ﻿using Mapsui.Nts;
-using ReactiveUI;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Mapsui.Interactivity;
 
 internal class DecoratorSelector : Selector, IDecoratorSelector
 {
     private IDecorator? _decorator;
+    private readonly Subject<IDecorator> _decoratorSelectingSubj = new();
 
     internal DecoratorSelector(Func<GeometryFeature, IDecorator> builder)
     {
-        DecoratorSelecting = ReactiveCommand.Create<IDecorator, IDecorator>(s =>
-        {
-            _decorator = s;
-            return _decorator;
-        });
-
         Select.Subscribe(s =>
         {
             if (s.SelectedFeature is GeometryFeature gf)
             {
-                var decorator = builder.Invoke(gf);
+                _decorator = builder.Invoke(gf);
 
-                decorator.Canceling.Subscribe(_ => base.Unselected());
+                _decorator.Canceling.Subscribe(_ => base.Unselected());
 
-                DecoratorSelecting.Execute(decorator).Subscribe();
+                _decoratorSelectingSubj.OnNext(_decorator);
             }
         });
     }
 
-    public ReactiveCommand<IDecorator, IDecorator> DecoratorSelecting { get; }
+    public IObservable<IDecorator> DecoratorSelecting => _decoratorSelectingSubj.AsObservable();
 
     public override void Unselected()
     {

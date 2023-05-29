@@ -1,8 +1,6 @@
-﻿using ReactiveUI;
-
-namespace Mapsui.Interactivity;
+﻿namespace Mapsui.Interactivity;
 
 public interface IDecoratorSelector : ISelector
 {
-    ReactiveCommand<IDecorator, IDecorator> DecoratorSelecting { get; }
+    IObservable<IDecorator> DecoratorSelecting { get; }
 }
