@@ -14,5 +14,5 @@ public interface IDesigner : IInteractive
 
     IObservable<IDesigner> HoverCreating { get; }
 
-    IObservable<IDesigner> EndCreating { get; }
+    IObservable<IFeature> EndCreating { get; }
 }

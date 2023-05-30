@@ -1,4 +1,5 @@
-﻿using Mapsui.Nts;
+﻿using Mapsui.Extensions;
+using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -10,7 +11,7 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
     private readonly Subject<IDesigner> _beginCreatingSubj = new();
     private readonly Subject<IDesigner> _creatingSubj = new();
     private readonly Subject<IDesigner> _hoverCreatingSubj = new();
-    private readonly Subject<IDesigner> _endCreatingSubj = new();
+    private readonly Subject<IFeature> _endCreatingSubj = new();
 
     public GeometryFeature Feature { get; protected set; } = new GeometryFeature();
 
@@ -22,7 +23,7 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
 
     public IObservable<IDesigner> HoverCreating => _hoverCreatingSubj.AsObservable();
 
-    public IObservable<IDesigner> EndCreating => _endCreatingSubj.AsObservable();
+    public IObservable<IFeature> EndCreating => _endCreatingSubj.AsObservable();
 
     public override IEnumerable<IFeature> GetFeatures()
     {
@@ -58,6 +59,6 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
 
     protected void OnEndCreating()
     {
-        _endCreatingSubj.OnNext(this);
+        _endCreatingSubj.OnNext(Feature.Copy());
     }
 }

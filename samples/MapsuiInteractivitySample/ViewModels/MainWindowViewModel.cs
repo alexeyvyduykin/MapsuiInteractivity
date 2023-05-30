@@ -1,5 +1,4 @@
 ﻿using Mapsui;
-using Mapsui.Extensions;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.Extensions;
 using Mapsui.Interactivity.UI;
@@ -404,7 +403,8 @@ public class MainWindowViewModel : ViewModelBase
 
         designer.EndCreating.Subscribe(s =>
         {
-            _userLayer.Add(s.Feature.Copy());
+            _userLayer.Add(s);
+            _userLayer.DataHasChanged();
         });
 
         Tip = "Нажмите, чтобы нарисовать точку";
@@ -427,7 +427,7 @@ public class MainWindowViewModel : ViewModelBase
 
         designer.EndCreating.Subscribe(s =>
         {
-            _userLayer.Add(s.Feature.Copy());
+            _userLayer.Add(s);
 
             Tip = string.Empty;
 
@@ -454,7 +454,7 @@ public class MainWindowViewModel : ViewModelBase
 
         designer.EndCreating.Subscribe(s =>
         {
-            _userLayer.Add(s.Feature.Copy());
+            _userLayer.Add(s);
 
             Tip = string.Empty;
 
@@ -485,7 +485,7 @@ public class MainWindowViewModel : ViewModelBase
 
         designer.EndCreating.Subscribe(s =>
         {
-            _userLayer.Add(s.Feature.Copy());
+            _userLayer.Add(s);
 
             Tip = string.Empty;
 
@@ -522,7 +522,7 @@ public class MainWindowViewModel : ViewModelBase
 
         designer.EndCreating.Subscribe(s =>
         {
-            _userLayer.Add(s.Feature.Copy());
+            _userLayer.Add(s);
 
             Tip = string.Empty;
 
