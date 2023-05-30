@@ -10,6 +10,7 @@ namespace Mapsui.Interactivity.UI.Avalonia;
 public class InteractivityMapView : MapControl, IView
 {
     private IController? _controller;
+    private Navigator? _navigator;
 
     public static readonly StyledProperty<Map?> MapSourceProperty =
         AvaloniaProperty.Register<InteractivityMapView, Map?>(nameof(MapSource));
@@ -25,6 +26,8 @@ public class InteractivityMapView : MapControl, IView
         get { return GetValue(MapSourceProperty); }
         set { SetValue(MapSourceProperty, value); }
     }
+
+    public Navigator Navigator => _navigator ?? new();
 
     public IInteractive Interactive
     {
@@ -47,6 +50,7 @@ public class InteractivityMapView : MapControl, IView
             if (change.NewValue.GetValueOrDefault() is Map map)
             {
                 Map = map;
+                _navigator = map.Navigator;
             }
         }
         else if (change.Property == StateProperty)

@@ -24,14 +24,6 @@ public class Selector : BaseInteractive, ISelector
 
     public IObservable<(IFeature, ILayer)> HoverEnd => _hoverEndSubj.AsObservable();
 
-    //public IFeature? SelectedFeature => _lastSelectedFeature;
-
-    //public ILayer? SelectedLayer => _lastSelectedLayer;
-
-    //public IFeature? HoveringFeature => _lastPointeroverFeature;
-
-    //public ILayer? PointeroverLayer => _lastPointeroverLayer;
-
     public void Selected(IFeature feature, ILayer layer)
     {
         if (_lastSelectedFeature is { } && _lastSelectedLayer is { })

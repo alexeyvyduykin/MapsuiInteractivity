@@ -29,12 +29,9 @@ public abstract class BaseController : IController
     {
         lock (GetSyncRoot(view))
         {
-            if (view.Map != null)
+            if (args.Handled)
             {
-                if (args.Handled)
-                {
-                    return true;
-                }
+                return true;
             }
 
             var command = GetCommand(new MouseEnterGesture());
@@ -46,12 +43,9 @@ public abstract class BaseController : IController
     {
         lock (GetSyncRoot(view))
         {
-            if (view.Map != null)
+            if (args.Handled)
             {
-                if (args.Handled)
-                {
-                    return true;
-                }
+                return true;
             }
 
             foreach (var m in MouseHoverManipulators.ToArray())
@@ -68,12 +62,9 @@ public abstract class BaseController : IController
     {
         lock (GetSyncRoot(view))
         {
-            if (view.Map != null)
+            if (args.Handled)
             {
-                if (args.Handled)
-                {
-                    return true;
-                }
+                return true;
             }
 
             var command = GetCommand(new MouseDownGesture(args.ChangedButton, args.ClickCount));
@@ -88,14 +79,6 @@ public abstract class BaseController : IController
             if (args.Handled)
             {
                 return true;
-            }
-
-            if (view.Map != null)
-            {
-                if (args.Handled)
-                {
-                    return true;
-                }
             }
 
             foreach (var m in MouseDownManipulators)
@@ -119,14 +102,6 @@ public abstract class BaseController : IController
             if (args.Handled)
             {
                 return true;
-            }
-
-            if (view.Map != null)
-            {
-                if (args.Handled)
-                {
-                    return true;
-                }
             }
 
             foreach (var m in MouseDownManipulators.ToArray())

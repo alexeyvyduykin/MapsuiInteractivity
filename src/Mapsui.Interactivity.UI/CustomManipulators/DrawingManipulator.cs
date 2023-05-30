@@ -1,4 +1,5 @@
-﻿using Mapsui.Interactivity.UI.Input;
+﻿using Mapsui.Extensions;
+using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
 namespace Mapsui.Interactivity.UI;
@@ -26,7 +27,7 @@ internal class DrawingManipulator : MouseManipulator
 
             bool isClick(MPoint worldPosition)
             {
-                var p0 = View.WorldToScreen(worldPosition);
+                var p0 = View.Navigator.Viewport.WorldToScreen(worldPosition);
 
                 var res = IsClick(p0, screenPosition);
 

@@ -23,7 +23,7 @@ internal class EditingManipulator : MouseManipulator
         {
             View.Interactive.Ending(e.MapInfo);
 
-            View.Map!.Navigator.PanLock = false;
+            View.Navigator.PanLock = false;
 
             _isEditing = false;
         }
@@ -104,7 +104,7 @@ internal class EditingManipulator : MouseManipulator
 
         if (_isEditing == true)
         {
-            View.Map!.Navigator.PanLock = true;
+            View.Navigator.PanLock = true;
         }
 
         e.Handled = true;

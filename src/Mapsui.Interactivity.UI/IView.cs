@@ -2,11 +2,9 @@
 
 public interface IView
 {
-    Map? Map { get; }
-
-    void SetCursor(CursorType cursorType);
+    Navigator Navigator { get; }
 
     IInteractive Interactive { get; }
 
-    MPoint WorldToScreen(MPoint worldPosition);
+    void SetCursor(CursorType cursorType);
 }
