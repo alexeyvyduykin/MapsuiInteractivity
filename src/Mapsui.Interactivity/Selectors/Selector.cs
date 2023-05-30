@@ -11,32 +11,32 @@ public class Selector : BaseInteractive, ISelector
     private IFeature? _lastPointeroverFeature;
     private ILayer? _lastPointeroverLayer;
     private bool _selectState = false;
-    private readonly Subject<ISelector> _selectSubj = new();
-    private readonly Subject<ISelector> _unselectSubj = new();
-    private readonly Subject<ISelector> _hoverBeginSubj = new();
-    private readonly Subject<ISelector> _hoverEndSubj = new();
+    private readonly Subject<(IFeature, ILayer)> _selectSubj = new();
+    private readonly Subject<(IFeature, ILayer)> _unselectSubj = new();
+    private readonly Subject<(IFeature, ILayer)> _hoverBeginSubj = new();
+    private readonly Subject<(IFeature, ILayer)> _hoverEndSubj = new();
 
-    public IObservable<ISelector> Select => _selectSubj.AsObservable();
+    public IObservable<(IFeature, ILayer)> Select => _selectSubj.AsObservable();
 
-    public IObservable<ISelector> Unselect => _unselectSubj.AsObservable();
+    public IObservable<(IFeature, ILayer)> Unselect => _unselectSubj.AsObservable();
 
-    public IObservable<ISelector> HoverBegin => _hoverBeginSubj.AsObservable();
+    public IObservable<(IFeature, ILayer)> HoverBegin => _hoverBeginSubj.AsObservable();
 
-    public IObservable<ISelector> HoverEnd => _hoverEndSubj.AsObservable();
+    public IObservable<(IFeature, ILayer)> HoverEnd => _hoverEndSubj.AsObservable();
 
-    public IFeature? SelectedFeature => _lastSelectedFeature;
+    //public IFeature? SelectedFeature => _lastSelectedFeature;
 
-    public ILayer? SelectedLayer => _lastSelectedLayer;
+    //public ILayer? SelectedLayer => _lastSelectedLayer;
 
-    public IFeature? HoveringFeature => _lastPointeroverFeature;
+    //public IFeature? HoveringFeature => _lastPointeroverFeature;
 
-    public ILayer? PointeroverLayer => _lastPointeroverLayer;
+    //public ILayer? PointeroverLayer => _lastPointeroverLayer;
 
     public void Selected(IFeature feature, ILayer layer)
     {
-        if (_lastSelectedFeature != null)
+        if (_lastSelectedFeature is { } && _lastSelectedLayer is { })
         {
-            _unselectSubj.OnNext(this);
+            _unselectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
         }
 
         _lastSelectedFeature = feature;
@@ -44,19 +44,16 @@ public class Selector : BaseInteractive, ISelector
 
         _selectState = true;
 
-        _selectSubj.OnNext(this);
+        _selectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
     }
 
     public virtual void Unselected()
     {
-        if (_lastPointeroverFeature != null)
-        {
-            _hoverEndSubj.OnNext(this);
-        }
+        HoveringEnd();
 
-        if (_lastSelectedFeature != null)
+        if (_lastSelectedFeature is { } && _lastSelectedLayer is { })
         {
-            _unselectSubj.OnNext(this);
+            _unselectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
         }
 
         _selectState = false;
@@ -69,9 +66,9 @@ public class Selector : BaseInteractive, ISelector
         {
             if (feature != _lastSelectedFeature)
             {
-                if (_lastSelectedFeature != null)
+                if (_lastSelectedFeature is { } && _lastSelectedLayer is { })
                 {
-                    _unselectSubj.OnNext(this);
+                    _unselectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
                 }
 
                 _lastSelectedFeature = feature;
@@ -79,19 +76,19 @@ public class Selector : BaseInteractive, ISelector
 
                 _selectState = true;
 
-                _selectSubj.OnNext(this);
+                _selectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
             }
-            else if (_lastSelectedFeature != null && feature == _lastSelectedFeature)
+            else if (_lastSelectedFeature is { } && _lastSelectedLayer is { } && feature == _lastSelectedFeature)
             {
                 var isSelected = _selectState;
 
                 if (isSelected == true)
                 {
-                    _unselectSubj.OnNext(this);
+                    _unselectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
                 }
                 else
                 {
-                    _selectSubj.OnNext(this);
+                    _selectSubj.OnNext((_lastSelectedFeature, _lastSelectedLayer));
                 }
 
                 _selectState = !_selectState;
@@ -119,12 +116,15 @@ public class Selector : BaseInteractive, ISelector
         _lastPointeroverFeature = feature;
         _lastPointeroverLayer = layer;
 
-        _hoverBeginSubj.OnNext(this);
+        _hoverBeginSubj.OnNext((feature, layer));
     }
 
     public override void HoveringEnd()
     {
-        _hoverEndSubj.OnNext(this);
+        if (_lastPointeroverFeature is { } && _lastPointeroverLayer is { })
+        {
+            _hoverEndSubj.OnNext((_lastPointeroverFeature, _lastPointeroverLayer));
+        }
     }
 
     public override void Cancel()

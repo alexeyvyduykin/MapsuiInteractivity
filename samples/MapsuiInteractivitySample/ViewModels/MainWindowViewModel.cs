@@ -109,10 +109,13 @@ public class MainWindowViewModel : ViewModelBase
 
     public void PointeroverLeaveImpl()
     {
+        var layerName = SelectedLayer?.Name;
+        var layer = Map.Layers.Where(s => string.Equals(s.Name, layerName)).FirstOrDefault();
+
         _selector?.HoveringEnd();
 
         _featureManager
-            .OnLayer(_selector?.PointeroverLayer)
+            .OnLayer(layer)
             .Leave();
     }
 
@@ -151,19 +154,19 @@ public class MainWindowViewModel : ViewModelBase
 
         _selector.Select.Subscribe(s =>
         {
-            SelectFeature(s);
+            SelectFeature(s.Feature, s.Layer);
 
-            Tip = $"Select{Environment.NewLine}{s.SelectedFeature?.ToFeatureInfo()}";
+            Tip = $"Select{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
 
             if (IsWktInfo == true)
             {
-                WktInfo = s.SelectedFeature?.ToWkt();
+                WktInfo = s.Feature.ToWkt();
             }
         });
 
         _selector.Unselect.Subscribe(s =>
         {
-            UnselectFeature(s);
+            UnselectFeature(s.Layer);
 
             Tip = string.Empty;
 
@@ -175,14 +178,14 @@ public class MainWindowViewModel : ViewModelBase
 
         _selector.HoverBegin.Subscribe(s =>
         {
-            EnterFeature(s);
+            EnterFeature(s.Feature, s.Layer);
 
-            Tip = $"HoveringBegin{Environment.NewLine}{s.HoveringFeature?.ToFeatureInfo()}";
+            Tip = $"HoveringBegin{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
         });
 
         _selector.HoverEnd.Subscribe(s =>
         {
-            LeaveFeature(s);
+            LeaveFeature(s.Layer);
 
             Tip = string.Empty;
         });
@@ -191,31 +194,31 @@ public class MainWindowViewModel : ViewModelBase
         State = States.Selecting;
     }
 
-    private void EnterFeature(ISelector selector)
+    private void EnterFeature(IFeature feature, ILayer layer)
     {
         _featureManager
-            .OnLayer(selector.PointeroverLayer)
-            .Enter(selector.HoveringFeature);
+            .OnLayer(layer)
+            .Enter(feature);
     }
 
-    private void LeaveFeature(ISelector selector)
+    private void LeaveFeature(ILayer layer)
     {
         _featureManager
-            .OnLayer(selector.PointeroverLayer)
+            .OnLayer(layer)
             .Leave();
     }
 
-    private void SelectFeature(ISelector selector)
+    private void SelectFeature(IFeature feature, ILayer layer)
     {
         _featureManager
-            .OnLayer(selector.SelectedLayer)
-            .Select(selector.SelectedFeature);
+            .OnLayer(layer)
+            .Select(feature);
     }
 
-    private void UnselectFeature(ISelector selector)
+    private void UnselectFeature(ILayer layer)
     {
         _featureManager
-            .OnLayer(selector.SelectedLayer)
+            .OnLayer(layer)
             .Unselect();
     }
 
@@ -229,11 +232,11 @@ public class MainWindowViewModel : ViewModelBase
 
         _selector.Select.Subscribe(s =>
         {
-            Tip = $"Select{Environment.NewLine}{s.SelectedFeature?.ToFeatureInfo()}";
+            Tip = $"Select{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
 
             if (IsWktInfo == true)
             {
-                WktInfo = s.SelectedFeature?.ToWkt();
+                WktInfo = s.Feature.ToWkt();
             }
         });
 
@@ -249,7 +252,7 @@ public class MainWindowViewModel : ViewModelBase
 
         _selector.HoverBegin.Subscribe(s =>
         {
-            Tip = $"HoveringBegin{Environment.NewLine}{s.HoveringFeature?.ToFeatureInfo()}";
+            Tip = $"HoveringBegin{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
         });
 
         _selector.HoverEnd.Subscribe(s =>
@@ -276,9 +279,9 @@ public class MainWindowViewModel : ViewModelBase
             Tip = $"Translate mode";
         });
 
-        _selector.Unselect.Subscribe(s =>
+        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
         {
-            Interactive = s;
+            Interactive = _selector;
             State = States.Selecting;
             Tip = String.Empty;
         });
@@ -303,9 +306,9 @@ public class MainWindowViewModel : ViewModelBase
             Tip = $"Translate mode";
         });
 
-        _selector.Unselect.Subscribe(s =>
+        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
         {
-            Interactive = s;
+            Interactive = _selector;
             State = States.Selecting;
             Tip = String.Empty;
         });
@@ -329,9 +332,9 @@ public class MainWindowViewModel : ViewModelBase
             Tip = $"Scale mode";
         });
 
-        _selector.Unselect.Subscribe(s =>
+        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
         {
-            Interactive = s;
+            Interactive = _selector;
             State = States.Selecting;
             Tip = string.Empty;
         });
@@ -355,9 +358,9 @@ public class MainWindowViewModel : ViewModelBase
             Tip = $"Rotate mode";
         });
 
-        _selector.Unselect.Subscribe(s =>
+        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
         {
-            Interactive = s;
+            Interactive = _selector;
             State = States.Selecting;
             Tip = string.Empty;
         });
@@ -381,9 +384,9 @@ public class MainWindowViewModel : ViewModelBase
             Tip = $"Edit mode";
         });
 
-        _selector.Unselect.Subscribe(s =>
+        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
         {
-            Interactive = s;
+            Interactive = _selector;
             State = States.Selecting;
             Tip = string.Empty;
         });

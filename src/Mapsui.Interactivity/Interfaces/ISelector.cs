@@ -10,19 +10,11 @@ public interface ISelector : IInteractive
 
     void HoveringBegin(IFeature feature, ILayer layer);
 
-    IFeature? SelectedFeature { get; }
+    IObservable<(IFeature Feature, ILayer Layer)> Select { get; }
 
-    ILayer? SelectedLayer { get; }
+    IObservable<(IFeature Feature, ILayer Layer)> Unselect { get; }
 
-    IFeature? HoveringFeature { get; }
+    IObservable<(IFeature Feature, ILayer Layer)> HoverBegin { get; }
 
-    ILayer? PointeroverLayer { get; }
-
-    IObservable<ISelector> Select { get; }
-
-    IObservable<ISelector> Unselect { get; }
-
-    IObservable<ISelector> HoverBegin { get; }
-
-    IObservable<ISelector> HoverEnd { get; }
+    IObservable<(IFeature Feature, ILayer Layer)> HoverEnd { get; }
 }
