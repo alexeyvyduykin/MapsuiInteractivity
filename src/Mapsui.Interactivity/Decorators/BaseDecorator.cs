@@ -19,10 +19,8 @@ public abstract class BaseDecorator : BaseInteractive, IDecorator
 
     public override IEnumerable<IFeature> GetFeatures()
     {
-        foreach (var point in GetActiveVertices())
-        {
-            yield return new GeometryFeature { Geometry = point.ToPoint() };
-        }
+        return GetActiveVertices()
+            .Select(s => new GeometryFeature { Geometry = s.ToPoint() });
     }
 
     protected void UpdateGeometry(Geometry geometry)

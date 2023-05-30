@@ -26,22 +26,19 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
 
     public override IEnumerable<IFeature> GetFeatures()
     {
-        var feature = Feature;
-
-        yield return feature;
+        var list = new List<IFeature>() { Feature };
 
         if (ExtraFeatures.Count != 0)
         {
-            foreach (var item in ExtraFeatures)
-            {
-                yield return item;
-            }
+            list.AddRange(ExtraFeatures);
         }
 
         foreach (var point in GetActiveVertices())
         {
-            yield return new GeometryFeature { Geometry = point.ToPoint() };
+            list.Add(new GeometryFeature { Geometry = point.ToPoint() });
         }
+
+        return list;
     }
 
     protected void OnBeginCreating()
