@@ -1,4 +1,5 @@
-﻿using Mapsui.Interactivity.UI.Input;
+﻿using Mapsui.Interactivity.Extensions;
+using Mapsui.Interactivity.UI.Input;
 using Mapsui.Interactivity.UI.Input.Core;
 
 namespace Mapsui.Interactivity.UI;
@@ -86,7 +87,7 @@ internal class EditingManipulator : MouseManipulator
         _skip = false;
         _counter = 0;
 
-        if (mapInfo != null && mapInfo.Feature != null && mapInfo.Layer is InteractiveLayer)
+        if (mapInfo?.IsInteractiveLayer() == true)
         {
             var distance = mapInfo.Resolution * _vertexRadius;
 
@@ -125,7 +126,7 @@ internal class HoverEditingManipulator : MouseManipulator
         {
             var mapInfo = e.MapInfo;
 
-            if (mapInfo != null && mapInfo.Layer != null && mapInfo.Layer is InteractiveLayer)
+            if (mapInfo?.IsInteractiveLayer() == true)
             {
                 if (_isChecker == true)
                 {

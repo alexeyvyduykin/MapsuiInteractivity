@@ -4,11 +4,13 @@ namespace Mapsui.Interactivity;
 
 public interface IInteractive
 {
-    IObservable<Unit> Invalidate { get; }
+    IObservable<IInteractive> Invalidate { get; }
 
     IObservable<Unit> Canceling { get; }
 
     IEnumerable<MPoint> GetActiveVertices();
+
+    IEnumerable<IFeature> GetFeatures();
 
     void Starting(MapInfo? mapInfo);
 

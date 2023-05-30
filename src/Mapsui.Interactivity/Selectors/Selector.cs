@@ -101,6 +101,8 @@ public class Selector : BaseInteractive, ISelector
 
     public override IEnumerable<MPoint> GetActiveVertices() => new List<MPoint>();
 
+    public override IEnumerable<IFeature> GetFeatures() => new List<IFeature>();
+
     public override void HoveringBegin(MapInfo? mapInfo)
     {
         if (mapInfo?.Feature is IFeature feature

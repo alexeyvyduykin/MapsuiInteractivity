@@ -1,4 +1,5 @@
 ﻿using Mapsui.Nts;
+using Mapsui.Nts.Extensions;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -22,6 +23,26 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
     public IObservable<IDesigner> HoverCreating => _hoverCreatingSubj.AsObservable();
 
     public IObservable<IDesigner> EndCreating => _endCreatingSubj.AsObservable();
+
+    public override IEnumerable<IFeature> GetFeatures()
+    {
+        var feature = Feature;
+
+        yield return feature;
+
+        if (ExtraFeatures.Count != 0)
+        {
+            foreach (var item in ExtraFeatures)
+            {
+                yield return item;
+            }
+        }
+
+        foreach (var point in GetActiveVertices())
+        {
+            yield return new GeometryFeature { Geometry = point.ToPoint() };
+        }
+    }
 
     protected void OnBeginCreating()
     {

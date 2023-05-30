@@ -5,7 +5,7 @@ namespace Mapsui.Interactivity.Extensions;
 
 public static class LayerCollectionExtensions
 {
-    public static InteractiveLayer AddInteractiveLayer(this LayerCollection layers, IInteractive interactive, IStyle style)
+    public static void AddInteractiveLayer(this LayerCollection layers, IInteractive interactive, IStyle style)
     {
         layers.RemoveInteractiveLayer();
 
@@ -16,20 +16,20 @@ public static class LayerCollectionExtensions
         };
 
         layers.Add(interactiveLayer);
-
-        return interactiveLayer;
     }
 
     public static void RemoveInteractiveLayer(this LayerCollection layers)
     {
-        var interactiveLayer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
+        var layer = layers.FindLayer(nameof(InteractiveLayer)).FirstOrDefault();
 
-        if (interactiveLayer != null)
+        if (layer is InteractiveLayer interactiveLayer)
         {
             // HACK: before remove from layers clear interactive geometries (mapsui not auto clear data)
-            ((InteractiveLayer)interactiveLayer).Cancel();
+            interactiveLayer.Cancel();
 
             layers.Remove(interactiveLayer);
+
+            interactiveLayer.Dispose();
         }
     }
 }

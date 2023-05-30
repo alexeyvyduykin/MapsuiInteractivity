@@ -6,21 +6,26 @@ namespace Mapsui.Interactivity;
 
 public abstract class BaseInteractive : IInteractive
 {
-    private readonly Subject<Unit> _invalidateSubj = new();
+    private readonly Subject<IInteractive> _invalidateSubj = new();
     private readonly Subject<Unit> _cancelingSubj = new();
 
-    public IObservable<Unit> Invalidate => _invalidateSubj.AsObservable();
+    public IObservable<IInteractive> Invalidate => _invalidateSubj.AsObservable();
 
     public IObservable<Unit> Canceling => _cancelingSubj.AsObservable();
 
     public abstract IEnumerable<MPoint> GetActiveVertices();
 
+    public abstract IEnumerable<IFeature> GetFeatures();
+
     protected virtual void OnInvalidate()
     {
-        _invalidateSubj.OnNext(Unit.Default);
+        _invalidateSubj.OnNext(this);
     }
 
-    public virtual void Starting(MapInfo? mapInfo) { }
+    public virtual void Starting(MapInfo? mapInfo)
+    {
+        OnInvalidate();
+    }
 
     public virtual void Starting(MapInfo? mapInfo, double screenDistance) { }
 
