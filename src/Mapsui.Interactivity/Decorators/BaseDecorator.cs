@@ -17,6 +17,8 @@ public abstract class BaseDecorator : BaseInteractive, IDecorator
 
     public GeometryFeature FeatureSource => _featureSource;
 
+    public bool IsFeatureChange { get; private set; } = false;
+
     public override IEnumerable<IFeature> GetFeatures()
     {
         return GetActiveVertices()
@@ -25,6 +27,8 @@ public abstract class BaseDecorator : BaseInteractive, IDecorator
 
     protected void UpdateGeometry(Geometry geometry)
     {
+        IsFeatureChange = true;
+
         _featureSource.Geometry = geometry;
 
         _featureSource.RenderedGeometry.Clear();

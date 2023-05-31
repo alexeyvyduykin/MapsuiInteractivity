@@ -11,7 +11,7 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
     private readonly Subject<IDesigner> _beginCreatingSubj = new();
     private readonly Subject<IDesigner> _creatingSubj = new();
     private readonly Subject<IDesigner> _hoverCreatingSubj = new();
-    private readonly Subject<IFeature> _endCreatingSubj = new();
+    private readonly Subject<GeometryFeature> _endCreatingSubj = new();
 
     public GeometryFeature Feature { get; protected set; } = new GeometryFeature();
 
@@ -23,7 +23,7 @@ public abstract class BaseDesigner : BaseInteractive, IDesigner
 
     public IObservable<IDesigner> HoverCreating => _hoverCreatingSubj.AsObservable();
 
-    public IObservable<IFeature> EndCreating => _endCreatingSubj.AsObservable();
+    public IObservable<GeometryFeature> EndCreating => _endCreatingSubj.AsObservable();
 
     public override IEnumerable<IFeature> GetFeatures()
     {
