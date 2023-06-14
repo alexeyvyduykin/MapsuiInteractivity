@@ -69,7 +69,7 @@ public partial class InteractivityBehavior : AvaloniaObject
         }
     }
 
-    private static void HandleInteractiveChanged(IAvaloniaObject element, IInteractive? value)
+    private static void HandleInteractiveChanged(AvaloniaObject element, IInteractive? value)
     {
         if (element is InteractivityBehavior behavior && value is not null)
         {
@@ -77,7 +77,7 @@ public partial class InteractivityBehavior : AvaloniaObject
         }
     }
 
-    private static void HandleStateChanged(IAvaloniaObject element, string? value)
+    private static void HandleStateChanged(AvaloniaObject element, string? value)
     {
         if (element is InteractivityBehavior behavior && string.IsNullOrEmpty(value) == false)
         {
@@ -85,7 +85,7 @@ public partial class InteractivityBehavior : AvaloniaObject
         }
     }
 
-    private static void HandleMapChanged(IAvaloniaObject element, Map? value)
+    private static void HandleMapChanged(AvaloniaObject element, Map? value)
     {
         if (element is InteractivityBehavior behavior)
         {

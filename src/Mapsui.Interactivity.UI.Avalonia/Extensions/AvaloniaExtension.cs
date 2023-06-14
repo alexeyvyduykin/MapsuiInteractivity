@@ -39,7 +39,7 @@ public static class AvaloniaExtension
         };
     }
 
-    public static MouseWheelEventArgs ToMouseWheelEventArgs(this aInput.PointerWheelEventArgs e, aInput.IInputElement relativeTo)
+    public static MouseWheelEventArgs ToMouseWheelEventArgs(this aInput.PointerWheelEventArgs e, aInput.InputElement relativeTo)
     {
         return new MouseWheelEventArgs
         {
@@ -47,7 +47,7 @@ public static class AvaloniaExtension
         };
     }
 
-    public static MouseEventArgs ToMouseEventArgs(this aInput.PointerEventArgs e, aInput.IInputElement relativeTo)
+    public static MouseEventArgs ToMouseEventArgs(this aInput.PointerEventArgs e, aInput.InputElement relativeTo)
     {
         MapInfo? mapInfo = null;
 
@@ -64,7 +64,7 @@ public static class AvaloniaExtension
         };
     }
 
-    public static MouseDownEventArgs ToMouseDownEventArgs(this aInput.PointerPressedEventArgs e, aInput.IInputElement relativeTo)
+    public static MouseDownEventArgs ToMouseDownEventArgs(this aInput.PointerPressedEventArgs e, aInput.InputElement relativeTo)
     {
         MapInfo? mapInfo = null;
 
@@ -78,14 +78,15 @@ public static class AvaloniaExtension
         return new MouseDownEventArgs
         {
 #pragma warning disable CS0618 // Тип или член устарел
-            ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+            //ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+            ChangedButton = e.GetCurrentPoint(null).Properties.PointerUpdateKind.Convert(),
 #pragma warning restore CS0618 // Тип или член устарел
             ClickCount = e.ClickCount,
             MapInfo = mapInfo
         };
     }
 
-    public static MouseEventArgs ToMouseReleasedEventArgs(this aInput.PointerReleasedEventArgs e, aInput.IInputElement relativeTo)
+    public static MouseEventArgs ToMouseReleasedEventArgs(this aInput.PointerReleasedEventArgs e, aInput.InputElement relativeTo)
     {
         MapInfo? mapInfo = null;
 

@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Input;
+using Mapsui.Interactivity.UI.Input.Core;
 using Mapsui.UI.Avalonia;
+using Mapsui.UI.Avalonia.Extensions;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -8,9 +10,9 @@ namespace Mapsui.Interactivity.UI.Avalonia;
 
 public partial class InteractivityBehavior
 {
-    public IAvaloniaObject? AssociatedObject { get; private set; }
+    public AvaloniaObject? AssociatedObject { get; private set; }
 
-    public void Attach(IAvaloniaObject? associatedObject)
+    public void Attach(AvaloniaObject? associatedObject)
     {
         if (Equals(associatedObject, AssociatedObject))
         {
@@ -45,8 +47,8 @@ public partial class InteractivityBehavior
             mapControl.PointerMoved += MapControl_PointerMoved;
             mapControl.PointerPressed += MapControl_PointerPressed;
             mapControl.PointerWheelChanged += MapControl_PointerWheelChanged;
-            mapControl.PointerLeave += MapControl_PointerLeave;
-            mapControl.PointerEnter += MapControl_PointerEnter;
+            mapControl.PointerExited += MapControl_PointerExited;
+            mapControl.PointerEntered += MapControl_PointerEntered;
         }
     }
 
@@ -58,12 +60,12 @@ public partial class InteractivityBehavior
             mapControl.PointerMoved -= MapControl_PointerMoved;
             mapControl.PointerPressed -= MapControl_PointerPressed;
             mapControl.PointerWheelChanged -= MapControl_PointerWheelChanged;
-            mapControl.PointerLeave -= MapControl_PointerLeave;
-            mapControl.PointerEnter -= MapControl_PointerEnter;
+            mapControl.PointerExited -= MapControl_PointerExited;
+            mapControl.PointerEntered -= MapControl_PointerEntered;
         }
     }
 
-    private void MapControl_PointerEnter(object? sender, PointerEventArgs e)
+    private void MapControl_PointerEntered(object? sender, PointerEventArgs e)
     {
         if (e.Handled)
         {
@@ -72,13 +74,22 @@ public partial class InteractivityBehavior
 
         if (sender is MapControl mapControl && _interactive is not null)
         {
-            var args = e.ToMouseEventArgs(mapControl);
+            // var args = e.ToMouseEventArgs(mapControl);
+
+            var position = e.GetPosition(mapControl).ToMapsui();
+
+            var mapInfo = mapControl.GetMapInfo(position);
+
+            var args = new MouseEventArgs
+            {
+                MapInfo = mapInfo,
+            };
 
             _controller?.HandleMouseEnter(new MapControlAdaptor(mapControl, _interactive), args);
         }
     }
 
-    private void MapControl_PointerLeave(object? sender, PointerEventArgs e)
+    private void MapControl_PointerExited(object? sender, PointerEventArgs e)
     {
         if (e.Handled)
         {
@@ -87,7 +98,17 @@ public partial class InteractivityBehavior
 
         if (sender is MapControl mapControl && _interactive is not null)
         {
-            var args = e.ToMouseEventArgs(mapControl);
+            //var args = e.ToMouseEventArgs(mapControl);
+
+            var position = e.GetPosition(mapControl).ToMapsui();
+
+            var mapInfo = mapControl.GetMapInfo(position);
+
+            var args = new MouseEventArgs
+            {
+                MapInfo = mapInfo,
+            };
+
 
             _controller?.HandleMouseLeave(new MapControlAdaptor(mapControl, _interactive), args);
         }
@@ -120,7 +141,21 @@ public partial class InteractivityBehavior
             mapControl.Focus();
             e.Pointer.Capture(mapControl);
 
-            var args = e.ToMouseDownEventArgs(mapControl);
+            //var args = e.ToMouseDownEventArgs(mapControl);
+
+            var position = e.GetPosition(mapControl).ToMapsui();
+
+            var mapInfo = mapControl.GetMapInfo(position);
+
+            var args = new MouseDownEventArgs
+            {
+#pragma warning disable CS0618 // Тип или член устарел
+                // ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+                ChangedButton = e.GetCurrentPoint(null).Properties.PointerUpdateKind.Convert(),
+#pragma warning restore CS0618 // Тип или член устарел
+                ClickCount = e.ClickCount,
+                MapInfo = mapInfo
+            };
 
             _controller?.HandleMouseDown(new MapControlAdaptor(mapControl, _interactive), args);
         }
@@ -135,7 +170,16 @@ public partial class InteractivityBehavior
 
         if (sender is MapControl mapControl && _interactive is not null)
         {
-            var args = e.ToMouseEventArgs(mapControl);
+            //var args = e.ToMouseEventArgs(mapControl);
+
+            var position = e.GetPosition(mapControl).ToMapsui();
+
+            var mapInfo = mapControl.GetMapInfo(position);
+
+            var args = new MouseEventArgs
+            {
+                MapInfo = mapInfo,
+            };
 
             _controller?.HandleMouseMove(new MapControlAdaptor(mapControl, _interactive), args);
 
@@ -154,7 +198,16 @@ public partial class InteractivityBehavior
 
         if (sender is MapControl mapControl && _interactive is not null)
         {
-            var args = e.ToMouseReleasedEventArgs(mapControl);
+            //var args = e.ToMouseReleasedEventArgs(mapControl);
+
+            var position = e.GetPosition(mapControl).ToMapsui();
+
+            var mapInfo = mapControl.GetMapInfo(position);
+
+            var args = new MouseEventArgs
+            {
+                MapInfo = mapInfo,
+            };
 
             _controller?.HandleMouseUp(new MapControlAdaptor(mapControl, _interactive), args);
         }

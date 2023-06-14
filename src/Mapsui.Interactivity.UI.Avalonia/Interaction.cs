@@ -11,9 +11,9 @@ public class Interaction
     }
 
     public static readonly AttachedProperty<InteractivityBehavior?> BehaviorProperty =
-        AvaloniaProperty.RegisterAttached<Interaction, IAvaloniaObject, InteractivityBehavior?>("Behavior");
+        AvaloniaProperty.RegisterAttached<Interaction, AvaloniaObject, InteractivityBehavior?>("Behavior");
 
-    public static InteractivityBehavior? GetBehavior(IAvaloniaObject obj)
+    public static InteractivityBehavior? GetBehavior(AvaloniaObject obj)
     {
         if (obj is null)
         {
@@ -31,7 +31,7 @@ public class Interaction
         return behavior;
     }
 
-    public static void SetBehavior(IAvaloniaObject obj, InteractivityBehavior? value)
+    public static void SetBehavior(AvaloniaObject obj, InteractivityBehavior? value)
     {
         if (obj is null)
         {
@@ -63,7 +63,7 @@ public class Interaction
         }
     }
 
-    private static void SetVisualTreeEventHandlersInitial(IAvaloniaObject obj)
+    private static void SetVisualTreeEventHandlersInitial(AvaloniaObject obj)
     {
         if (obj is not Control control)
         {
@@ -77,7 +77,7 @@ public class Interaction
         control.DetachedFromVisualTree += Control_DetachedFromVisualTreeInitial;
     }
 
-    private static void SetVisualTreeEventHandlersRuntime(IAvaloniaObject obj)
+    private static void SetVisualTreeEventHandlersRuntime(AvaloniaObject obj)
     {
         if (obj is not Control control)
         {
@@ -90,7 +90,7 @@ public class Interaction
 
     private static void Control_AttachedToVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
     {
-        if (sender is IAvaloniaObject d)
+        if (sender is AvaloniaObject d)
         {
             GetBehavior(d)?.Attach(d);
         }
@@ -98,7 +98,7 @@ public class Interaction
 
     private static void Control_DetachedFromVisualTreeInitial(object? sender, VisualTreeAttachmentEventArgs e)
     {
-        if (sender is IAvaloniaObject d)
+        if (sender is AvaloniaObject d)
         {
             GetBehavior(d)?.Detach();
         }

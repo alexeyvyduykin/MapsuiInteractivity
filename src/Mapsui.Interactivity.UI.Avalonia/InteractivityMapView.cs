@@ -40,20 +40,19 @@ public class InteractivityMapView : MapControl, IView
         set { SetValue(StateProperty, value); }
     }
 
-    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
         if (change.Property == MapSourceProperty)
         {
-            if (change.NewValue.GetValueOrDefault() is Map map)
-            {
-                Map = map;
-            }
+            Map = change.GetNewValue<Map>();
         }
         else if (change.Property == StateProperty)
         {
-            if (change.NewValue.GetValueOrDefault() is string state && string.IsNullOrEmpty(state) == false)
+            var state = change.GetNewValue<string>();
+
+            if (string.IsNullOrEmpty(state) == false)
             {
                 _controller = InteractiveControllerFactory.GetController(state);
 
@@ -73,9 +72,9 @@ public class InteractivityMapView : MapControl, IView
         return Map.Navigator.Viewport.WorldToScreen(worldPosition);
     }
 
-    protected override void OnPointerEnter(PointerEventArgs e)
+    protected override void OnPointerEntered(PointerEventArgs e)
     {
-        base.OnPointerEnter(e);
+        base.OnPointerEntered(e);
 
         if (e.Handled)
         {
@@ -89,9 +88,9 @@ public class InteractivityMapView : MapControl, IView
         _controller?.HandleMouseEnter(this, new MouseEventArgs { MapInfo = mapInfo });
     }
 
-    protected override void OnPointerLeave(PointerEventArgs e)
+    protected override void OnPointerExited(PointerEventArgs e)
     {
-        base.OnPointerLeave(e);
+        base.OnPointerExited(e);
 
         if (e.Handled)
         {
@@ -142,7 +141,8 @@ public class InteractivityMapView : MapControl, IView
         var args = new MouseDownEventArgs
         {
 #pragma warning disable CS0618 // Тип или член устарел
-            ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+            //ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
+            ChangedButton = e.GetCurrentPoint(null).Properties.PointerUpdateKind.Convert(),
 #pragma warning restore CS0618 // Тип или член устарел
             ClickCount = e.ClickCount,
             MapInfo = mapInfo
