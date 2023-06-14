@@ -9,7 +9,8 @@
              xmlns:inter="clr-namespace:Mapsui.Interactivity.UI.Avalonia;assembly=Mapsui.Interactivity.UI.Avalonia"
 			 x:Name="mainView"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
-             x:Class="MapsuiInteractivitySample.Views.MainView">
+             x:Class="MapsuiInteractivitySample.Views.MainView"
+			 x:DataType="vm:MainWindowViewModel">
 
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
@@ -88,7 +89,7 @@
 				</ListBox>
 			</StackPanel>
 			<StackPanel Grid.Row="1">
-				<ListBox x:Name="lb" 
+				<ListBox x:Name="lb"
 						 ItemsSource="{Binding Features}"
 						 SelectedItem="{Binding SelectedFeature}">
 					<ListBox.Styles>
@@ -119,7 +120,7 @@
 			</StackPanel>
 		</Grid>
 
-		<StackPanel Margin="0,64,0,0" 
+		<StackPanel Margin="0,64,0,0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Background="Black">

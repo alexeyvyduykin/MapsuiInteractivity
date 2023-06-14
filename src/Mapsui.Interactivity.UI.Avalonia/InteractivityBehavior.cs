@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Data;
 using Mapsui.UI.Avalonia;
 
 namespace Mapsui.Interactivity.UI.Avalonia;
@@ -11,38 +10,69 @@ public partial class InteractivityBehavior : AvaloniaObject
 
     static InteractivityBehavior()
     {
-        InteractiveProperty.Changed.Subscribe(s => HandleInteractiveChanged(s.Sender, s.NewValue.GetValueOrDefault<IInteractive>()));
-        StateProperty.Changed.Subscribe(s => HandleStateChanged(s.Sender, s.NewValue.GetValueOrDefault<string>()));
-        MapProperty.Changed.Subscribe(s => HandleMapChanged(s.Sender, s.NewValue.GetValueOrDefault<Map>()));
+        InteractiveProperty.Changed.Subscribe(InteractiveChanged);
+        StateProperty.Changed.Subscribe(StateChanged);
+        MapProperty.Changed.Subscribe(MapChanged);
     }
 
-    // HACK: [Binding] Error in binding to 'Mapsui.Interactivity.UI.Avalonia.InteractivityBehavior'.'Interactive': 'Null value in expression '{empty}' at ''.' (InteractivityBehavior #16468652)
-
     public static readonly StyledProperty<IInteractive?> InteractiveProperty =
-        AvaloniaProperty.Register<InteractivityBehavior, IInteractive?>(nameof(Interactive), null, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : null);
+        AvaloniaProperty.Register<InteractivityBehavior, IInteractive?>(nameof(Interactive));
 
     public IInteractive? Interactive
     {
-        get { return GetValue(InteractiveProperty); }
-        set { SetValue(InteractiveProperty, value); }
+        get => GetValue(InteractiveProperty);
+        set => SetValue(InteractiveProperty, value);
     }
 
     public static readonly StyledProperty<string> StateProperty =
-        AvaloniaProperty.Register<InteractivityBehavior, string>(nameof(State), States.Default, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : string.Empty);
+        AvaloniaProperty.Register<InteractivityBehavior, string>(nameof(State), States.Default);
 
     public string State
     {
-        get { return GetValue(StateProperty); }
-        set { SetValue(StateProperty, value); }
+        get => GetValue(StateProperty);
+        set => SetValue(StateProperty, value);
     }
 
     public static readonly StyledProperty<Map?> MapProperty =
-        AvaloniaProperty.Register<InteractivityBehavior, Map?>(nameof(Map), null, false, BindingMode.OneWay, coerce: (s, value) => value is { } ? value : null);
+        AvaloniaProperty.Register<InteractivityBehavior, Map?>(nameof(Map));
 
     public Map? Map
     {
-        get { return GetValue(MapProperty); }
-        set { SetValue(MapProperty, value); }
+        get => GetValue(MapProperty);
+        set => SetValue(MapProperty, value);
+    }
+
+    private static void InteractiveChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Sender is InteractivityBehavior behavior)
+        {
+            var value = e.GetNewValue<IInteractive>();
+
+            behavior.SetInteractive(value);
+        }
+    }
+
+    private static void StateChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Sender is InteractivityBehavior behavior)
+        {
+            var value = e.GetNewValue<string>();
+
+            if (string.IsNullOrEmpty(value) == false)
+            {
+                behavior.SetController(value);
+            }
+        }
+    }
+
+    private static void MapChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Sender is InteractivityBehavior behavior)
+        {
+            var value = e.GetNewValue<Map>();
+
+            behavior.SetMap(value);
+        }
     }
 
     private void SetController(string key)
@@ -63,33 +93,9 @@ public partial class InteractivityBehavior : AvaloniaObject
 
     private void SetMap(Map? map)
     {
-        if (AssociatedObject is MapControl mapControl)
+        if (AssociatedObject is MapControl mapControl && map is { })
         {
             mapControl.Map = map;
-        }
-    }
-
-    private static void HandleInteractiveChanged(AvaloniaObject element, IInteractive? value)
-    {
-        if (element is InteractivityBehavior behavior && value is not null)
-        {
-            behavior.SetInteractive(value);
-        }
-    }
-
-    private static void HandleStateChanged(AvaloniaObject element, string? value)
-    {
-        if (element is InteractivityBehavior behavior && string.IsNullOrEmpty(value) == false)
-        {
-            behavior.SetController(value);
-        }
-    }
-
-    private static void HandleMapChanged(AvaloniaObject element, Map? value)
-    {
-        if (element is InteractivityBehavior behavior)
-        {
-            behavior.SetMap(value);
         }
     }
 }

@@ -16,13 +16,13 @@ public class Selector : BaseInteractive, ISelector
     private readonly Subject<(IFeature, ILayer)> _hoverBeginSubj = new();
     private readonly Subject<(IFeature, ILayer)> _hoverEndSubj = new();
 
-    public IObservable<(IFeature, ILayer)> Select => _selectSubj.AsObservable();
+    public IObservable<(IFeature Feature, ILayer Layer)> Select => _selectSubj.AsObservable();
 
-    public IObservable<(IFeature, ILayer)> Unselect => _unselectSubj.AsObservable();
+    public IObservable<(IFeature Feature, ILayer Layer)> Unselect => _unselectSubj.AsObservable();
 
-    public IObservable<(IFeature, ILayer)> HoverBegin => _hoverBeginSubj.AsObservable();
+    public IObservable<(IFeature Feature, ILayer Layer)> HoverBegin => _hoverBeginSubj.AsObservable();
 
-    public IObservable<(IFeature, ILayer)> HoverEnd => _hoverEndSubj.AsObservable();
+    public IObservable<(IFeature Feature, ILayer Layer)> HoverEnd => _hoverEndSubj.AsObservable();
 
     public void Selected(IFeature feature, ILayer layer)
     {

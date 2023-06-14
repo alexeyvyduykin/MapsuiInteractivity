@@ -26,9 +26,12 @@ internal class DecoratorSelector : Selector, IDecoratorSelector
 
         Unselect.Subscribe(s =>
         {
-            var feature = _decorator!.IsFeatureChange ? _decorator!.FeatureSource : null;
+            //var feature = _decorator!.IsFeatureChange ? _decorator!.FeatureSource : null;
 
-            _decoratorUnselectingSubj.OnNext(feature);
+            if (s.Feature is GeometryFeature gf)
+            {
+                _decoratorUnselectingSubj.OnNext(gf);
+            }
         });
     }
 
