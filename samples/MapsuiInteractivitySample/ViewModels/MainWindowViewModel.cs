@@ -3,6 +3,7 @@ using Mapsui.Interactivity;
 using Mapsui.Interactivity.Extensions;
 using Mapsui.Interactivity.UI;
 using Mapsui.Layers;
+using Mapsui.Styles;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reflection.Emit;
 
 namespace MapsuiInteractivitySample.ViewModels;
 
@@ -26,10 +28,14 @@ public class MainWindowViewModel : ViewModelBase
         Map.Layers.Changed += Layers_Changed;
 
         _featureManager = new FeatureManager()
-            .WithSelect(f => f[InteractiveFields.Select] = true)
-            .WithUnselect(f => f[InteractiveFields.Select] = false)
-            .WithEnter(f => f[InteractiveFields.Hover] = true)
-            .WithLeave(f => f[InteractiveFields.Hover] = false);
+            .WithSelect(f => f[MapBuilder.SelectField] = true)
+            .WithUnselect(f => f[MapBuilder.SelectField] = false)
+            .WithEnter(f => f[MapBuilder.HoverField] = true)
+            .WithLeave(f => f[MapBuilder.HoverField] = false);
+
+        //_featureManager = new FeatureManager()
+        // .WithSelectStyle(MapBuilder.CreateFeatureSelectStyle())
+        // .WithHoverStyle(MapBuilder.CreateFeatureHoverStyle());
 
         _userLayer = (WritableLayer)Map.Layers[0];
 
@@ -73,6 +79,8 @@ public class MainWindowViewModel : ViewModelBase
 
         SelectedLayer = Layers.FirstOrDefault();
     }
+
+
 
     private void Layers_Changed(object sender, LayerCollectionChangedEventArgs args)
     {

@@ -1,7 +1,6 @@
 ﻿using Avalonia.Input;
 using Mapsui;
 using Mapsui.Extensions;
-using Mapsui.Interactivity.UI;
 using Mapsui.Interactivity.UI.Avalonia;
 using Mapsui.Projections;
 
@@ -34,7 +33,7 @@ public class UserInteractivityMapView : InteractivityMapView
 
                     _prevCursor = Cursor;
 
-                    Cursor = new Cursor(CursorType.HandGrab.ToStandartCursor());
+                    Cursor = new Cursor(StandardCursorType.SizeAll);
                 }
             }
         }

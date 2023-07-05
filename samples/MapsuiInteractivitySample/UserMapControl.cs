@@ -1,7 +1,5 @@
 ﻿using Avalonia.Input;
 using Mapsui.Extensions;
-using Mapsui.Interactivity.UI;
-using Mapsui.Interactivity.UI.Avalonia;
 using Mapsui.Projections;
 using Mapsui.UI.Avalonia;
 
@@ -15,7 +13,7 @@ public class UserMapControl : MapControl
     public UserMapControl() : base()
     {
         Map.Navigator.CenterOn(SphericalMercator.FromLonLat(13, 42).ToMPoint());
-        Map.Navigator.ZoomTo(1000);
+        Map.Navigator.ZoomTo(1000);        
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
@@ -34,7 +32,7 @@ public class UserMapControl : MapControl
 
                     _prevCursor = Cursor;
 
-                    Cursor = new Cursor(CursorType.HandGrab.ToStandartCursor());
+                    Cursor = new Cursor(StandardCursorType.SizeAll);
                 }
             }
         }

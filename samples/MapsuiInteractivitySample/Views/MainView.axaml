@@ -12,143 +12,143 @@
              x:Class="MapsuiInteractivitySample.Views.MainView"
 			 x:DataType="vm:MainWindowViewModel">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
 
-	<UserControl.Styles>
-		<Style Selector="ToggleButton">
-			<Setter Property="Padding" Value="8,4,8,4"/>
-			<Setter Property="HorizontalAlignment" Value="Stretch"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		</Style>
-	</UserControl.Styles>
+  <UserControl.Styles>
+    <Style Selector="ToggleButton">
+      <Setter Property="Padding" Value="8,4,8,4"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+  </UserControl.Styles>
 
-	<Grid RowDefinitions="*,Auto">
+  <Grid RowDefinitions="*,Auto">
 
-		<TabControl>
-			<TabItem Header="View">
-				<local:UserInteractivityMapView x:Name="MapView"
+    <TabControl>
+      <TabItem Header="View">
+        <local:UserInteractivityMapView x:Name="MapView"
 					  MapSource="{Binding Map}"
 					  Interactive="{Binding Interactive}"
 					  State="{Binding State}"
 					  VerticalAlignment="Stretch"
 					  HorizontalAlignment="Stretch"/>
-			</TabItem>
-			<TabItem Header="Behavior">
-				<local:UserMapControl x:Name="MapControl"
+      </TabItem>
+      <TabItem Header="Behavior">
+        <local:UserMapControl x:Name="MapControl"
 							  VerticalAlignment="Stretch"
 							  HorizontalAlignment="Stretch">
-					<inter:Interaction.Behavior>
-						<inter:InteractivityBehavior Map="{Binding Map}"
+          <inter:Interaction.Behavior>
+            <inter:InteractivityBehavior Map="{Binding Map}"
 													 Interactive="{Binding Interactive}"
 													 State="{Binding State}"/>
-					</inter:Interaction.Behavior>
-				</local:UserMapControl>
-			</TabItem>
-		</TabControl>
+          </inter:Interaction.Behavior>
+        </local:UserMapControl>
+      </TabItem>
+    </TabControl>
 
-		<Border VerticalAlignment="Bottom"
+    <Border VerticalAlignment="Bottom"
 				HorizontalAlignment="Left"
 				IsVisible="{Binding !!LayerNames.Count}"
 				Background="Black"
 				Margin="8">
-			<ItemsControl Margin="8"
+      <ItemsControl Margin="8"
 						  ItemsSource="{Binding LayerNames}"/>
-		</Border>
+    </Border>
 
-		<Grid Width="200"
+    <Grid Width="200"
 			  RowDefinitions="Auto,Auto"
 			  HorizontalAlignment="Right"
 			  VerticalAlignment="Stretch"
 			  Background="Black">
-			<StackPanel>
-				<Grid ColumnDefinitions="60,60,80">
-					<TextBlock Text="Name" Grid.Column="0"/>
-					<TextBlock Text="Visible" Grid.Column="1"/>
-					<TextBlock Text="Selectable" Grid.Column="2"/>
-				</Grid>
-				<ListBox ItemsSource="{Binding Layers}"
+      <StackPanel>
+        <Grid ColumnDefinitions="60,60,80">
+          <TextBlock Text="Name" Grid.Column="0"/>
+          <TextBlock Text="Visible" Grid.Column="1"/>
+          <TextBlock Text="Selectable" Grid.Column="2"/>
+        </Grid>
+        <ListBox ItemsSource="{Binding Layers}"
 						 SelectedItem="{Binding SelectedLayer}">
-					<ListBox.ItemTemplate>
-						<DataTemplate DataType="vm:LayerViewModel">
-							<DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
-								<TextBlock Text="{Binding Name}"
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="vm:LayerViewModel">
+              <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding Name}"
 										   Width="60"
 										   VerticalAlignment="Center"/>
-								<CheckBox IsChecked="{Binding IsVisible}"
+                <CheckBox IsChecked="{Binding IsVisible}"
 										  Width="60"
 										  Margin="4,0,0,0" VerticalAlignment="Center"/>
-								<CheckBox IsChecked="{Binding IsSelectable}"
+                <CheckBox IsChecked="{Binding IsSelectable}"
 										  Margin="4,0,0,0"
 										  Width="60"
 										  VerticalAlignment="Center"/>
-							</DockPanel>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</StackPanel>
-			<StackPanel Grid.Row="1">
-				<ListBox x:Name="lb"
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
+      <StackPanel Grid.Row="1">
+        <ListBox x:Name="lb"
 						 ItemsSource="{Binding Features}"
 						 SelectedItem="{Binding SelectedFeature}">
-					<ListBox.Styles>
-						<Style Selector="ListBoxItem">
-							<Setter Property="Padding" Value="0"/>
-						</Style>
-					</ListBox.Styles>
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem">
+              <Setter Property="Padding" Value="0"/>
+            </Style>
+          </ListBox.Styles>
 
-					<ListBox.ItemTemplate>
-						<DataTemplate DataType="vm:FeatureViewModel">
-							<Border x:Name="brdr" Padding="16,8" Background="Transparent">
-								<i:Interaction.Behaviors>
-									<ia:EventTriggerBehavior EventName="PointerEntered" SourceObject="{Binding #brdr}">
-										<ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerEnterFeature}"
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="vm:FeatureViewModel">
+              <Border x:Name="brdr" Padding="16,8" Background="Transparent">
+                <i:Interaction.Behaviors>
+                  <ia:EventTriggerBehavior EventName="PointerEntered" SourceObject="{Binding #brdr}">
+                    <ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerEnterFeature}"
 																CommandParameter="{Binding #txtblck.Text}" />
-									</ia:EventTriggerBehavior>
-									<ia:EventTriggerBehavior EventName="PointerExited" SourceObject="{Binding #brdr}">
-										<ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerLeaveFeature}"/>
-									</ia:EventTriggerBehavior>
-								</i:Interaction.Behaviors>
+                  </ia:EventTriggerBehavior>
+                  <ia:EventTriggerBehavior EventName="PointerExited" SourceObject="{Binding #brdr}">
+                    <ia:InvokeCommandAction Command="{Binding #mainView.DataContext.PointerLeaveFeature}"/>
+                  </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
 
-								<TextBlock x:Name="txtblck" Text="{Binding Name}" VerticalAlignment="Center"/>
-							</Border>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
+                <TextBlock x:Name="txtblck" Text="{Binding Name}" VerticalAlignment="Center"/>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
 
-				</ListBox>
-			</StackPanel>
-		</Grid>
+        </ListBox>
+      </StackPanel>
+    </Grid>
 
-		<StackPanel Margin="0,64,0,0"
+    <StackPanel Margin="0,64,0,0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Background="Black">
-			<ItemsControl ItemsSource="{Binding RadioButtons}">
-				<ItemsControl.Styles>
-					<Style Selector="ItemsControl > ContentPresenter:nth-child(1)">
-						<Setter Property="Margin" Value="0,0,0,10"></Setter>
-					</Style>
-					<Style Selector="ItemsControl > ContentPresenter:nth-child(5)">
-						<Setter Property="Margin" Value="0,0,0,10"></Setter>
-					</Style>
-					<Style Selector="ItemsControl > ContentPresenter:nth-child(10)">
-						<Setter Property="Margin" Value="0,0,0,10"></Setter>
-					</Style>
-				</ItemsControl.Styles>
+      <ItemsControl ItemsSource="{Binding RadioButtons}">
+        <ItemsControl.Styles>
+          <Style Selector="ItemsControl > ContentPresenter:nth-child(1)">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+          </Style>
+          <Style Selector="ItemsControl > ContentPresenter:nth-child(5)">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+          </Style>
+          <Style Selector="ItemsControl > ContentPresenter:nth-child(10)">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+          </Style>
+        </ItemsControl.Styles>
 
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="vm:RadioButtonItem">
-						<ToggleButton IsChecked="{Binding IsSelected}"
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="vm:RadioButtonItem">
+            <ToggleButton IsChecked="{Binding IsSelected}"
 									  Content="{Binding Name}"/>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
-			<CheckBox Content="WktInfo" IsChecked="{Binding IsWktInfo}"/>
-		</StackPanel>
+      <CheckBox Content="WktInfo" IsChecked="{Binding IsWktInfo}"/>
+    </StackPanel>
 
-		<Border x:Name="tipBorder"
+    <Border x:Name="tipBorder"
 				HorizontalAlignment="Center"
 				Width="200"
 				VerticalAlignment="Bottom"
@@ -156,21 +156,21 @@
 				Background="AliceBlue"
 				BorderThickness="1"
 				BorderBrush="Black">
-			<TextBlock TextWrapping="Wrap"
+      <TextBlock TextWrapping="Wrap"
 					   Foreground="Black"
 					   Text="{Binding Tip}"></TextBlock>
-		</Border>
+    </Border>
 
-		<Grid Grid.Row="1"
+    <Grid Grid.Row="1"
 			  Height="100"
 			  IsVisible="{Binding IsWktInfo}">
-			<ScrollViewer VerticalScrollBarVisibility="Visible">
-				<TextBox Text="{Binding WktInfo}"
+      <ScrollViewer VerticalScrollBarVisibility="Visible">
+        <TextBox Text="{Binding WktInfo}"
 						 IsReadOnly="True"
 						 TextWrapping="Wrap" />
-			</ScrollViewer>
-		</Grid>
+      </ScrollViewer>
+    </Grid>
 
-	</Grid>
+  </Grid>
 
 </UserControl>

@@ -33,6 +33,10 @@ internal static class MapBuilder
     private static readonly Color backgroundColor = new(20, 120, 120, 40);
     private static readonly Color lineColor = new(20, 120, 120);
     private static readonly Color outlineColor = new(20, 20, 20);
+        
+    public const string SelectField = "Select";
+       
+    public const string HoverField = "Hover";
 
     public static Map Create()
     {
@@ -121,8 +125,8 @@ internal static class MapBuilder
                 return null;
             }
 
-            var isSelect = gf.GetValue<bool>(InteractiveFields.Select);
-            var isHover = gf.GetValue<bool>(InteractiveFields.Hover);
+            var isSelect = gf.GetValue<bool>(SelectField);
+            var isHover = gf.GetValue<bool>(HoverField);
 
             if (isSelect == true)
             {
