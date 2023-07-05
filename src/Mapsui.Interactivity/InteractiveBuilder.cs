@@ -114,7 +114,7 @@ public class InteractiveBuilder
 
             if (gf["Name"] != null)
             {
-                if (string.Equals(gf["Name"], InteractiveNames.ExtraPolygonHoverLine) == true)
+                if (string.Equals(gf["Name"], InteractiveFields.ExtraPolygonHoverLine) == true)
                 {
                     return new VectorStyle
                     {
@@ -122,7 +122,7 @@ public class InteractiveBuilder
                         Line = new Pen(_color, 4) { PenStyle = PenStyle.Dot },
                     };
                 }
-                else if (string.Equals(gf["Name"], InteractiveNames.ExtraPolygonArea) == true)
+                else if (string.Equals(gf["Name"], InteractiveFields.ExtraPolygonArea) == true)
                 {
                     return new VectorStyle
                     {
@@ -131,7 +131,7 @@ public class InteractiveBuilder
                         Outline = null,
                     };
                 }
-                else if (string.Equals(gf["Name"], InteractiveNames.ExtraRouteHoverLine) == true)
+                else if (string.Equals(gf["Name"], InteractiveFields.ExtraRouteHoverLine) == true)
                 {
                     return new VectorStyle
                     {

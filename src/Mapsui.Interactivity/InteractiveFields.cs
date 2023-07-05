@@ -2,7 +2,9 @@
 
 public static class InteractiveFields
 {
-    public const string Select = "Select";
+    public const string ExtraPolygonHoverLine = "ExtraPolygonHoverLine";
 
-    public const string Hover = "Hover";
+    public const string ExtraPolygonArea = "ExtraPolygonArea";
+
+    public const string ExtraRouteHoverLine = "ExtraRouteHoverLine";
 }

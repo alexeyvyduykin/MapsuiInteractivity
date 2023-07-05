@@ -134,9 +134,9 @@ public class PolygonDesigner : BaseDesigner, IDesigner
         var p0 = worldPosition.ToCoordinate();
         var p1 = worldPosition.ToCoordinate();
 
-        _extraLineString = new[] { p0, p1 }.ToLineString().ToFeature(InteractiveNames.ExtraPolygonHoverLine);
+        _extraLineString = new[] { p0, p1 }.ToLineString().ToFeature(InteractiveFields.ExtraPolygonHoverLine);
         _extraPolygonCoordinates = new() { p0 };
-        _extraPolygon = _extraPolygonCoordinates.ToPolygon().ToFeature(InteractiveNames.ExtraPolygonArea);
+        _extraPolygon = _extraPolygonCoordinates.ToPolygon().ToFeature(InteractiveFields.ExtraPolygonArea);
 
         _featureCoordinates = new() { p0 };
         Feature = _featureCoordinates.ToLineString().ToFeature();
