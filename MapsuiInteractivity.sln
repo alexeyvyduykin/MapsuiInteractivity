@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapsuiInteractivitySample",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HoverSample", "samples\HoverSample\HoverSample.csproj", "{EA9563D2-203C-4119-AE52-657395FA1867}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractivityWPFSample", "samples\InteractivityWPFSample\InteractivityWPFSample.csproj", "{1C473629-ED07-4A6B-814E-D68810CF0712}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{EA9563D2-203C-4119-AE52-657395FA1867}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA9563D2-203C-4119-AE52-657395FA1867}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA9563D2-203C-4119-AE52-657395FA1867}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C473629-ED07-4A6B-814E-D68810CF0712}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C473629-ED07-4A6B-814E-D68810CF0712}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C473629-ED07-4A6B-814E-D68810CF0712}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C473629-ED07-4A6B-814E-D68810CF0712}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{33A023A6-0431-42A3-B219-527F6F01C428} = {5BA43119-DCAD-49DD-A551-B923D65540B9}
 		{F059853D-0A01-4333-A98E-E755E49B28EB} = {CA1D973F-B7F7-4A05-A6C7-D0C800CF5D4D}
 		{EA9563D2-203C-4119-AE52-657395FA1867} = {CA1D973F-B7F7-4A05-A6C7-D0C800CF5D4D}
+		{1C473629-ED07-4A6B-814E-D68810CF0712} = {CA1D973F-B7F7-4A05-A6C7-D0C800CF5D4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2D6691E-C4CB-4679-BD96-8245F4EFF9A2}
