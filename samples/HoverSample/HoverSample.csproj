@@ -6,7 +6,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  
+  <PropertyGroup>
+    <AvaloniaVersion>11.0.0</AvaloniaVersion>
+    <AvaloniaXamlBehaviorsVersion>11.0.0</AvaloniaXamlBehaviorsVersion>
+    <ReactiveUIVersion>18.3.1</ReactiveUIVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
