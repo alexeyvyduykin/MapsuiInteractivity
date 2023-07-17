@@ -1,14 +1,7 @@
-﻿//using Avalonia.Input;
-//using Mapsui.UI.Avalonia;
-
-using InteractivityWPFSample.Extensions;
-using Mapsui;
-using Mapsui.Interactivity;
-using Mapsui.Interactivity.UI;
+﻿using Mapsui.Interactivity.UI.Wpf.Extensions;
 using Mapsui.UI.Wpf;
-using System.Windows.Input;
 
-namespace InteractivityWPFSample;
+namespace Mapsui.Interactivity.UI.Wpf;
 
 internal class MapControlAdaptor : IView
 {

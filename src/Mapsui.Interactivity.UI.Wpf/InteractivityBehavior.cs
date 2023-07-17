@@ -1,11 +1,8 @@
-﻿using Mapsui;
-using Mapsui.Interactivity;
-using Mapsui.Interactivity.UI;
-using Mapsui.UI.Wpf;
+﻿using Mapsui.UI.Wpf;
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 
-namespace InteractivityWPFSample;
+namespace Mapsui.Interactivity.UI.Wpf;
 
 public partial class InteractivityBehavior : Behavior<MapControl>
 {

@@ -1,9 +1,10 @@
-﻿using InteractivityWPFSample.Extensions;
-using Mapsui.Interactivity.UI.Input.Core;
+﻿using Mapsui.Interactivity.UI.Input.Core;
+using Mapsui.Interactivity.UI.Wpf.Extensions;
 using Mapsui.UI.Wpf;
 using Mapsui.UI.Wpf.Extensions;
+using System.Text;
 
-namespace InteractivityWPFSample;
+namespace Mapsui.Interactivity.UI.Wpf;
 
 public partial class InteractivityBehavior
 {
@@ -184,3 +185,4 @@ public partial class InteractivityBehavior
         }
     }
 }
+

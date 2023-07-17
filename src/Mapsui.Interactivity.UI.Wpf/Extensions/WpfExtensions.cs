@@ -1,10 +1,9 @@
-﻿using Mapsui.Interactivity.UI;
-using Mapsui.Interactivity.UI.Input;
+﻿using Mapsui.Interactivity.UI.Input;
 using wpfInput = System.Windows.Input;
 
-namespace InteractivityWPFSample.Extensions;
+namespace Mapsui.Interactivity.UI.Wpf.Extensions;
 
-public static class WPFExtensions
+public static class WpfExtensions
 {
     public static wpfInput.Cursor ToStandartCursor(this CursorType cursorType)
     {

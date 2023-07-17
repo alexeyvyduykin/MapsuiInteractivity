@@ -1,14 +1,12 @@
-﻿using InteractivityWPFSample.Extensions;
-using Mapsui;
-using Mapsui.Extensions;
-using Mapsui.Interactivity;
-using Mapsui.Interactivity.UI;
+﻿using Mapsui.Extensions;
 using Mapsui.Interactivity.UI.Input.Core;
+using Mapsui.Interactivity.UI.Wpf.Extensions;
 using Mapsui.UI.Wpf;
 using Mapsui.UI.Wpf.Extensions;
+using System.Text;
 using System.Windows;
 
-namespace InteractivityWPFSample;
+namespace Mapsui.Interactivity.UI.Wpf;
 
 public class InteractivityMapView : MapControl, IView
 {

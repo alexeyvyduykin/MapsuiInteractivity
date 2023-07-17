@@ -10,15 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mapsui.Wpf" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="ReactiveUI" Version="19.2.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Mapsui.Interactivity.UI\Mapsui.Interactivity.UI.csproj" />
-    <ProjectReference Include="..\..\src\Mapsui.Interactivity\Mapsui.Interactivity.csproj" />
+    <ProjectReference Include="..\..\src\Mapsui.Interactivity.UI.Wpf\Mapsui.Interactivity.UI.Wpf.csproj" />
   </ItemGroup>
 
 </Project>

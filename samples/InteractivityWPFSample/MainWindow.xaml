@@ -7,6 +7,7 @@
         xmlns:vm="clr-namespace:InteractivityWPFSample.ViewModels"
         xmlns:wpf1="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf"   
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:inter="clr-namespace:Mapsui.Interactivity.UI.Wpf;assembly=Mapsui.Interactivity.UI.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
@@ -30,19 +31,17 @@
 
         <TabControl>
             <TabItem Header="View">
-                <local:InteractivityMapView x:Name="MapView"
-					  MapSource="{Binding Map}"
-					  InteractiveSource="{Binding Interactive}"
-					  State="{Binding State}"
-					  VerticalAlignment="Stretch"
-					  HorizontalAlignment="Stretch"/>
+                <inter:InteractivityMapView x:Name="MapView"
+                                            MapSource="{Binding Map}"
+                                            InteractiveSource="{Binding Interactive}"
+                                            State="{Binding State}"/>
             </TabItem>
             <TabItem Header="Behavior">
                 <wpf1:MapControl x:Name="MapControl"
                                  VerticalAlignment="Stretch"
                                  HorizontalAlignment="Stretch">
                     <i:Interaction.Behaviors>
-                        <local:InteractivityBehavior Map="{Binding Map}"
+                        <inter:InteractivityBehavior Map="{Binding Map}"
 													 Interactive="{Binding Interactive}"
                                                      State="{Binding State}"/>
                     </i:Interaction.Behaviors>
