@@ -14,7 +14,7 @@ internal class DecoratorSelector : Selector, IDecoratorSelector
     {
         Select.Subscribe(s =>
         {
-            if (s.Item1 is GeometryFeature gf)
+            if (s.Feature is GeometryFeature gf)
             {
                 _decorator = builder.Invoke(gf);
 

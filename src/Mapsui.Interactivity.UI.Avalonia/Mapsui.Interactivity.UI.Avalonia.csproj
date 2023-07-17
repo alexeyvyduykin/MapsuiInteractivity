@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RepositoryUrl>https://github.com/alexeyvyduykin/MapsuiInteractivity</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Mapsui.Avalonia" Version="4.0.0-rc.3" />
+		<PackageReference Include="Mapsui.Avalonia" Version="4.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
