@@ -2,6 +2,7 @@
 using Mapsui;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.UI;
+using Mapsui.Interactivity.Utilities;
 using System;
 
 namespace HoverSample.ViewModels;

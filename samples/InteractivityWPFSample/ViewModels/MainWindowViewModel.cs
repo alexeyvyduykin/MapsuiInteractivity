@@ -4,16 +4,14 @@ using Mapsui;
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.Extensions;
 using Mapsui.Interactivity.UI;
+using Mapsui.Interactivity.Utilities;
 using Mapsui.Layers;
-using Mapsui.Styles;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection.Emit;
 
 namespace InteractivityWPFSample.ViewModels;
 
@@ -26,8 +24,6 @@ public class MainWindowViewModel : ReactiveObject
     public MainWindowViewModel()
     {
         Map = MapBuilder.Create();
-
-        Map.Layers.Changed += Layers_Changed;
 
         _featureManager = new FeatureManager()
             .WithSelect(f => f[MapBuilder.SelectField] = true)
@@ -49,18 +45,8 @@ public class MainWindowViewModel : ReactiveObject
         radioButtonList.Register(new RadioButtonItem("Circle"), DrawingCircleCommand, Reset);
         radioButtonList.Register(new RadioButtonItem("Polygon"), DrawingPolygonCommand, Reset);
         radioButtonList.Register(new RadioButtonItem("Route"), DrawingRouteCommand, Reset);
-        radioButtonList.Register(new RadioButtonItem("Select|Filter"), SelectWithFilterCommand, Reset);
-        radioButtonList.Register(new RadioButtonItem("Translate|Filter"), TranslateWithFilterCommand, Reset);
 
         RadioButtons = new List<RadioButtonItem>(radioButtonList.Items);
-    }
-
-    private void Layers_Changed(object sender, LayerCollectionChangedEventArgs args)
-    {
-        if (sender is LayerCollection layers)
-        {
-            LayerNames = layers.Select(s => s.Name).ToList();
-        }
     }
 
     private (IFeature? feature, ILayer? layer) Find(string? featureName, string? layerName)
@@ -101,11 +87,6 @@ public class MainWindowViewModel : ReactiveObject
             SelectFeature(s.Feature, s.Layer);
 
             Tip = $"Select{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
-
-            if (IsWktInfo == true)
-            {
-                WktInfo = s.Feature.ToWkt();
-            }
         });
 
         _selector.Unselect.Subscribe(s =>
@@ -113,11 +94,6 @@ public class MainWindowViewModel : ReactiveObject
             UnselectFeature(s.Layer);
 
             Tip = string.Empty;
-
-            if (IsWktInfo == true)
-            {
-                WktInfo = string.Empty;
-            }
         });
 
         _selector.HoverBegin.Subscribe(s =>
@@ -166,81 +142,12 @@ public class MainWindowViewModel : ReactiveObject
             .Unselect();
     }
 
-    private void SelectWithFilterCommand()
-    {
-        _selector = new InteractiveBuilder()
-            .SelectSelector<Selector>()
-            .AttachTo(Map)
-            .AvailableFor(_userLayer)
-            .Build();
-
-        _selector.Select.Subscribe(s =>
-        {
-            Tip = $"Select{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
-
-            if (IsWktInfo == true)
-            {
-                WktInfo = s.Feature.ToWkt();
-            }
-        });
-
-        _selector.Unselect.Subscribe(s =>
-        {
-            Tip = string.Empty;
-
-            if (IsWktInfo == true)
-            {
-                WktInfo = string.Empty;
-            }
-        });
-
-        _selector.HoverBegin.Subscribe(s =>
-        {
-            Tip = $"HoveringBegin{Environment.NewLine}{s.Feature.ToFeatureInfo()}";
-        });
-
-        _selector.HoverEnd.Subscribe(s =>
-        {
-            Tip = string.Empty;
-        });
-
-        Interactive = _selector;
-        State = States.Selecting;
-    }
-
     private void TranslateCommand()
     {
         _selector = new InteractiveBuilder()
             .SelectDecorator<TranslateDecorator>()
             .AttachTo(Map)
             .WithSelector<Selector>()
-            .Build();
-
-        ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
-        {
-            Interactive = s;
-            State = States.Editing;
-            Tip = $"Translate mode";
-        });
-
-        ((IDecoratorSelector)_selector).DecoratorUnselecting.Subscribe(s =>
-        {
-            Interactive = _selector;
-            State = States.Selecting;
-            Tip = String.Empty;
-        });
-
-        Interactive = _selector;
-        State = States.Selecting;
-    }
-
-    private void TranslateWithFilterCommand()
-    {
-        _selector = new InteractiveBuilder()
-            .SelectDecorator<TranslateDecorator>()
-            .AttachTo(Map)
-            .WithSelector<Selector>()
-            .AvailableFor(_userLayer)
             .Build();
 
         ((IDecoratorSelector)_selector).DecoratorSelecting.Subscribe(s =>
@@ -490,17 +397,8 @@ public class MainWindowViewModel : ReactiveObject
     public string State { get; set; } = States.Default;
 
     [Reactive]
-    public IList<string> LayerNames { get; set; } = new List<string>();
-
-    [Reactive]
     public List<RadioButtonItem> RadioButtons { get; set; }
 
     [Reactive]
     public string Tip { get; set; } = string.Empty;
-
-    [Reactive]
-    public bool IsWktInfo { get; set; }
-
-    [Reactive]
-    public string? WktInfo { get; set; }
 }

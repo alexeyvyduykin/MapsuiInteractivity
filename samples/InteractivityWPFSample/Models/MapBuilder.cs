@@ -1,7 +1,7 @@
 ﻿using InteractivityWPFSample.Extensions;
 using Mapsui;
 //using Mapsui.Interactivity;
-//using Mapsui.Interactivity.Utilities;
+using Mapsui.Interactivity.Utilities;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Nts.Extensions;
@@ -86,7 +86,7 @@ internal static class MapBuilder
         };
 
         var feature = CreateFeature("Polygon2", wktPolygon1);
-
+       
         Geomorpher.Translate(((GeometryFeature)feature).Geometry!, 700000, 0);
 
         layer.Add(feature);

@@ -166,7 +166,6 @@ public class InteractivityMapView : MapControl, IView
         {
 #pragma warning disable CS0618 // Тип или член устарел
             //ChangedButton = e.GetPointerPoint(null).Properties.PointerUpdateKind.Convert(),
-            // ChangedButton = e.GetCurrentPoint(null).Properties.PointerUpdateKind.Convert(),
             ChangedButton = e.ChangedButton.Convert(),
 #pragma warning restore CS0618 // Тип или член устарел
             ClickCount = e.ClickCount,

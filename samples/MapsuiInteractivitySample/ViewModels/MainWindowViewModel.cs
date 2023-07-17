@@ -2,8 +2,8 @@
 using Mapsui.Interactivity;
 using Mapsui.Interactivity.Extensions;
 using Mapsui.Interactivity.UI;
+using Mapsui.Interactivity.Utilities;
 using Mapsui.Layers;
-using Mapsui.Styles;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection.Emit;
 
 namespace MapsuiInteractivitySample.ViewModels;
 

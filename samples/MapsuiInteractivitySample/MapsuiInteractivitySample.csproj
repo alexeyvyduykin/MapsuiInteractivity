@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AvaloniaVersion>11.0.0-rc1.1</AvaloniaVersion>
-		<AvaloniaXamlBehaviorsVersion>11.0.0-rc1.1</AvaloniaXamlBehaviorsVersion>
+		<AvaloniaVersion>11.0.0</AvaloniaVersion>
+		<AvaloniaXamlBehaviorsVersion>11.0.0</AvaloniaXamlBehaviorsVersion>
 		<ReactiveUIVersion>18.3.1</ReactiveUIVersion>
 	</PropertyGroup>
 
@@ -26,6 +26,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />

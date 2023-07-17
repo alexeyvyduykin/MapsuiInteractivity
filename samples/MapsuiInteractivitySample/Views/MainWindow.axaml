@@ -3,17 +3,17 @@
         xmlns:vm="using:MapsuiInteractivitySample.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="using:MapsuiInteractivitySample"
-		xmlns:views="using:MapsuiInteractivitySample.Views"
+        xmlns:local="using:MapsuiInteractivitySample"
+        xmlns:views="using:MapsuiInteractivitySample.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MapsuiInteractivitySample.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="MapsuiInteractivitySample">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
 
-	<views:MainView DataContext="{Binding}"/>
+  <views:MainView DataContext="{Binding}"/>
 
 </Window>

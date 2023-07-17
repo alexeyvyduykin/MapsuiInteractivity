@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mapsui.Wpf" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="ReactiveUI" Version="19.2.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.2.1" />
   </ItemGroup>
