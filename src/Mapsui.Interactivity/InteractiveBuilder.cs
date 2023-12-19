@@ -12,6 +12,24 @@ public class InteractiveBuilder
     private static readonly IDictionary<Type, Func<IInteractive>> _cache1 = new Dictionary<Type, Func<IInteractive>>();
     private static readonly IDictionary<Type, Func<GeometryFeature, IDecorator>> _cache2 = new Dictionary<Type, Func<GeometryFeature, IDecorator>>();
 
+    private static SymbolStyle _interactivePointLayerDesignerStyle = new SymbolStyle()
+    {
+        Fill = new Brush(Color.White),
+        Outline = new Pen(Color.Black, 2 / 0.3),
+        Line = null,
+        SymbolType = SymbolType.Ellipse,
+        SymbolScale = 0.3,
+    };
+
+    private static SymbolStyle _interactivePointLayerDecoratorStyle = new SymbolStyle()
+    {
+        Fill = new Brush(Color.White),
+        Outline = new Pen(Color.Black, 2 / 0.3),
+        Line = null,
+        SymbolType = SymbolType.Ellipse,
+        SymbolScale = 0.3,
+    };
+
     static InteractiveBuilder()
     {
         _cache1.Add(typeof(PointDesigner), () => new PointDesigner());
@@ -63,7 +81,6 @@ public class InteractiveBuilder
 
         throw new Exception($"Selector type {type} not register in {nameof(InteractiveBuilder)}'s cache.");
     }
-
     internal static IStyle CreateInteractiveLayerDecoratorStyle()
     {
         return new ThemeStyle(f =>
@@ -75,14 +92,7 @@ public class InteractiveBuilder
 
             if (gf.Geometry is Point)
             {
-                return new SymbolStyle()
-                {
-                    Fill = new Brush(Color.White),
-                    Outline = new Pen(Color.Black, 2 / 0.3),
-                    Line = null,
-                    SymbolType = SymbolType.Ellipse,
-                    SymbolScale = 0.3,
-                };
+                return _interactivePointLayerDecoratorStyle;
             }
 
             return null;
@@ -100,14 +110,7 @@ public class InteractiveBuilder
 
             if (gf.Geometry is Point)
             {
-                return new SymbolStyle()
-                {
-                    Fill = new Brush(Color.White),
-                    Outline = new Pen(Color.Black, 2 / 0.3),
-                    Line = null,
-                    SymbolType = SymbolType.Ellipse,
-                    SymbolScale = 0.3,
-                };
+                return _interactivePointLayerDesignerStyle;
             }
 
             var _color = new Color(76, 154, 231);
